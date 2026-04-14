@@ -15,12 +15,12 @@ export type Room = Readonly<{
 export type RoomMode = TimeMode | MoneyMode
 
 export type TimeMode = {
-  name: "timeMode"
+  name: "time"
   target: TimeValue
 }
 
 export type MoneyMode = {
-  name: "moneyMode"
+  name: "money"
   target: MoneyValue
 }
 

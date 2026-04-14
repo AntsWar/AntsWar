@@ -24,17 +24,17 @@ export default function RoomModeSelect({
   mode,
   onChange,
 }: RoomModeSelectProps) {
-  const handleModeChange = (nextName: "timeMode" | "moneyMode") => {
-    if (nextName === "timeMode") {
+  const handleModeChange = (nextName: "time" | "money") => {
+    if (nextName === "time") {
       onChange({
-        name: "timeMode",
+        name: "time",
         target: TIME_OPTIONS[0],
       })
       return
     }
 
     onChange({
-      name: "moneyMode",
+      name: "money",
       target: MONEY_OPTIONS[0],
     })
   }
@@ -42,33 +42,33 @@ export default function RoomModeSelect({
   const handleValueChange = (rawValue: string) => {
     const nextValue = Number(rawValue)
 
-    if (mode.name === "timeMode") {
+    if (mode.name === "time") {
       onChange({
-        name: "timeMode",
+        name: "time",
         target: nextValue as TimeValue,
       })
       return
     }
 
     onChange({
-      name: "moneyMode",
+      name: "money",
       target: nextValue as MoneyValue,
     })
   }
 
-  const currentOptions = mode.name === "timeMode" ? TIME_OPTIONS : MONEY_OPTIONS
+  const currentOptions = mode.name === "time" ? TIME_OPTIONS : MONEY_OPTIONS
 
   return (
     <ButtonGroup>
       <Select
         value={mode.name}
-        onValueChange={(v) => handleModeChange(v as "timeMode" | "moneyMode")}
+        onValueChange={(v) => handleModeChange(v as "time" | "money")}
       >
         <SelectTrigger className="min-w-24">
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="min-w-0">
-          <SelectItem value="timeMode">시간 모드</SelectItem>
+          <SelectItem value="time">시간 모드</SelectItem>
           {/* <SelectItem target="money">목표 금액</SelectItem> */}
         </SelectContent>
       </Select>
@@ -80,7 +80,7 @@ export default function RoomModeSelect({
         <SelectContent className="min-w-0">
           {currentOptions.map((option) => (
             <SelectItem key={option} value={String(option)}>
-              {mode.name === "timeMode"
+              {mode.name === "time"
                 ? `${option}분`
                 : `${formatMoney(option)} 만원`}
             </SelectItem>
