@@ -1,3 +1,4 @@
+import type { Money } from "@/shared/model/money"
 import { Button } from "@/shared/ui/button"
 import {
   Select,
@@ -16,6 +17,7 @@ import {
 } from "@/shared/ui/table"
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useMemo, useState } from "react"
+import { formatMoney } from "@/shared/lib/formatMoney"
 
 export default function MarketSection() {
   const [selectedType, setSelectedType] = useState<Market["type"]>("주식")
@@ -71,7 +73,7 @@ export default function MarketSection() {
 
 type Market = {
   name: string
-  value: number
+  value: Money
   type: "주식" | "코인"
 }
 
@@ -79,7 +81,7 @@ function MarketRow({ market }: { market: Market }) {
   return (
     <TableRow>
       <TableCell>{market.name}</TableCell>
-      <TableCell className="text-center">{market.value}</TableCell>
+      <TableCell className="text-center">{formatMoney(market.value)}</TableCell>
       <TableCell className="text-center">
         <Button className="w-full">매수</Button>
       </TableCell>

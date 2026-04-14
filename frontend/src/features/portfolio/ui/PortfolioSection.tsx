@@ -8,6 +8,7 @@ import {
 } from "@/shared/ui/table"
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useState } from "react"
+import { formatMoney } from "@/shared/lib/formatMoney"
 
 type FilterType = "all" | "stock" | "crypto"
 
@@ -74,8 +75,12 @@ function PositionRow({ position }: { position: Position }) {
   return (
     <TableRow>
       <TableCell>{position.name}</TableCell>
-      <TableCell className="text-center">{position.currentPrice}</TableCell>
-      <TableCell className="text-center">{position.averagePrice}</TableCell>
+      <TableCell className="text-center">
+        {formatMoney(position.currentPrice)}
+      </TableCell>
+      <TableCell className="text-center">
+        {formatMoney(position.averagePrice)}
+      </TableCell>
       <TableCell className="text-center">{position.quantity}</TableCell>
       <TableCell className="text-center">{assetType}</TableCell>
       <TableCell className="text-center">{positionType}</TableCell>

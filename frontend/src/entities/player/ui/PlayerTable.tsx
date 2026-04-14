@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/shared/ui/table"
 import type { Player } from "../model/types"
+import { formatMoney } from "@/shared/lib/formatMoney"
 
 const myId = 3
 
@@ -34,7 +35,9 @@ function PlayerRow({ player }: { player: Player }) {
   return (
     <TableRow>
       <TableCell className={isMe ? "font-bold" : ""}>{player.name}</TableCell>
-      <TableCell className="text-right">{player.balance}</TableCell>
+      <TableCell className="text-right">
+        {formatMoney(player.balance)}
+      </TableCell>
     </TableRow>
   )
 }
