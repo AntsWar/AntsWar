@@ -17,6 +17,6 @@ public record RegisterRoomRequest (
     ) {}
 
     public RegisterRoomCommand toCommand(String hostId){
-        return new RegisterRoomCommand(this.name, this.password,hostId, RoomMode.of(roomMode.roomModeType, roomMode.target));
+        return new RegisterRoomCommand(this.name, this.password, hostId, new RoomMode(this.roomMode.roomModeType, this.roomMode.target));
     }
 }

@@ -20,23 +20,23 @@ public class Room extends SoftDeleteEntity {
     private String password;
     private RoomStatus status;
     private String hostId;
+    private RoomModeType type;
+    private int target;
 
-    @Embedded
-    private RoomMode mode;
-
-    private Room(String name, String password, String hostId, RoomMode mode){
+    private Room(String name, String password, String hostId, RoomModeType type, int target){
         this.publicId = UUID.randomUUID().toString();
         this.name = name;
         this.password = password;
         this.status = RoomStatus.READY;
         this.hostId = hostId;
-        this.mode = mode;
+        this.type = type;
+        this.target = target;
     }
 
     public static Room of(String name, String password, String hostId, RoomMode mode){
         validateName(name);
         validatePassword(password);
-        return new Room(name, password, hostId, mode);
+        return new Room(name, password, hostId, mode.type(), mode.target());
     }
 
     private static void validatePassword(String password) {
