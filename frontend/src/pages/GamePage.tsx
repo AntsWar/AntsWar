@@ -1,5 +1,6 @@
 import { MarketSection } from "@/features/market"
 import { PortfolioSection } from "@/features/portfolio"
+import { TabToEarnButton } from "@/features/seedIncome"
 
 export default function GamePage() {
   return (
@@ -7,6 +8,7 @@ export default function GamePage() {
       <div className="p-2">시드 123456</div>
       <MarketSection />
       <PortfolioSection />
+      <TabToEarnButton />
     </div>
   )
 }
