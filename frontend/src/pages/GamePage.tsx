@@ -1,5 +1,5 @@
 import { MarketSection } from "@/features/market"
-import { ParticipantSection } from "@/features/participant"
+import { PlayerSection } from "@/features/player"
 import { PortfolioSection } from "@/features/portfolio"
 import { TabToEarnButton } from "@/features/seedIncome"
 import { Button } from "@/shared/ui/button"
@@ -15,7 +15,7 @@ export default function GamePage() {
         </div>
       </div>
       <div className="flex flex-col gap-7">
-        <ParticipantSection />
+        <PlayerSection />
         <MarketSection />
         <PortfolioSection />
         <TabToEarnButton />
