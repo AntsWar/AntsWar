@@ -1,4 +1,10 @@
-import { type RoomMode } from "@/entities/room"
+import {
+  RoomCapacitySelect,
+  RoomModeSelect,
+  RoomPasswordInput,
+  RoomTitleInput,
+  type RoomMode,
+} from "@/entities/room"
 import { Button } from "@/shared/ui/button"
 import {
   Dialog,
@@ -9,10 +15,6 @@ import {
   DialogTrigger,
 } from "@/shared/ui/dialog"
 import { useState } from "react"
-import RoomTitleInput from "./RoomTitleInput"
-import { RoomPasswordInput } from "./RoomPasswordInput"
-import RoomModeSelect from "./RoomModeSelect"
-import RoomCapacitySelect from "./RoomCapacitySelect"
 import { Field, FieldGroup, FieldLabel } from "@/shared/ui/field"
 
 export default function RoomRegister() {
@@ -20,8 +22,8 @@ export default function RoomRegister() {
   const [password, setPassword] = useState<string>("")
   const [capacity, setCapacity] = useState("")
   const [mode, setMode] = useState<RoomMode>({
-    name: "시간모드",
-    value: 5,
+    name: "timeMode",
+    target: 5,
   })
 
   const handleClick = () => {
@@ -44,7 +46,7 @@ export default function RoomRegister() {
         </DialogHeader>
         <FieldGroup className="gap-4">
           <Field>
-            <FieldLabel>방 제목</FieldLabel>{" "}
+            <FieldLabel>방 제목</FieldLabel>
             <RoomTitleInput
               placeholder="방 제목"
               value={title}
@@ -53,7 +55,7 @@ export default function RoomRegister() {
           </Field>
 
           <Field>
-            <FieldLabel>비밀번호</FieldLabel>{" "}
+            <FieldLabel>비밀번호</FieldLabel>
             <RoomPasswordInput
               placeholder="비밀번호"
               value={password}

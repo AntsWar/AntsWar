@@ -1,4 +1,4 @@
-import { roomSpec } from "@/entities/room"
+import { roomSpec } from "../config"
 import { Button } from "@/shared/ui/button"
 import {
   InputGroup,
@@ -19,7 +19,7 @@ type InputWithCountProps = Omit<
   onChange: (value: string) => void
 }
 
-export function RoomPasswordInput({
+export default function RoomPasswordInput({
   value,
   onChange,
   ...props

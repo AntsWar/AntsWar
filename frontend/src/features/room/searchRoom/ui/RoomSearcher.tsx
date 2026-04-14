@@ -1,19 +1,10 @@
-import { roomSpec, type Room } from "@/entities/room"
+import { roomSpec, RoomTable, type Room } from "@/entities/room"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/shared/ui/input-group"
-import { cn } from "@/shared/ui/lib"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/shared/ui/table"
-import { Lock, Search } from "lucide-react"
+import { Search } from "lucide-react"
 import { useState } from "react"
 
 const { titleMaxLength } = roomSpec
@@ -27,7 +18,7 @@ export default function RoomSearcher() {
   }
 
   return (
-    <>
+    <div>
       <InputGroup>
         <InputGroupAddon align="inline-start">
           <Search className="size-5" />
@@ -40,54 +31,8 @@ export default function RoomSearcher() {
           maxLength={maxLength}
         />
       </InputGroup>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>방 제목</TableHead>
-            <TableHead className="w-25 text-center">모드</TableHead>
-            <TableHead className="w-20 text-center">인원</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rooms.map((room) => (
-            <RoomRow key={room.id} room={room} />
-          ))}
-        </TableBody>
-      </Table>
-    </>
-  )
-}
-
-function RoomRow({ room }: { room: Room }) {
-  const isFull = room.currentCount >= room.capacity
-  const handleJoin = () => {
-    console.log(room)
-  }
-
-  return (
-    <TableRow
-      className={cn(
-        "cursor-pointer",
-        isFull && "cursor-not-allowed text-muted-foreground"
-      )}
-      tabIndex={isFull ? -1 : 0}
-      onClick={isFull ? undefined : handleJoin}
-    >
-      <TableCell className="flex flex-row items-center gap-2">
-        {room.title}{" "}
-        {room.hasPassword && (
-          <span>
-            <Lock className="size-4" />
-          </span>
-        )}
-      </TableCell>
-      <TableCell className="text-center">
-        {room.mode.name} ({room.mode.value}분)
-      </TableCell>
-      <TableCell className="text-center">
-        {room.currentCount} / {room.capacity}
-      </TableCell>
-    </TableRow>
+      <RoomTable rooms={rooms} />
+    </div>
   )
 }
 
@@ -99,8 +44,8 @@ const rooms: Room[] = [
     capacity: 10,
     hasPassword: false,
     mode: {
-      name: "시간모드",
-      value: 10,
+      name: "timeMode",
+      target: 10,
     },
   },
   {
@@ -110,8 +55,8 @@ const rooms: Room[] = [
     capacity: 6,
     hasPassword: true,
     mode: {
-      name: "시간모드",
-      value: 10,
+      name: "timeMode",
+      target: 10,
     },
   },
   {
@@ -121,8 +66,8 @@ const rooms: Room[] = [
     capacity: 8,
     hasPassword: false,
     mode: {
-      name: "시간모드",
-      value: 10,
+      name: "timeMode",
+      target: 10,
     },
   },
   {
@@ -132,8 +77,8 @@ const rooms: Room[] = [
     capacity: 4,
     hasPassword: true,
     mode: {
-      name: "시간모드",
-      value: 10,
+      name: "timeMode",
+      target: 10,
     },
   },
   {
@@ -143,8 +88,8 @@ const rooms: Room[] = [
     capacity: 12,
     hasPassword: false,
     mode: {
-      name: "시간모드",
-      value: 10,
+      name: "timeMode",
+      target: 10,
     },
   },
 ]

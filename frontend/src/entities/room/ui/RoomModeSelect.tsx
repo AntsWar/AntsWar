@@ -5,6 +5,7 @@ import {
   type RoomMode,
   type TimeValue,
 } from "@/entities/room"
+import { formatMoney } from "@/shared/lib/formatMoney"
 import { ButtonGroup } from "@/shared/ui/button-group"
 import {
   Select,
@@ -14,72 +15,74 @@ import {
   SelectValue,
 } from "@/shared/ui/select"
 
+type RoomModeSelectProps = {
+  mode: RoomMode
+  onChange: (target: RoomMode) => void
+}
+
 export default function RoomModeSelect({
   mode,
   onChange,
-}: {
-  mode: RoomMode
-  onChange: (value: RoomMode) => void
-}) {
-  const handleModeChange = (nextName: "시간모드" | "금액모드") => {
-    if (nextName === "시간모드") {
+}: RoomModeSelectProps) {
+  const handleModeChange = (nextName: "timeMode" | "moneyMode") => {
+    if (nextName === "timeMode") {
       onChange({
-        name: "시간모드",
-        value: TIME_OPTIONS[0],
+        name: "timeMode",
+        target: TIME_OPTIONS[0],
       })
       return
     }
 
     onChange({
-      name: "금액모드",
-      value: MONEY_OPTIONS[0],
+      name: "moneyMode",
+      target: MONEY_OPTIONS[0],
     })
   }
 
   const handleValueChange = (rawValue: string) => {
     const nextValue = Number(rawValue)
 
-    if (mode.name === "시간모드") {
+    if (mode.name === "timeMode") {
       onChange({
-        name: "시간모드",
-        value: nextValue as TimeValue,
+        name: "timeMode",
+        target: nextValue as TimeValue,
       })
       return
     }
 
     onChange({
-      name: "금액모드",
-      value: nextValue as MoneyValue,
+      name: "moneyMode",
+      target: nextValue as MoneyValue,
     })
   }
 
-  const currentOptions = mode.name === "시간모드" ? TIME_OPTIONS : MONEY_OPTIONS
+  const currentOptions = mode.name === "timeMode" ? TIME_OPTIONS : MONEY_OPTIONS
 
   return (
     <ButtonGroup>
       <Select
         value={mode.name}
-        onValueChange={(v) => handleModeChange(v as "시간모드" | "금액모드")}
+        onValueChange={(v) => handleModeChange(v as "timeMode" | "moneyMode")}
       >
         <SelectTrigger className="min-w-24">
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="min-w-0">
-          <SelectItem value="시간모드">시간 모드</SelectItem>
-          {/* <SelectItem value="money">목표 금액</SelectItem> */}
+          <SelectItem value="timeMode">시간 모드</SelectItem>
+          {/* <SelectItem target="money">목표 금액</SelectItem> */}
         </SelectContent>
       </Select>
 
-      <Select value={String(mode.value)} onValueChange={handleValueChange}>
+      <Select value={String(mode.target)} onValueChange={handleValueChange}>
         <SelectTrigger className="min-w-20">
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="min-w-0">
           {currentOptions.map((option) => (
             <SelectItem key={option} value={String(option)}>
-              {mode.name === "시간모드"
+              {mode.name === "timeMode"
                 ? `${option}분`
-                : `${option.toLocaleString()} 만원`}
+                : `${formatMoney(option)} 만원`}
             </SelectItem>
           ))}
         </SelectContent>

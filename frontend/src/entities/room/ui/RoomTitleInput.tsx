@@ -1,4 +1,4 @@
-import { roomSpec } from "@/entities/room"
+import { roomSpec } from "../config"
 import {
   InputGroup,
   InputGroupAddon,

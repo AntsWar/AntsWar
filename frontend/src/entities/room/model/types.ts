@@ -15,13 +15,13 @@ export type Room = Readonly<{
 export type RoomMode = TimeMode | MoneyMode
 
 export type TimeMode = {
-  name: "시간모드"
-  value: TimeValue
+  name: "timeMode"
+  target: TimeValue
 }
 
 export type MoneyMode = {
-  name: "금액모드"
-  value: MoneyValue
+  name: "moneyMode"
+  target: MoneyValue
 }
 
 export type TimeValue = 5 | 10 | 30 | 60
