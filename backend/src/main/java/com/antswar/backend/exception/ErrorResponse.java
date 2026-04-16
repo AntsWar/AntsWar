@@ -5,27 +5,22 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.validation.BindingResult;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Getter
 public class ErrorResponse {
-    private final String errorMessage;
-    private final List<FieldError> errors;
+    private final String code;
+    private String message;
+    private List<FieldError> errors;
 
-    public ErrorResponse(final String errorMessage) {
-        this.errorMessage = errorMessage;
-        this.errors = new ArrayList<>();
+    public ErrorResponse(final String code, String message) {
+        this.code = code;
+        this.message = message;
     }
 
-    public ErrorResponse(final ErrorCode code) {
-        this.errorMessage = code.getMessage();
-        this.errors = new ArrayList<>();
-    }
-
-    public ErrorResponse(final ErrorCode code, final BindingResult bindingResult) {
-        this.errorMessage = code.getMessage();
+    public ErrorResponse(final String code, final BindingResult bindingResult) {
+        this.code = code;
         this.errors = FieldError.of(bindingResult);
     }
 

@@ -1,11 +1,13 @@
 package com.antswar.backend.common.lock;
 
-import com.antswar.backend.exception.LockTimeoutException;
+import com.antswar.backend.exception.GlobalException;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
+
+import static com.antswar.backend.exception.GlobalErrorCode.LOCK_TIME_OUT;
 
 @Slf4j
 public class StripedLock<K> implements KeyedLock<K> {
@@ -49,7 +51,7 @@ public class StripedLock<K> implements KeyedLock<K> {
         boolean acquired = false;
         try {
             acquired = lock.tryLock(timeoutSeconds, TimeUnit.SECONDS);
-            if (!acquired) throw new LockTimeoutException(key, timeoutSeconds);
+            if (!acquired) throw new GlobalException(LOCK_TIME_OUT, "락획득 실패.key=" + key + " within " + timeoutSeconds +"s");
             log.debug("acquire lock : {}", key);
             body.run();
         } catch (InterruptedException e) {
