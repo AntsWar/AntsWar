@@ -36,7 +36,7 @@ public record Money(BigDecimal amount, Currency currency) {
         return new Money(this.amount.subtract(other.amount), currency);
     }
 
-    public Money times(int multiplier) {
+    public Money times(double multiplier) {
         if (multiplier < 0) throw new IllegalArgumentException("배수는 음수일 수 없음");
         return new Money(this.amount.multiply(BigDecimal.valueOf(multiplier)), currency);
     }

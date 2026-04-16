@@ -18,4 +18,8 @@ public class Purchase {
     private void validateQuantity(int quantity) {
         if (quantity <= 0) throw new IllegalArgumentException("수량은 1 이상");
     }
+
+    public void changePriceByRate(double rate) {
+        this.price = price.times(1 + rate);
+    }
 }
