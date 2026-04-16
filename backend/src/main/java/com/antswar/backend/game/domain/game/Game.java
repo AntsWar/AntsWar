@@ -2,9 +2,7 @@ package com.antswar.backend.game.domain.game;
 
 import com.antswar.backend.game.domain.market.Market;
 import com.antswar.backend.game.domain.player.Player;
-import com.antswar.backend.game.domain.player.Players;
 import com.antswar.backend.game.exception.GameException;
-import lombok.AccessLevel;
 import lombok.Getter;
 
 import java.util.*;
@@ -22,7 +20,6 @@ public class Game {
     private GameStatus status;
 
     private final Market market= new Market();
-    @Getter(AccessLevel.NONE)
     private final Players players;
 
     public Game(String name, String password, String hostId, GameMode mode, int capacity){
@@ -61,17 +58,4 @@ public class Game {
         if(this.status == GameStatus.FINISHED) throw new GameException(GAME_FINISHED);
         this.status = GameStatus.RUNNING;
     }
-
-    public Player getPlayer(String playerId){
-        return this.players.getPlayer(playerId);
-    }
-
-    public boolean hasPlayer(String playerId){
-        return this.players.hasPlayer(playerId);
-    }
-
-    public List<Player> getPlayers(){
-        return this.players.getPlayers();
-    }
-
 }

@@ -30,7 +30,7 @@ public class RunningGameService implements GetGame, GetMe, BuyPurchase, SellPurc
     @Override
     public void buy(PurchaseCommand command) {
         Game game = getGame(command.gameId());
-        Player player = game.getPlayer(command.playerId());
+        Player player = game.getPlayers().getPlayer(command.playerId());
         Purchase purchase = game.getMarket().getPurchase(command.purchaseId());
         player.buy(purchase, command.type(), command.quantity());
 }
@@ -38,7 +38,7 @@ public class RunningGameService implements GetGame, GetMe, BuyPurchase, SellPurc
     @Override
     public void sell(PurchaseCommand command) {
         Game game = getGame(command.gameId());
-        Player player = game.getPlayer(command.playerId());
+        Player player = game.getPlayers().getPlayer(command.playerId());
         Purchase purchase = game.getMarket().getPurchase(command.purchaseId());
         player.sell(purchase, command.type(), command.quantity());
     }
@@ -46,9 +46,9 @@ public class RunningGameService implements GetGame, GetMe, BuyPurchase, SellPurc
     @Override
     public GetGameResult get(GetGameQuery query) {
         Game game = getGame(query.gameId());
-        if(!game.hasPlayer(query.playerId())) throw new GameException(GAME_FORBIDDEN);
+        if(!game.getPlayers().hasPlayer(query.playerId())) throw new GameException(GAME_FORBIDDEN);
 
-        List<PlayerInfo> players = game.getPlayers().stream()
+        List<PlayerInfo> players = game.getPlayers().toList().stream()
                 .map(PlayerInfo::from).toList();
         List<PurchaseInfo> purchases = game.getMarket().getPurchases().stream()
                 .map(PurchaseInfo::from).toList();
@@ -59,7 +59,7 @@ public class RunningGameService implements GetGame, GetMe, BuyPurchase, SellPurc
     @Override
     public GetMeResult me(String gameId, String playerId) {
         Game game = getGame(gameId);
-        Player player = game.getPlayer(playerId);
+        Player player = game.getPlayers().getPlayer(playerId);
         List<PositionInfo> longPositions = player.getPortfolio(PositionType.LONG).stream().map(position ->
                 PositionInfo.from(position, PositionType.LONG)).toList();
         List<PositionInfo> shortPositions = player.getPortfolio(PositionType.SHORT).stream().map(position ->
