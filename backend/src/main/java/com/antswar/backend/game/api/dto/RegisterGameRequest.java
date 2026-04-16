@@ -11,13 +11,13 @@ public record RegisterGameRequest(
         @NotBlank @Size(max = 20) String name
         , String password
         , int capacity
-        , @NotNull GameModeRequest gameMode){
+        , @NotNull GameModeRequest mode){
     public record GameModeRequest(
-            @NotNull GameModeType gameModeType,
+            @NotNull GameModeType type,
             @NotNull Integer target
     ) {}
 
     public RegisterGameCommand toCommand(String hostId){
-        return new RegisterGameCommand(this.name, this.password, hostId, new GameMode(this.gameMode.gameModeType, this.gameMode.target),capacity);
+        return new RegisterGameCommand(this.name, this.password, hostId, new GameMode(this.mode.type, this.mode.target),capacity);
     }
 }

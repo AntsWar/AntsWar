@@ -36,7 +36,7 @@ public class RunningGameController {
     public ResponseEntity<Void> buyPurchase(@PathVariable @NotBlank String gameId,
                                                  @RequestBody @Valid PurchaseRequest request,
                                                  @Auth PlayerPrincipal player){
-         buyPurchase.buy(new PurchaseCommand(gameId, player.id(), request.purchaseId(), request.quantity()));
+         buyPurchase.buy(new PurchaseCommand(gameId, player.id(), request.type(), request.purchaseId(), request.quantity()));
         return ResponseEntity.noContent().build();
     }
 
@@ -44,7 +44,7 @@ public class RunningGameController {
     public ResponseEntity<GetGameResult> sellPurchase(@PathVariable @NotBlank String gameId,
                                                      @RequestBody @Valid PurchaseRequest request,
                                                      @Auth PlayerPrincipal player){
-        sellPurchase.sell(new PurchaseCommand(gameId, player.id(), request.purchaseId(), request.quantity()));
+        sellPurchase.sell(new PurchaseCommand(gameId, player.id(), request.type(), request.purchaseId(), request.quantity()));
         return ResponseEntity.noContent().build();
     }
 

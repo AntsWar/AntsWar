@@ -32,19 +32,19 @@ public class Player{
         if (name.length() > 10) throw new IllegalArgumentException("이름 10자 이하");
     }
 
-    public List<Position> getPortfolio(){
-        return portfolio.getPositions();
+    public List<Position> getPortfolio(PositionType type){
+        return List.copyOf(portfolio.getPositions(type).values());
     }
 
-    public void buy(Purchase purchase, int quantity) {
+    public void buy(Purchase purchase, PositionType type, int quantity) {
         Money totalPrice = purchase.calculateTotalPrice(quantity);
         if(money.compareTo(totalPrice) < 0) throw new GameException(MONEY_NOT_ENOUGH);
-        portfolio.add(purchase, quantity);
+        portfolio.add(purchase, type, quantity);
         this.money = this.money.subtract(totalPrice);
     }
 
-    public void sell(Purchase purchase, int quantity) {
-        portfolio.subtract(purchase, quantity);
+    public void sell(Purchase purchase, PositionType type, int quantity) {
+        portfolio.subtract(purchase, type, quantity);
         Money totalPrice = purchase.calculateTotalPrice(quantity);
         this.money = this.money.add(totalPrice);
     }

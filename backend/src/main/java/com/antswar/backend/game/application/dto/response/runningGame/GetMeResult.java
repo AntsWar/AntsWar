@@ -5,5 +5,5 @@ import com.antswar.backend.game.application.dto.response.PositionInfo;
 
 import java.util.List;
 
-public record GetMeResult(PlayerInfo player, List<PositionInfo> positions) {
+public record GetMeResult(PlayerInfo player, List<PositionInfo> longPositions, List<PositionInfo> shortPositions) {
 }

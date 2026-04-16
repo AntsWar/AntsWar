@@ -13,6 +13,7 @@ import com.antswar.backend.game.application.port.out.GameRepository;
 import com.antswar.backend.game.domain.game.Game;
 import com.antswar.backend.game.domain.market.Purchase;
 import com.antswar.backend.game.domain.player.Player;
+import com.antswar.backend.game.domain.player.PositionType;
 import com.antswar.backend.game.exception.GameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class RunningGameService implements GetGame, GetMe, BuyPurchase, SellPurc
         Game game = getGame(command.gameId());
         Player player = game.getPlayer(command.playerId());
         Purchase purchase = game.getMarket().getPurchase(command.purchaseId());
-        player.buy(purchase, command.quantity());
+        player.buy(purchase, command.type(), command.quantity());
 }
 
     @Override
@@ -39,7 +40,7 @@ public class RunningGameService implements GetGame, GetMe, BuyPurchase, SellPurc
         Game game = getGame(command.gameId());
         Player player = game.getPlayer(command.playerId());
         Purchase purchase = game.getMarket().getPurchase(command.purchaseId());
-        player.sell(purchase, command.quantity());
+        player.sell(purchase, command.type(), command.quantity());
     }
 
     @Override
@@ -59,8 +60,11 @@ public class RunningGameService implements GetGame, GetMe, BuyPurchase, SellPurc
     public GetMeResult me(String gameId, String playerId) {
         Game game = getGame(gameId);
         Player player = game.getPlayer(playerId);
-        List<PositionInfo> positions = player.getPortfolio().stream().map(PositionInfo::from).toList();
-        return new GetMeResult(PlayerInfo.from(player),positions);
+        List<PositionInfo> longPositions = player.getPortfolio(PositionType.LONG).stream().map(position ->
+                PositionInfo.from(position, PositionType.LONG)).toList();
+        List<PositionInfo> shortPositions = player.getPortfolio(PositionType.SHORT).stream().map(position ->
+                PositionInfo.from(position, PositionType.SHORT)).toList();
+        return new GetMeResult(PlayerInfo.from(player),longPositions, shortPositions);
     }
 
     @Override

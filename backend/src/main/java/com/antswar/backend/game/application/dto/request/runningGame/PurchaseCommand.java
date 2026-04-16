@@ -1,4 +1,6 @@
 package com.antswar.backend.game.application.dto.request.runningGame;
 
-public record PurchaseCommand(String gameId, String playerId, int purchaseId, int quantity){
+import com.antswar.backend.game.domain.player.PositionType;
+
+public record PurchaseCommand(String gameId, String playerId, PositionType type, int purchaseId, int quantity){
 }
