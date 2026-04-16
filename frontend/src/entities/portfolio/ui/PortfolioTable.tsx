@@ -16,7 +16,6 @@ export default function PortfolioTable(props: { positions: Array<Position> }) {
       <TableHeader>
         <TableRow>
           <TableHead>이름</TableHead>
-          <TableHead className="text-center">현재가</TableHead>
           <TableHead className="text-center">평단가</TableHead>
           <TableHead className="text-center">수량</TableHead>
           <TableHead className="text-center">자산 종류</TableHead>
@@ -25,7 +24,7 @@ export default function PortfolioTable(props: { positions: Array<Position> }) {
       </TableHeader>
       <TableBody>
         {positions.map((position) => (
-          <PositionRow key={position.name} position={position} />
+          <PositionRow key={position.meta.name} position={position} />
         ))}
       </TableBody>
     </Table>
@@ -33,15 +32,12 @@ export default function PortfolioTable(props: { positions: Array<Position> }) {
 }
 
 function PositionRow({ position }: { position: Position }) {
-  const instrumentType = position.instrumentType === "stock" ? "주식" : "코인"
-  const positionType = position.positionType === "long" ? "매수" : "공매도"
+  const instrumentType = position.meta.type === "stock" ? "주식" : "코인"
+  const positionType = position.type === "long" ? "매수" : "공매도"
 
   return (
     <TableRow>
-      <TableCell>{position.name}</TableCell>
-      <TableCell className="text-center">
-        {formatMoney(position.currentPrice)}
-      </TableCell>
+      <TableCell>{position.meta.name}</TableCell>
       <TableCell className="text-center">
         {formatMoney(position.averagePrice)}
       </TableCell>

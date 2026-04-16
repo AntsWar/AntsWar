@@ -1,26 +1,30 @@
-export type RoomSpec = Readonly<{
+export type GameSpec = Readonly<{
   titleMaxLength: number
   passwordMaxLength: number
 }>
 
-export type Room = Readonly<{
+export type Game = Readonly<{
   id: number
   title: string
-  currentCount: number
-  capacity: number
   hasPassword: boolean
-  mode: RoomMode
+  occupancy: Occupancy
+  mode: GameMode
 }>
 
-export type RoomMode = TimeMode | MoneyMode
+export type Occupancy = {
+  currentCount: number
+  capacity: number
+}
+
+export type GameMode = TimeMode | MoneyMode
 
 export type TimeMode = {
-  name: "time"
+  type: "time"
   target: TimeValue
 }
 
 export type MoneyMode = {
-  name: "money"
+  type: "money"
   target: MoneyValue
 }
 

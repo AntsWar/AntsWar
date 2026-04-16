@@ -1,4 +1,3 @@
-import { type Room } from "@/entities/room"
 import { cn } from "@/shared/ui/lib"
 import {
   Table,
@@ -9,9 +8,10 @@ import {
   TableRow,
 } from "@/shared/ui/table"
 import { Lock } from "lucide-react"
+import type { Game } from "../model/types"
 
-export default function RoomTable(props: { rooms: Array<Room> }) {
-  const { rooms } = props
+export default function GameTable(props: { games: Array<Game> }) {
+  const { games } = props
   return (
     <Table>
       <TableHeader>
@@ -22,19 +22,19 @@ export default function RoomTable(props: { rooms: Array<Room> }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {rooms.map((room) => (
-          <RoomRow key={room.id} room={room} />
+        {games.map((game) => (
+          <GameRow key={game.id} game={game} />
         ))}
       </TableBody>
     </Table>
   )
 }
-function RoomRow({ room }: { room: Room }) {
-  const roomMode = room.mode.name === "timeMode" ? "시간모드" : "금액모드"
+function GameRow({ game }: { game: Game }) {
+  const gameMode = game.mode.type === "time" ? "시간모드" : "금액모드"
 
-  const isFull = room.currentCount >= room.capacity
+  const isFull = game.occupancy.currentCount >= game.occupancy.capacity
   const handleJoin = () => {
-    console.log(room)
+    console.log(game)
   }
 
   return (
@@ -47,18 +47,18 @@ function RoomRow({ room }: { room: Room }) {
       onClick={isFull ? undefined : handleJoin}
     >
       <TableCell className="flex flex-row items-center gap-2">
-        {room.title}{" "}
-        {room.hasPassword && (
+        {game.title}{" "}
+        {game.hasPassword && (
           <span>
             <Lock className="size-4" />
           </span>
         )}
       </TableCell>
       <TableCell className="text-center">
-        {roomMode} ({room.mode.target}분)
+        {gameMode} ({game.mode.target}분)
       </TableCell>
       <TableCell className="text-center">
-        {room.currentCount} / {room.capacity}
+        {game.occupancy.currentCount} / {game.occupancy.capacity}
       </TableCell>
     </TableRow>
   )

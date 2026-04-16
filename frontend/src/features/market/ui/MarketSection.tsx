@@ -9,15 +9,15 @@ import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useMemo, useState } from "react"
 import {
   MarketTable,
-  type Instrument,
-  type InstrumentType,
+  type Purchase,
+  type PurchaseType,
 } from "@/entities/market"
 
 export default function MarketSection() {
-  const [selectedType, setSelectedType] = useState<InstrumentType>("stock")
+  const [selectedType, setSelectedType] = useState<PurchaseType>("stock")
 
   const filteredInstruments = useMemo(
-    () => instruments.filter((instrument) => instrument.type === selectedType),
+    () => purchases.filter((purchase) => purchase.meta.type === selectedType),
     [selectedType]
   )
   return (
@@ -27,7 +27,7 @@ export default function MarketSection() {
         <div className="flex flex-row justify-between">
           <Tabs
             value={selectedType}
-            onValueChange={(value) => setSelectedType(value as InstrumentType)}
+            onValueChange={(value) => setSelectedType(value as PurchaseType)}
           >
             <TabsList>
               <TabsTrigger value={"stock"}>주식보기</TabsTrigger>
@@ -47,26 +47,78 @@ export default function MarketSection() {
             </SelectContent>
           </Select>
         </div>
-        <MarketTable instruments={filteredInstruments} />
+        <MarketTable purchases={filteredInstruments} />
       </div>
     </section>
   )
 }
 
-const instruments = [
+const purchases = [
   // 주식 5개
-  { name: "삼성전자", value: 72000, type: "stock" },
-  { name: "애플", value: 210000, type: "stock" },
-  { name: "테슬라", value: 180000, type: "stock" },
-  { name: "엔비디아", value: 950000, type: "stock" },
-  { name: "카카오", value: 55000, type: "stock" },
-
-  // 코인 5개
-  { name: "비트코인", value: 950000, type: "crypto" },
-  { name: "이더리움", value: 4500000, type: "crypto" },
-  { name: "솔라나", value: 180000, type: "crypto" },
-  { name: "리플", value: 900, type: "crypto" },
-  { name: "도지코인", value: 150, type: "crypto" },
-] as Array<Instrument>
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+  {
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    price: 72000,
+  },
+] as Array<Purchase>
 
 const quantities = ["1개", "100개", "전체"]

@@ -1,16 +1,16 @@
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useState } from "react"
 import { PortfolioTable, type Position } from "@/entities/portfolio"
-import type { InstrumentType } from "@/entities/market"
+import type { PurchaseType } from "@/entities/market"
 
-type FilterType = "all" | InstrumentType
+type FilterType = "all" | PurchaseType
 
 export default function PortfolioSection() {
   const [selectedType, setSelectedType] = useState<FilterType>("all")
   const filteredPositions =
     selectedType === "all"
-      ? positions
-      : positions.filter((position) => position.instrumentType === selectedType)
+      ? longPositions
+      : longPositions.filter((position) => position.meta.type === selectedType)
 
   return (
     <section className="flex flex-col gap-3">
@@ -34,29 +34,35 @@ export default function PortfolioSection() {
   )
 }
 
-const positions = [
+const longPositions = [
   {
-    name: "삼성전자",
-    instrumentType: "stock",
-    positionType: "long",
+    meta: {
+      id: 1,
+      name: "삼성전자",
+      type: "stock",
+    },
+    type: "long",
     quantity: 5,
-    currentPrice: 72000,
     averagePrice: 70000,
   },
   {
-    name: "테슬라",
-    instrumentType: "stock",
-    positionType: "long",
-    quantity: 1,
-    currentPrice: 180000,
-    averagePrice: 175000,
+    meta: {
+      id: 2,
+      name: "테슬라",
+      type: "stock",
+    },
+    type: "long",
+    quantity: 5,
+    averagePrice: 70000,
   },
   {
-    name: "도지코인",
-    instrumentType: "crypto",
-    positionType: "long",
-    quantity: 500,
-    currentPrice: 150,
-    averagePrice: 120,
+    meta: {
+      id: 3,
+      name: "도지",
+      type: "crypto",
+    },
+    type: "long",
+    quantity: 5,
+    averagePrice: 70000,
   },
 ] as Array<Position>

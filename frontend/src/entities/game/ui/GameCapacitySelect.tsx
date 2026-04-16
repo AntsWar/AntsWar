@@ -7,7 +7,7 @@ import {
 } from "@/shared/ui/select"
 import type { SelectProps } from "@radix-ui/react-select"
 
-export default function RoomCapacitySelect({ ...props }: SelectProps) {
+export default function GameCapacitySelect({ ...props }: SelectProps) {
   const capacities = Array.from({ length: 10 }, (_, i) => i + 1)
 
   return (

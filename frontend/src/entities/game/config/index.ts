@@ -1,6 +1,6 @@
-import type { MoneyValue, RoomSpec, TimeValue } from "../model/types"
+import type { GameSpec, MoneyValue, TimeValue } from "../model/types"
 
-export const roomSpec: RoomSpec = {
+export const gameSpec: GameSpec = {
   titleMaxLength: 20,
   passwordMaxLength: 10,
 }

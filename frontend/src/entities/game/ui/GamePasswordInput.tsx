@@ -1,4 +1,4 @@
-import { roomSpec } from "../config"
+import { gameSpec } from "../config"
 import { Button } from "@/shared/ui/button"
 import {
   InputGroup,
@@ -9,7 +9,7 @@ import {
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { useState } from "react"
 
-const { passwordMaxLength } = roomSpec
+const { passwordMaxLength } = gameSpec
 
 type InputWithCountProps = Omit<
   React.ComponentProps<"input">,
@@ -19,7 +19,7 @@ type InputWithCountProps = Omit<
   onChange: (value: string) => void
 }
 
-export default function RoomPasswordInput({
+export default function GamePasswordInput({
   value,
   onChange,
   ...props

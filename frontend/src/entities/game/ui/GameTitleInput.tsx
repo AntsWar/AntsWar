@@ -1,4 +1,4 @@
-import { roomSpec } from "../config"
+import { gameSpec } from "../config"
 import {
   InputGroup,
   InputGroupAddon,
@@ -6,7 +6,7 @@ import {
   InputGroupText,
 } from "@/shared/ui/input-group"
 
-const { titleMaxLength } = roomSpec
+const { titleMaxLength } = gameSpec
 
 type InputWithCountProps = Omit<
   React.ComponentProps<"input">,
@@ -16,7 +16,7 @@ type InputWithCountProps = Omit<
   onChange: (value: string) => void
 }
 
-export default function RoomTitleInput({
+export default function GameTitleInput({
   value,
   onChange,
   ...props

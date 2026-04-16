@@ -8,10 +8,10 @@ import {
   TableRow,
 } from "@/shared/ui/table"
 import { formatMoney } from "@/shared/lib/formatMoney"
-import type { Instrument } from "../model/types"
+import type { Purchase } from "../model/types"
 
-export default function MarketTable(props: { instruments: Array<Instrument> }) {
-  const { instruments } = props
+export default function MarketTable(props: { purchases: Array<Purchase> }) {
+  const { purchases } = props
   return (
     <Table>
       <TableHeader>
@@ -21,20 +21,20 @@ export default function MarketTable(props: { instruments: Array<Instrument> }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {instruments.map((instrument) => (
-          <InstrumentRow key={instrument.name} instrument={instrument} />
+        {purchases.map((purchase) => (
+          <PurchaseRow key={purchase.meta.id} purchase={purchase} />
         ))}
       </TableBody>
     </Table>
   )
 }
 
-function InstrumentRow({ instrument }: { instrument: Instrument }) {
+function PurchaseRow({ purchase }: { purchase: Purchase }) {
   return (
     <TableRow>
-      <TableCell>{instrument.name}</TableCell>
+      <TableCell>{purchase.meta.name}</TableCell>
       <TableCell className="text-center">
-        {formatMoney(instrument.value)}
+        {formatMoney(purchase.price)}
       </TableCell>
       <TableCell className="text-center">
         <Button className="w-full">매수</Button>

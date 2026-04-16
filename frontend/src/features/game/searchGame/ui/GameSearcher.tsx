@@ -1,4 +1,4 @@
-import { roomSpec, RoomTable, type Room } from "@/entities/room"
+import { gameSpec, GameTable, type Game } from "@/entities/game"
 import {
   InputGroup,
   InputGroupAddon,
@@ -7,7 +7,7 @@ import {
 import { Search } from "lucide-react"
 import { useState } from "react"
 
-const { titleMaxLength } = roomSpec
+const { titleMaxLength } = gameSpec
 
 export default function RoomSearcher() {
   const [search, setSearch] = useState<string>("")
@@ -31,65 +31,62 @@ export default function RoomSearcher() {
           maxLength={maxLength}
         />
       </InputGroup>
-      <RoomTable rooms={rooms} />
+      <GameTable games={games} />
     </div>
   )
 }
 
-const rooms: Room[] = [
-  {
-    id: 1,
-    title: "자유 채팅방",
-    currentCount: 3,
-    capacity: 10,
-    hasPassword: false,
-    mode: {
-      name: "timeMode",
-      target: 10,
-    },
-  },
+const games = [
   {
     id: 2,
     title: "게임 같이 하실 분",
-    currentCount: 5,
-    capacity: 6,
+    occupancy: {
+      currentCount: 5,
+      capacity: 6,
+    },
     hasPassword: true,
     mode: {
-      name: "timeMode",
+      type: "time",
       target: 10,
     },
   },
   {
     id: 3,
     title: "코딩 스터디",
-    currentCount: 2,
-    capacity: 8,
+    occupancy: {
+      currentCount: 2,
+      capacity: 8,
+    },
     hasPassword: false,
     mode: {
-      name: "timeMode",
+      type: "time",
       target: 10,
     },
   },
   {
     id: 4,
     title: "비밀 방",
-    currentCount: 4,
-    capacity: 4,
+    occupancy: {
+      currentCount: 4,
+      capacity: 4,
+    },
     hasPassword: true,
     mode: {
-      name: "timeMode",
+      type: "time",
       target: 10,
     },
   },
   {
     id: 5,
     title: "잡담방",
-    currentCount: 7,
-    capacity: 12,
+    occupancy: {
+      currentCount: 7,
+      capacity: 12,
+    },
     hasPassword: false,
     mode: {
-      name: "timeMode",
+      type: "time",
       target: 10,
     },
   },
-]
+] as Array<Game>

@@ -1,10 +1,4 @@
-import {
-  MONEY_OPTIONS,
-  TIME_OPTIONS,
-  type MoneyValue,
-  type RoomMode,
-  type TimeValue,
-} from "@/entities/room"
+import { type GameMode, type MoneyValue, type TimeValue } from "../model/types"
 import { formatMoney } from "@/shared/lib/formatMoney"
 import { ButtonGroup } from "@/shared/ui/button-group"
 import {
@@ -14,27 +8,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select"
+import { MONEY_OPTIONS, TIME_OPTIONS } from "../config"
 
-type RoomModeSelectProps = {
-  mode: RoomMode
-  onChange: (target: RoomMode) => void
+type GameModeSelectProps = {
+  mode: GameMode
+  onChange: (target: GameMode) => void
 }
 
-export default function RoomModeSelect({
+export default function GameModeSelect({
   mode,
   onChange,
-}: RoomModeSelectProps) {
+}: GameModeSelectProps) {
   const handleModeChange = (nextName: "time" | "money") => {
     if (nextName === "time") {
       onChange({
-        name: "time",
+        type: "time",
         target: TIME_OPTIONS[0],
       })
       return
     }
 
     onChange({
-      name: "money",
+      type: "money",
       target: MONEY_OPTIONS[0],
     })
   }
@@ -42,26 +37,26 @@ export default function RoomModeSelect({
   const handleValueChange = (rawValue: string) => {
     const nextValue = Number(rawValue)
 
-    if (mode.name === "time") {
+    if (mode.type === "time") {
       onChange({
-        name: "time",
+        type: "time",
         target: nextValue as TimeValue,
       })
       return
     }
 
     onChange({
-      name: "money",
+      type: "money",
       target: nextValue as MoneyValue,
     })
   }
 
-  const currentOptions = mode.name === "time" ? TIME_OPTIONS : MONEY_OPTIONS
+  const currentOptions = mode.type === "time" ? TIME_OPTIONS : MONEY_OPTIONS
 
   return (
     <ButtonGroup>
       <Select
-        value={mode.name}
+        value={mode.type}
         onValueChange={(v) => handleModeChange(v as "time" | "money")}
       >
         <SelectTrigger className="min-w-24">
@@ -80,7 +75,7 @@ export default function RoomModeSelect({
         <SelectContent className="min-w-0">
           {currentOptions.map((option) => (
             <SelectItem key={option} value={String(option)}>
-              {mode.name === "time"
+              {mode.type === "time"
                 ? `${option}분`
                 : `${formatMoney(option)} 만원`}
             </SelectItem>

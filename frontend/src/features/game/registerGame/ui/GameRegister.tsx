@@ -1,10 +1,10 @@
 import {
-  RoomCapacitySelect,
-  RoomModeSelect,
-  RoomPasswordInput,
-  RoomTitleInput,
-  type RoomMode,
-} from "@/entities/room"
+  GameCapacitySelect,
+  GameModeSelect,
+  GamePasswordInput,
+  GameTitleInput,
+  type GameMode,
+} from "@/entities/game"
 import { Button } from "@/shared/ui/button"
 import {
   Dialog,
@@ -17,12 +17,12 @@ import {
 import { useState } from "react"
 import { Field, FieldGroup, FieldLabel } from "@/shared/ui/field"
 
-export default function RoomRegister() {
+export default function GameRegister() {
   const [title, setTitle] = useState<string>("")
   const [password, setPassword] = useState<string>("")
   const [capacity, setCapacity] = useState("")
-  const [mode, setMode] = useState<RoomMode>({
-    name: "timeMode",
+  const [mode, setMode] = useState<GameMode>({
+    type: "time",
     target: 5,
   })
 
@@ -47,7 +47,7 @@ export default function RoomRegister() {
         <FieldGroup className="gap-4">
           <Field>
             <FieldLabel>방 제목</FieldLabel>
-            <RoomTitleInput
+            <GameTitleInput
               placeholder="방 제목"
               value={title}
               onChange={setTitle}
@@ -56,7 +56,7 @@ export default function RoomRegister() {
 
           <Field>
             <FieldLabel>비밀번호</FieldLabel>
-            <RoomPasswordInput
+            <GamePasswordInput
               placeholder="비밀번호"
               value={password}
               onChange={setPassword}
@@ -65,11 +65,11 @@ export default function RoomRegister() {
 
           <Field>
             <FieldLabel>모드 선택</FieldLabel>
-            <RoomModeSelect mode={mode} onChange={setMode} />
+            <GameModeSelect mode={mode} onChange={setMode} />
           </Field>
           <Field>
             <FieldLabel>인원 수 선택</FieldLabel>
-            <RoomCapacitySelect value={capacity} onValueChange={setCapacity} />
+            <GameCapacitySelect value={capacity} onValueChange={setCapacity} />
           </Field>
         </FieldGroup>
         <DialogFooter className="py-3" showCloseButton>
