@@ -4,6 +4,7 @@ import HomePage from "@/pages/HomePage"
 import CenterLayout from "./layouts/CenterLayout"
 import RootLayout from "./layouts/RootLayout"
 import GamePage from "@/pages/GamePage"
+import { QueryProvider } from "./provider/queryProvider"
 
 const router = createBrowserRouter([
   {
@@ -20,9 +21,11 @@ const router = createBrowserRouter([
 
 export function App() {
   return (
-    <ThemeProvider>
-      <RouterProvider router={router} />
-    </ThemeProvider>
+    <QueryProvider>
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
+    </QueryProvider>
   )
 }
 

@@ -4,7 +4,7 @@ export type GameSpec = Readonly<{
 }>
 
 export type Game = Readonly<{
-  id: number
+  id: string
   title: string
   hasPassword: boolean
   occupancy: Occupancy
