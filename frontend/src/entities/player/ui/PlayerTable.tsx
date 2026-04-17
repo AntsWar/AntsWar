@@ -9,8 +9,6 @@ import {
 import type { Player } from "../model/types"
 import { formatMoney } from "@/shared/lib/formatMoney"
 
-const myId = 3
-
 export default function PlayerTable(props: { players: Array<Player> }) {
   const { players } = props
 
@@ -24,17 +22,16 @@ export default function PlayerTable(props: { players: Array<Player> }) {
       </TableHeader>
       <TableBody>
         {players.map((player) => (
-          <PlayerRow key={player.id} player={player} />
+          <PlayerRow key={player.name} player={player} />
         ))}
       </TableBody>
     </Table>
   )
 }
 function PlayerRow({ player }: { player: Player }) {
-  const isMe = myId === player.id
   return (
     <TableRow>
-      <TableCell className={isMe ? "font-bold" : ""}>{player.name}</TableCell>
+      <TableCell>{player.name}</TableCell>
       <TableCell className="text-right">
         {formatMoney(player.balance)}
       </TableCell>

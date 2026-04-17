@@ -5,7 +5,7 @@ export type GameSpec = Readonly<{
 
 export type Game = Readonly<{
   id: string
-  title: string
+  name: string
   hasPassword: boolean
   occupancy: Occupancy
   mode: GameMode
@@ -19,12 +19,12 @@ export type Occupancy = {
 export type GameMode = TimeMode | MoneyMode
 
 export type TimeMode = {
-  type: "time"
+  type: "TIME"
   target: TimeValue
 }
 
 export type MoneyMode = {
-  type: "money"
+  type: "MONEY"
   target: MoneyValue
 }
 

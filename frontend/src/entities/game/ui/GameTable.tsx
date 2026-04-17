@@ -30,7 +30,7 @@ export default function GameTable(props: { games: Array<Game> }) {
   )
 }
 function GameRow({ game }: { game: Game }) {
-  const gameMode = game.mode.type === "time" ? "시간모드" : "금액모드"
+  const gameMode = game.mode.type === "TIME" ? "시간모드" : "금액모드"
 
   const isFull = game.occupancy.currentCount >= game.occupancy.capacity
   const handleJoin = () => {
@@ -47,7 +47,7 @@ function GameRow({ game }: { game: Game }) {
       onClick={isFull ? undefined : handleJoin}
     >
       <TableCell className="flex flex-row items-center gap-2">
-        {game.title}{" "}
+        {game.name}{" "}
         {game.hasPassword && (
           <span>
             <Lock className="size-4" />

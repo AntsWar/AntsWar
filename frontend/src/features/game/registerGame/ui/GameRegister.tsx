@@ -16,23 +16,31 @@ import {
 } from "@/shared/ui/dialog"
 import { useState } from "react"
 import { Field, FieldGroup, FieldLabel } from "@/shared/ui/field"
+import { registerGame } from "../api/registerGame"
+import { useMutation } from "@tanstack/react-query"
+import type { RegisterGameRequest } from "../api/types"
 
 export default function GameRegister() {
-  const [title, setTitle] = useState<string>("")
+  const [name, setName] = useState<string>("")
   const [password, setPassword] = useState<string>("")
-  const [capacity, setCapacity] = useState("")
+  const [capacity, setCapacity] = useState<number>(5)
   const [mode, setMode] = useState<GameMode>({
-    type: "time",
+    type: "TIME",
     target: 5,
   })
 
+  const { mutateAsync } = useMutation({
+    mutationKey: ["registerGame"],
+    mutationFn: registerGame,
+  })
+
   const handleClick = () => {
-    console.log({
-      title: title,
+    mutateAsync({
+      name: name,
       password: password,
       capacity: capacity,
       mode: mode,
-    })
+    } as RegisterGameRequest)
   }
 
   return (
@@ -49,8 +57,8 @@ export default function GameRegister() {
             <FieldLabel>방 제목</FieldLabel>
             <GameTitleInput
               placeholder="방 제목"
-              value={title}
-              onChange={setTitle}
+              value={name}
+              onChange={setName}
             />
           </Field>
 
@@ -69,7 +77,10 @@ export default function GameRegister() {
           </Field>
           <Field>
             <FieldLabel>인원 수 선택</FieldLabel>
-            <GameCapacitySelect value={capacity} onValueChange={setCapacity} />
+            <GameCapacitySelect
+              value={String(capacity)}
+              onValueChange={(value) => setCapacity(Number(value))}
+            />
           </Field>
         </FieldGroup>
         <DialogFooter className="py-3" showCloseButton>

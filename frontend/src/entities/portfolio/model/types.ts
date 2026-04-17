@@ -13,4 +13,4 @@ export type Position = {
   averagePrice: Money
 }
 
-export type PositionType = "long" | "short"
+export type PositionType = "LONG" | "SHORT"
