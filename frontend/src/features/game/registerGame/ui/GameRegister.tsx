@@ -19,6 +19,8 @@ import { Field, FieldGroup, FieldLabel } from "@/shared/ui/field"
 import { registerGame } from "../api/registerGame"
 import { useMutation } from "@tanstack/react-query"
 import type { RegisterGameRequest } from "../api/types"
+import { Spinner } from "@/shared/ui/spinner"
+import { useNavigate } from "react-router"
 
 export default function GameRegister() {
   const [name, setName] = useState<string>("")
@@ -29,9 +31,14 @@ export default function GameRegister() {
     target: 5,
   })
 
-  const { mutateAsync } = useMutation({
+  const navigate = useNavigate()
+
+  const { mutateAsync, isPending } = useMutation({
     mutationKey: ["registerGame"],
     mutationFn: registerGame,
+    onSuccess: (data) => {
+      navigate(`/game/${data.id}`)
+    },
   })
 
   const handleClick = () => {
@@ -84,7 +91,10 @@ export default function GameRegister() {
           </Field>
         </FieldGroup>
         <DialogFooter className="py-3" showCloseButton>
-          <Button onClick={handleClick}>생성</Button>
+          <Button onClick={handleClick} disabled={isPending || !name.trim()}>
+            {isPending && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
+            생성
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

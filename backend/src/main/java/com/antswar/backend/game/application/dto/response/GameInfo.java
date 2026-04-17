@@ -4,7 +4,7 @@ import com.antswar.backend.game.domain.game.Game;
 import com.antswar.backend.game.domain.game.GameMode;
 import com.antswar.backend.game.domain.game.GameStatus;
 
-public record GameInfo(String publicId, String name, boolean hasPassword, GameStatus status, GameMode mode, Occupancy occupancy) {
+public record GameInfo(String id, String name, boolean hasPassword, GameStatus status, GameMode mode, Occupancy occupancy) {
     public record Occupancy (int currentCount, int capacity){ }
 
     public static GameInfo from(Game game){

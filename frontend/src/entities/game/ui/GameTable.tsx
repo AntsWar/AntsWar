@@ -9,9 +9,15 @@ import {
 } from "@/shared/ui/table"
 import { Lock } from "lucide-react"
 import type { Game } from "../model/types"
+import { useNavigate } from "react-router"
 
 export default function GameTable(props: { games: Array<Game> }) {
   const { games } = props
+  const navigate = useNavigate()
+  const handleJoin = (game: Game) => {
+    navigate(`/game/${game.id}`)
+  }
+
   return (
     <Table>
       <TableHeader>
@@ -23,19 +29,16 @@ export default function GameTable(props: { games: Array<Game> }) {
       </TableHeader>
       <TableBody>
         {games.map((game) => (
-          <GameRow key={game.id} game={game} />
+          <GameRow key={game.id} game={game} onJoin={() => handleJoin(game)} />
         ))}
       </TableBody>
     </Table>
   )
 }
-function GameRow({ game }: { game: Game }) {
-  const gameMode = game.mode.type === "TIME" ? "시간모드" : "금액모드"
 
+function GameRow({ game, onJoin }: { game: Game; onJoin: () => void }) {
+  const gameMode = game.mode.type === "TIME" ? "시간모드" : "금액모드"
   const isFull = game.occupancy.currentCount >= game.occupancy.capacity
-  const handleJoin = () => {
-    console.log(game)
-  }
 
   return (
     <TableRow
@@ -44,7 +47,7 @@ function GameRow({ game }: { game: Game }) {
         isFull && "cursor-not-allowed text-muted-foreground"
       )}
       tabIndex={isFull ? -1 : 0}
-      onClick={isFull ? undefined : handleJoin}
+      onClick={isFull ? undefined : onJoin}
     >
       <TableCell className="flex flex-row items-center gap-2">
         {game.name}{" "}
