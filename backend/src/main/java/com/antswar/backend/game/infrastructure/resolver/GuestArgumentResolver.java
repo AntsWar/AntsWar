@@ -38,7 +38,7 @@ public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
 
         boolean required = annotation == null || annotation.required();
 
-        if (guestId == null || guestName == null) {
+        if (guestId == null) {
             if (!required) {
                 return null;
             }
