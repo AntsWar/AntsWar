@@ -22,15 +22,16 @@ public class Game {
     private final Market market= new Market();
     private final Players players;
 
-    public Game(String name, String password, String hostId, GameMode mode, int capacity){
+    public Game(String name, String password, Player host, GameMode mode, int capacity){
         this.id = UUID.randomUUID().toString();
         this.name = Objects.requireNonNull(name, "방 이름 필수");
         this.password = password;
         this.mode = Objects.requireNonNull(mode,"모드 필수");
-        this.hostId = Objects.requireNonNull(hostId,"호스트 필수");
+        this.hostId = Objects.requireNonNull(host.getId(),"호스트 필수");
         this.status = GameStatus.READY;
 
         this.players = new Players(capacity);
+        this.players.join(host);
         validate();
     }
 

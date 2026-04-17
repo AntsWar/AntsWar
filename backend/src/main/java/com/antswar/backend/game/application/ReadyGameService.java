@@ -34,7 +34,7 @@ public class ReadyGameService implements RegisterGame, JoinGame, SearchReadyGame
 
     @Override
     public RegisterGameResult register(RegisterGameCommand command) {
-        Game game = repository.save(new Game(command.name(), command.password(), command.hostId(), command.mode(), command.capacity()));
+        Game game = repository.save(new Game(command.name(), command.password(), command.host(), command.mode(), command.capacity()));
         return new RegisterGameResult(game.getId());
     }
 

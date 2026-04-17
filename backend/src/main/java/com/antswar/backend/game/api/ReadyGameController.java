@@ -32,7 +32,7 @@ public class ReadyGameController {
     @PostMapping
     public ResponseEntity<RegisterGameResult> register(@RequestBody @Valid RegisterGameRequest request,
                                                        @Auth PlayerPrincipal player){
-        RegisterGameResult result = registerGame.register(request.toCommand(player.id()));
+        RegisterGameResult result = registerGame.register(request.toCommand(player.id(), player.name()));
         return ResponseEntity.ok(result);
     }
 
