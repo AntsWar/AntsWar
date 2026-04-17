@@ -15,8 +15,8 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String GUEST_ID_COOKIE = "GUEST_ID";
-    private static final String GUEST_NAME_COOKIE = "GUEST_NAME";
+    private static final String GUEST_ID_HEADER = "GUEST_ID";
+    private static final String GUEST_NAME_HEADER = "GUEST_NAME";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -33,12 +33,11 @@ public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
         Auth annotation = parameter.getParameterAnnotation(Auth.class);
 
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        String guestId = extractCookieValue(request, GUEST_ID_COOKIE);
-        String guestName = extractCookieValue(request, GUEST_NAME_COOKIE);
+        String guestId = request != null ? request.getHeader(GUEST_ID_HEADER) : null;
+        String guestName = request != null ? request.getHeader(GUEST_NAME_HEADER) : null;
 
         boolean required = annotation == null || annotation.required();
-
-        if (guestId == null || guestName == null) {
+        if (guestId == null || guestId.isBlank() || guestName == null || guestName.isBlank()) {
             if (!required) {
                 return null;
             }
@@ -48,16 +47,4 @@ public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
         return new PlayerPrincipal(guestId, guestName);
     }
 
-    private String extractCookieValue(HttpServletRequest request, String cookieName) {
-        if (request == null || request.getCookies() == null) {
-            return null;
-        }
-
-        for (Cookie cookie : request.getCookies()) {
-            if (cookieName.equals(cookie.getName())) {
-                return cookie.getValue();
-            }
-        }
-        return null;
-    }
 }

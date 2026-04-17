@@ -1,15 +1,6 @@
 import axios from "axios"
-
-const GUEST_ID_KEY = "GUEST_ID"
-
-const guestId = (() => {
-  const savedGuestId = localStorage.getItem(GUEST_ID_KEY)
-  if (savedGuestId) return savedGuestId
-
-  const newGuestId = crypto.randomUUID()
-  localStorage.setItem(GUEST_ID_KEY, newGuestId)
-  return newGuestId
-})()
+import { getGuestId, getGuestName } from "../lib/guestStorage"
+import type { ApiError, ErrorResponse } from "./apiError"
 
 export const api = axios.create({
   baseURL: "/api",
@@ -17,6 +8,26 @@ export const api = axios.create({
 })
 
 api.interceptors.request.use((config) => {
-  config.headers["GUEST_ID"] = guestId
+  config.headers["GUEST_ID"] = getGuestId()
+  config.headers["GUEST_NAME"] = getGuestName()
+
   return config
 })
+
+api.interceptors.response.use(
+  (response) => response,
+
+  (error) => {
+    if (axios.isAxiosError<ErrorResponse>(error)) {
+      const apiError = error as ApiError
+
+      apiError.apiCode = error.response?.data?.code
+      apiError.apiMessage = error.response?.data?.message ?? null
+      apiError.apiErrors = error.response?.data?.errors ?? null
+
+      return Promise.reject(apiError)
+    }
+
+    return Promise.reject(error)
+  }
+)

@@ -49,8 +49,12 @@ public class Game {
     }
 
     public void join(Player player, String password){
+        if (this.players.hasPlayer(player.getId())) return;
         if (this.status != GameStatus.READY) throw new GameException(GAME_NOT_READY);
-        if (hasPassword() && !this.password.equals(password)) throw new GameException(GAME_INVALID_PASSWORD);
+        if (hasPassword()){
+            if (!hasText(password)) throw new GameException(GAME_REQUIRE_PASSWORD);
+            if (!this.password.equals(password))throw new GameException(GAME_INVALID_PASSWORD);
+        }
         this.players.join(player);
     }
 

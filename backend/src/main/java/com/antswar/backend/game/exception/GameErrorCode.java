@@ -7,6 +7,7 @@ import lombok.Getter;
 public enum GameErrorCode implements ErrorCode {
     GAME_NOT_FOUND,
     GAME_FULL,
+    GAME_REQUIRE_PASSWORD,
     GAME_INVALID_PASSWORD,
     GAME_NOT_READY,
     GAME_FORBIDDEN,
