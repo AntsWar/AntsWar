@@ -60,7 +60,6 @@ export function useGame(
           break
         }
         case "NOTICE": {
-          console.log(message.payload)
           optionsRef.current.onNotice?.(message.payload as string)
         }
       }
