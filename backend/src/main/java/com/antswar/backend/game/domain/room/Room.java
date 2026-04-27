@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
@@ -88,8 +89,9 @@ public class Room {
     public void finishIfEnded(Instant now) {
         if (this.getStatus() != RoomStatus.RUNNING) return;
         if (this.mode.getType() == RoomModeType.TIME){
-            Instant endAt = this.game.getStartedAt().plusSeconds(this.mode.getTarget());
-            if (!now.isBefore(endAt)) {
+            long elapsed = Duration.between(this.game.getStartedAt(), now).getSeconds();
+            // 임시방편으로 해놓음. 재대로하면 틱으로 끌고 가야할듯싶음
+            if (elapsed >= this.getMode().getTarget()-1) {
                 this.game.finish(now);
             }
         }
