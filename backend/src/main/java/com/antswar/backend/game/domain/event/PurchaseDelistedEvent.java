@@ -1,4 +1,4 @@
-package com.antswar.backend.game.domain;
+package com.antswar.backend.game.domain.event;
 
 import com.antswar.backend.game.domain.market.PurchaseMeta;
 

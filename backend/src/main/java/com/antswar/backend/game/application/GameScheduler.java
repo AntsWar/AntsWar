@@ -1,14 +1,15 @@
 package com.antswar.backend.game.application;
 
-import com.antswar.backend.game.application.dto.PlayerInfo;
 import com.antswar.backend.game.application.dto.PurchaseMetaInfo;
 import com.antswar.backend.game.application.port.out.persistence.RoomRepository;
 import com.antswar.backend.game.application.port.out.publisher.RoomEventPublisher;
 import com.antswar.backend.game.application.port.out.publisher.RoomEvent;
 import com.antswar.backend.game.application.port.out.publisher.RoomEventType;
 import com.antswar.backend.game.application.dto.GameInfo;
-import com.antswar.backend.game.domain.GameDomainEvent;
-import com.antswar.backend.game.domain.PurchaseDelistedEvent;
+import com.antswar.backend.game.domain.event.GameDomainEvent;
+import com.antswar.backend.game.domain.event.NewsEvent;
+import com.antswar.backend.game.domain.event.PurchaseDelistedEvent;
+import com.antswar.backend.game.domain.news.NewsGenerator;
 import com.antswar.backend.game.domain.room.Room;
 import com.antswar.backend.game.domain.room.RoomStatus;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.List;
 public class GameScheduler {
     private final RoomRepository roomRepository;
     private final RoomEventPublisher roomEventPublisher;
+    private final NewsGenerator newsGenerator;
     private final Clock clock;
 
     @Scheduled(fixedRate = 5000)
@@ -39,7 +41,7 @@ public class GameScheduler {
             }else if(room.getStatus() == RoomStatus.RUNNING){
                 room.finishIfEnded(now);
                 if(room.getStatus() == RoomStatus.RUNNING) {
-                    List<GameDomainEvent> events = room.getGame().tick();
+                    List<GameDomainEvent> events = room.getGame().tick(newsGenerator);
                     events.forEach(event -> publishEvent(room, event));
                 }
             }
@@ -63,6 +65,11 @@ public class GameScheduler {
             roomEventPublisher.publish(
                     room.getId(),
                     new RoomEvent(RoomEventType.PURCHASE_DELIST, PurchaseMetaInfo.from(e.meta()))
+            );
+        }else if(event instanceof NewsEvent e){
+            roomEventPublisher.publish(
+                    room.getId(),
+                    new RoomEvent(RoomEventType.NOTICE, e.meta().getCode())
             );
         }
     }

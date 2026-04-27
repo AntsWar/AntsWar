@@ -5,4 +5,5 @@ public enum RoomEventType {
     GAME_READY,
     GAME_STARTED,
     PURCHASE_DELIST,
+    NOTICE
 }

@@ -8,6 +8,7 @@ type GameStateOptions = {
   onGameReady?: () => void
   onGameStart?: () => void
   onPurchaseDelist?: (payload: { name: string }) => void
+  onNotice?: (code: string) => void
 }
 
 export function useGame(
@@ -57,6 +58,10 @@ export function useGame(
             message.payload as { name: string }
           )
           break
+        }
+        case "NOTICE": {
+          console.log(message.payload)
+          optionsRef.current.onNotice?.(message.payload as string)
         }
       }
     },

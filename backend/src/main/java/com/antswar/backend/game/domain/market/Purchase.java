@@ -2,11 +2,13 @@ package com.antswar.backend.game.domain.market;
 
 import com.antswar.backend.game.domain.Money;
 import com.antswar.backend.game.domain.Game;
+import com.antswar.backend.game.domain.news.News;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -50,8 +52,8 @@ public class Purchase {
         return this.meta.equals(meta);
     }
 
-    public void updatePrices() {
-        double rate = PricePolicy.nextRate(this.meta);
+    public void updatePrices(List<News> news) {
+        double rate = PricePolicy.nextRate(this.meta, news);
         this.price = price.times(1 + rate);
         if (this.price.compareTo(MIN_ACTIVE_PRICE) <= 0) {
             this.price = ZERO_PRICE;

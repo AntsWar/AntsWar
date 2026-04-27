@@ -15,6 +15,11 @@ import { useGame } from "@/features/game/getGame"
 import type { Game, GameMeta } from "@/entities/game"
 import { FinishedOverlay } from "@/features/game/finishedGame"
 
+const NOTICE_MESSAGES: Record<string, string> = {
+  E1: "삼손전자 호재 발생",
+  E2: "반도체 규제 강화",
+}
+
 export default function GameView(props: {
   room: Room
   game: Game
@@ -33,6 +38,11 @@ export default function GameView(props: {
       onPurchaseDelist: ({ name }: { name: string }) => {
         toast(`${name}(이)가 상폐되었습니다.`)
         queryClient.invalidateQueries({ queryKey: qk.getMe(room.id) })
+      },
+      onNotice: (code: string) => {
+        const message = NOTICE_MESSAGES[code] ?? code
+
+        toast(message)
       },
     }),
     [queryClient, room.id]
