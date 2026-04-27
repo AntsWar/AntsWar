@@ -12,7 +12,6 @@ public class RandomNewsGenerator implements NewsGenerator {
     public Optional<NewsMeta> generate() {
         if (ThreadLocalRandom.current().nextDouble() > GENERATE_PROBABILITY) {return Optional.empty();}
         NewsMeta[] values = NewsMeta.values();
-        System.out.println("new 발생");
         return Optional.of(values[ThreadLocalRandom.current().nextInt(values.length)]);
     }
 }

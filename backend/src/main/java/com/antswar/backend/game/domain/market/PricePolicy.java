@@ -11,7 +11,7 @@ public class PricePolicy {
 
     private static RateRange rangeOf(PurchaseMeta purchaseMeta, List<News> news ){
         RateRange baseRange = baseRangeOf(purchaseMeta.getType());
-        double newsImpact = calculateNewsImpact(purchaseMeta, news);
+        double newsImpact = calculateNewsImpact(purchaseMeta, news) * STEP;
         return baseRange.shift(newsImpact);
     }
 
@@ -35,7 +35,7 @@ public class PricePolicy {
         return news.stream()
                 .flatMap(n -> n.getMeta().getEffects().stream())
                 .filter(effect -> effect.meta().equals(meta))
-                .mapToDouble(NewsEffect::impact)
+                .mapToInt(NewsEffect::impact)
                 .sum();
 
     }
