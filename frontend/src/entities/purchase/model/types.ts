@@ -13,4 +13,4 @@ export type PurchaseMeta = {
 
 export type PurchaseType = "STOCK" | "CRYPTO"
 
-export type TradeQuantity = 1 | 100 | "ALL"
+export type TradeQuantity = number | "ALL"

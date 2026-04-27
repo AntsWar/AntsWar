@@ -1,7 +1,8 @@
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useState } from "react"
-import { PortfolioTable, type Position } from "@/entities/position"
+import { type Position } from "@/entities/position"
 import type { PurchaseType } from "@/entities/purchase"
+import PortfolioTable from "./PortfolioTable"
 
 type FilterType = "all" | PurchaseType
 

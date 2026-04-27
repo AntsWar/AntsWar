@@ -6,7 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table"
-import type { Position } from "../../../entities/position/model/types"
+import type { Position } from "@/entities/position/model/types"
 import { Money } from "@/shared/model/Money"
 
 export default function PortfolioTable(props: { positions: Array<Position> }) {

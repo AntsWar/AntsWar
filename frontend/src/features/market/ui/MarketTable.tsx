@@ -12,6 +12,8 @@ import { useParams } from "react-router"
 import type { Purchase, TradeQuantity } from "@/entities/purchase"
 import { type OrderRequest } from "../api/order"
 import { useOrderMutation } from "../api/useOrderMutation"
+import { useMeQuery } from "@/features/getMe"
+import { toast } from "sonner"
 
 export default function MarketTable(props: {
   purchases: Array<Purchase>
@@ -48,16 +50,44 @@ function PurchaseRow(props: {
   quantity: TradeQuantity
 }) {
   const { purchase, gameId, quantity } = props
-  const orderMutation = useOrderMutation(gameId)
+  const { mutate, isPending } = useOrderMutation(gameId)
+
+  // 같은 feature라 원래 안됨. 고칠 필요 있음
+  const { data: me } = useMeQuery(gameId)
+
   const submitOrder = (
     orderType: OrderRequest["orderType"],
     positionType: OrderRequest["positionType"]
   ) => {
-    orderMutation.mutate({
+    let qty = 0
+    if (orderType === "BUY") {
+      qty =
+        quantity === "ALL"
+          ? Math.floor(
+              (me?.player.balance?.amount ?? 0) / purchase.price.amount
+            )
+          : quantity
+    } else {
+      qty =
+        quantity === "ALL"
+          ? (me?.positions.find(
+              (pos) =>
+                pos.meta.code === purchase.meta.code &&
+                pos.type === positionType
+            )?.quantity ?? 0)
+          : quantity
+    }
+
+    if (!qty || qty <= 0) {
+      toast("수량이 없습니다")
+      return
+    }
+
+    mutate({
       orderType,
       meta: purchase.meta.code,
       positionType,
-      quantity,
+      quantity: qty,
     } as OrderRequest)
   }
 
@@ -71,7 +101,7 @@ function PurchaseRow(props: {
         <Button
           className="w-full"
           onClick={() => submitOrder("BUY", "LONG")}
-          disabled={orderMutation.isPending}
+          disabled={isPending}
         >
           매수
         </Button>
@@ -80,7 +110,7 @@ function PurchaseRow(props: {
         <Button
           className="w-full"
           onClick={() => submitOrder("SELL", "LONG")}
-          disabled={orderMutation.isPending}
+          disabled={isPending}
         >
           매도
         </Button>
@@ -89,7 +119,7 @@ function PurchaseRow(props: {
         <Button
           className="w-full"
           onClick={() => submitOrder("BUY", "SHORT")}
-          disabled={orderMutation.isPending}
+          disabled={isPending}
         >
           공매도
         </Button>
@@ -98,7 +128,7 @@ function PurchaseRow(props: {
         <Button
           className="w-full"
           onClick={() => submitOrder("SELL", "SHORT")}
-          disabled={orderMutation.isPending}
+          disabled={isPending}
         >
           상환
         </Button>

@@ -1,11 +1,10 @@
 import { PlayerTable } from "@/entities/player"
-import { getMe } from "@/features/game/getMe"
 import { StartGameButton, StartGameOverlay } from "@/features/game/startGame"
 import { MarketSection } from "@/features/market"
-import { PortfolioSection } from "@/features/portfolio"
+import { PortfolioSection, useMeQuery } from "@/features/getMe"
 import { Money } from "@/shared/model/Money"
 import { qk } from "@/shared/quries/keys"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
+import { useQueryClient } from "@tanstack/react-query"
 import { formatTimeToHMS } from "@/shared/lib/formatTime"
 import { Banknote } from "lucide-react"
 import { RoomSection, type Room } from "@/entities/room"
@@ -23,10 +22,7 @@ export default function GameView(props: {
 }) {
   const { room, game, isHost } = props
   const [isStarting, setIsStarting] = useState<boolean>(false)
-  const { data: me } = useQuery({
-    queryKey: qk.getMe(room.id),
-    queryFn: () => getMe({ gameId: room.id }),
-  })
+  const { data: me } = useMeQuery(room.id)
 
   const queryClient = useQueryClient()
 

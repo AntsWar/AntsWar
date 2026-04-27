@@ -76,7 +76,7 @@ function QuantitySelect(props: {
     <Select
       value={String(value)}
       onValueChange={(value) =>
-        onValueChange(value === "ALL" ? "ALL" : (Number(value) as 1 | 100))
+        onValueChange(value === "ALL" ? "ALL" : Number(value))
       }
     >
       <SelectTrigger className="min-w-24">
