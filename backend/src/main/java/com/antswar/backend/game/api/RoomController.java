@@ -1,0 +1,58 @@
+package com.antswar.backend.game.api;
+
+import com.antswar.backend.common.annotation.Auth;
+import com.antswar.backend.game.api.request.JoinGameRequest;
+import com.antswar.backend.game.api.request.RegisterGameRequest;
+import com.antswar.backend.game.application.dto.RoomInfo;
+import com.antswar.backend.game.application.port.in.room.*;
+import com.antswar.backend.game.application.port.in.room.request.JoinRoomCommand;
+import com.antswar.backend.game.application.port.in.room.response.JoinRoomResult;
+import com.antswar.backend.game.application.port.in.room.response.RegisterRoomResult;
+import com.antswar.backend.game.application.port.in.room.StartGame;
+import com.antswar.backend.game.infrastructure.resolver.PlayerPrincipal;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RequestMapping("/room")
+@RestController
+@RequiredArgsConstructor
+public class RoomController {
+    private final RegisterRoom registerRoom;
+    private final SearchRoom searchRoom;
+    private final JoinRoom joinRoom;
+    private final StartGame startGame;
+
+    @PostMapping
+    public ResponseEntity<RegisterRoomResult> register(@RequestBody @Valid RegisterGameRequest request,
+                                                       @Auth PlayerPrincipal player){
+        RegisterRoomResult result = registerRoom.register(request.toCommand(player.id(), player.name()));
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<RoomInfo>> search(@RequestParam(value = "name", required = false) String name){
+        List<RoomInfo> gameInfos = searchRoom.search(name);
+        return ResponseEntity.ok(gameInfos);
+    }
+
+    @PostMapping("/{roomId}/join")
+    public ResponseEntity<JoinRoomResult> join(@PathVariable @NotBlank String roomId,
+                                               @RequestBody @Valid JoinGameRequest request,
+                                               @Auth PlayerPrincipal player){
+        JoinRoomResult result = joinRoom.join(new JoinRoomCommand(roomId, request.password(), player.id(), player.name()));
+        return ResponseEntity.ok(result);
+    }
+
+    @PostMapping("/{roomId}/start")
+    public ResponseEntity<Void> start(@PathVariable @NotBlank String roomId,
+                                      @Auth PlayerPrincipal player){
+        startGame.start(roomId, player.id());
+        return ResponseEntity.noContent().build();
+    }
+
+}

@@ -5,6 +5,7 @@ import CenterLayout from "./layouts/CenterLayout"
 import RootLayout from "./layouts/RootLayout"
 import GamePage from "@/pages/GamePage"
 import { QueryProvider } from "./provider/queryProvider"
+import { Toaster } from "sonner"
 
 const router = createBrowserRouter([
   {
@@ -13,7 +14,7 @@ const router = createBrowserRouter([
     children: [{ index: true, element: <HomePage /> }],
   },
   {
-    path: "/game/:gameId",
+    path: "/room/:roomId",
     element: <RootLayout />,
     children: [{ index: true, element: <GamePage /> }],
   },
@@ -24,6 +25,7 @@ export function App() {
     <QueryProvider>
       <ThemeProvider>
         <RouterProvider router={router} />
+        <Toaster position="top-center" />
       </ThemeProvider>
     </QueryProvider>
   )

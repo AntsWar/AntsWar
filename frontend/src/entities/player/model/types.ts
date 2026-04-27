@@ -1,4 +1,4 @@
-import type { Money } from "@/shared/model/money"
+import type { Money } from "@/shared/model/Money"
 
 export type Player = {
   name: string

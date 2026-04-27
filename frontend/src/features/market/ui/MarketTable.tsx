@@ -1,0 +1,108 @@
+import { Button } from "@/shared/ui/button"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/shared/ui/table"
+import { Money } from "@/shared/model/Money"
+import { useParams } from "react-router"
+import type { Purchase, TradeQuantity } from "@/entities/purchase"
+import { type OrderRequest } from "../api/order"
+import { useOrderMutation } from "../api/useOrderMutation"
+
+export default function MarketTable(props: {
+  purchases: Array<Purchase>
+  quantity: TradeQuantity
+}) {
+  const { roomId } = useParams()
+  const { purchases, quantity } = props
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>이름</TableHead>
+          <TableHead className="text-center">현재가</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {purchases.map((purchase) => (
+          <PurchaseRow
+            key={purchase.meta.code}
+            purchase={purchase}
+            gameId={roomId!}
+            quantity={quantity}
+          />
+        ))}
+      </TableBody>
+    </Table>
+  )
+}
+
+function PurchaseRow(props: {
+  purchase: Purchase
+  gameId: string
+  quantity: TradeQuantity
+}) {
+  const { purchase, gameId, quantity } = props
+  const orderMutation = useOrderMutation(gameId)
+  const submitOrder = (
+    orderType: OrderRequest["orderType"],
+    positionType: OrderRequest["positionType"]
+  ) => {
+    orderMutation.mutate({
+      orderType,
+      meta: purchase.meta.code,
+      positionType,
+      quantity,
+    } as OrderRequest)
+  }
+
+  return (
+    <TableRow>
+      <TableCell>{purchase.meta.name}</TableCell>
+      <TableCell className="text-center">
+        <Money money={purchase.price} />
+      </TableCell>
+      <TableCell className="text-center">
+        <Button
+          className="w-full"
+          onClick={() => submitOrder("BUY", "LONG")}
+          disabled={orderMutation.isPending}
+        >
+          매수
+        </Button>
+      </TableCell>
+      <TableCell className="text-center">
+        <Button
+          className="w-full"
+          onClick={() => submitOrder("SELL", "LONG")}
+          disabled={orderMutation.isPending}
+        >
+          매도
+        </Button>
+      </TableCell>
+      <TableCell className="text-center">
+        <Button
+          className="w-full"
+          onClick={() => submitOrder("BUY", "SHORT")}
+          disabled={orderMutation.isPending}
+        >
+          공매도
+        </Button>
+      </TableCell>
+      <TableCell className="text-center">
+        <Button
+          className="w-full"
+          onClick={() => submitOrder("SELL", "SHORT")}
+          disabled={orderMutation.isPending}
+        >
+          상환
+        </Button>
+      </TableCell>
+    </TableRow>
+  )
+}

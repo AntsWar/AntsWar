@@ -1,31 +1,46 @@
-import { JoinDialog } from "@/features/game/joinGame"
-import { MarketSection } from "@/features/market"
-import { PlayerSection } from "@/features/player"
-import { PortfolioSection } from "@/features/portfolio"
-import { TabToEarnButton } from "@/features/seedIncome"
-import { Button } from "@/shared/ui/button"
+import { JoinDialog, useJoinRoomMutation } from "@/features/room/joinRoom"
+import { isApiError } from "@/shared/api/apiError"
+import { useEffect, useState } from "react"
 import { useParams } from "react-router"
+import { type Room } from "@/entities/room"
+import { GameView } from "@/widgets/game"
+import type { Game } from "@/entities/game"
 
 export default function GamePage() {
-  const { gameId } = useParams()
-  if (!gameId) return null
+  const { roomId } = useParams()
+  if (!roomId) throw new Error("roomId is required")
 
+  const [room, setRoom] = useState<Room | null>(null)
+  const [game, setGame] = useState<Game>()
+  const [isHost, setIsHost] = useState(false)
+
+  const { mutate } = useJoinRoomMutation(roomId)
+  const [join, setJoin] = useState<boolean>(true)
+  const [apiCode, setApiCode] = useState("")
+
+  useEffect(() => {
+    mutate(
+      { password: "" },
+      {
+        onSuccess: (data) => {
+          setJoin(true)
+          setRoom(data.room)
+          setGame(data.game)
+          setIsHost(data.isHost)
+        },
+        onError: (err) => {
+          if (!isApiError(err)) return
+          setApiCode(err.apiCode)
+          setJoin(false)
+        },
+      }
+    )
+  }, [mutate])
   return (
-    <>
-      <JoinDialog gameId={gameId} />
-      <div className="sticky top-0 z-10 bg-background py-2">
-        <div className="grid grid-cols-3 items-center">
-          <span>방제</span>
-          <Button>게임시작</Button>
-          <span className="text-right">내 시드 500</span>
-        </div>
-      </div>
-      <div className="flex flex-col gap-7">
-        <PlayerSection />
-        <MarketSection />
-        <PortfolioSection />
-        <TabToEarnButton />
-      </div>
-    </>
+    <div>
+      <JoinDialog roomId={roomId} open={!join} apiCode={apiCode} />
+
+      {room && game && <GameView room={room} game={game} isHost={isHost} />}
+    </div>
   )
 }

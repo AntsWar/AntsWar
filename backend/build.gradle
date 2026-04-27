@@ -38,6 +38,9 @@ dependencies {
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	implementation 'com.h2database:h2'
 
+	/* Websocket */
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 	/* QueryDSL */
 //	implementation "io.github.openfeign.querydsl:querydsl-jpa:7.1"
 //

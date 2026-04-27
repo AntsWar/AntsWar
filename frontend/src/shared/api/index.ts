@@ -21,7 +21,7 @@ api.interceptors.response.use(
     if (axios.isAxiosError<ErrorResponse>(error)) {
       const apiError = error as ApiError
 
-      apiError.apiCode = error.response?.data?.code
+      apiError.apiCode = error.response?.data?.code ?? ""
       apiError.apiMessage = error.response?.data?.message ?? null
       apiError.apiErrors = error.response?.data?.errors ?? null
 

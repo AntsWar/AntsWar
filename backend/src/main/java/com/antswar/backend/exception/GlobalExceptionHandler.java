@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity
                 .status(INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("INTERNAL_SERVER_ERROR", e.getMessage()));
+                .body(new ErrorResponse("INTERNAL_SERVER_ERROR", ""));
     }
 
     private ErrorResponse createBadRequestResponse(Exception e) {

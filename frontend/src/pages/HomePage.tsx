@@ -1,14 +1,14 @@
-import { GameRegister } from "@/features/game/registerGame"
-import { GameSearcher } from "@/features/game/searchGame"
+import { RoomRegister } from "@/features/room/registerRoom"
+import { RoomSearcher } from "@/features/room/searchRoom"
 
 export default function HomePage() {
   return (
     <div className="flex flex-col items-center gap-10">
       <div className="text-4xl font-bold">개미전쟁</div>
       <div className="flex w-full flex-col gap-5">
-        <GameSearcher />
+        <RoomSearcher />
         <div className="self-end">
-          <GameRegister />
+          <RoomRegister />
         </div>
       </div>
     </div>

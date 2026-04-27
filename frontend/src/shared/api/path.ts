@@ -1,6 +1,5 @@
 export const API_PATH = {
-  SEARCH_GAME: "room/search",
-  REGISTER_GAME: "room",
-  JOIN_GAME: (gameId: string) => `room/${gameId}/join`,
-  GET_GAME: "game",
+  ROOM_BASE: "room",
+  ROOM: (roomId: string) => `room/${roomId}`,
+  GAME: (gameId: string) => `game/${gameId}`,
 }

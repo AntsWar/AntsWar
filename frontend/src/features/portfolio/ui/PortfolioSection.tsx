@@ -1,16 +1,20 @@
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useState } from "react"
-import { PortfolioTable, type Position } from "@/entities/portfolio"
-import type { PurchaseType } from "@/entities/market"
+import { PortfolioTable, type Position } from "@/entities/position"
+import type { PurchaseType } from "@/entities/purchase"
 
 type FilterType = "all" | PurchaseType
 
-export default function PortfolioSection() {
+export default function PortfolioSection(props: {
+  positions: Array<Position>
+}) {
+  const { positions } = props
+
   const [selectedType, setSelectedType] = useState<FilterType>("all")
   const filteredPositions =
     selectedType === "all"
-      ? longPositions
-      : longPositions.filter((position) => position.meta.type === selectedType)
+      ? positions
+      : positions.filter((position) => position.meta.type === selectedType)
 
   return (
     <section className="flex flex-col gap-3">
@@ -23,8 +27,8 @@ export default function PortfolioSection() {
           >
             <TabsList>
               <TabsTrigger value={"all"}>전체보기</TabsTrigger>
-              <TabsTrigger value={"stock"}>주식보기</TabsTrigger>
-              <TabsTrigger value={"crypto"}>코인보기</TabsTrigger>
+              <TabsTrigger value={"STOCK"}>주식보기</TabsTrigger>
+              <TabsTrigger value={"CRYPTO"}>코인보기</TabsTrigger>
             </TabsList>
           </Tabs>
         </div>
@@ -33,36 +37,3 @@ export default function PortfolioSection() {
     </section>
   )
 }
-
-const longPositions = [
-  {
-    meta: {
-      id: 1,
-      name: "삼성전자",
-      type: "stock",
-    },
-    type: "long",
-    quantity: 5,
-    averagePrice: 70000,
-  },
-  {
-    meta: {
-      id: 2,
-      name: "테슬라",
-      type: "stock",
-    },
-    type: "long",
-    quantity: 5,
-    averagePrice: 70000,
-  },
-  {
-    meta: {
-      id: 3,
-      name: "도지",
-      type: "crypto",
-    },
-    type: "long",
-    quantity: 5,
-    averagePrice: 70000,
-  },
-] as Array<Position>
