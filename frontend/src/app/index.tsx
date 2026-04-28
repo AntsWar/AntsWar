@@ -1,6 +1,7 @@
 import { ThemeProvider } from "./provider/theme-provider"
 import { createBrowserRouter, RouterProvider } from "react-router"
 import HomePage from "@/pages/HomePage"
+import CenterLayout from "./layouts/CenterLayout"
 import RootLayout from "./layouts/RootLayout"
 import GamePage from "@/pages/GamePage"
 import { QueryProvider } from "./provider/queryProvider"
@@ -9,11 +10,13 @@ import { Toaster } from "sonner"
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <CenterLayout />,
+    children: [{ index: true, element: <HomePage /> }],
+  },
+  {
+    path: "/room/:roomId",
     element: <RootLayout />,
-    children: [
-      { index: true, element: <HomePage /> },
-      { path: "room/:roomId", element: <GamePage /> },
-    ],
+    children: [{ index: true, element: <GamePage /> }],
   },
 ])
 
