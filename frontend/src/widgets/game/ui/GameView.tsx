@@ -69,13 +69,13 @@ export default function GameView(props: {
       onGameReady: () => setIsStarting(true),
       onGameStart: () => setIsStarting(false),
       onPurchaseDelist: ({ name }: { name: string }) => {
-        toast(`${name}(이)가 상폐되었습니다.`)
+        toast.info(`${name}(이)가 상폐되었습니다.`)
         queryClient.invalidateQueries({ queryKey: qk.getMe(room.id) })
       },
       onNotice: (code: string) => {
         const message = NEWS_TOAST_MESSAGES[code] ?? code
 
-        toast(message)
+        toast.info(message)
       },
     }),
     [queryClient, room.id]

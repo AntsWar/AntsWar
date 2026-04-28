@@ -5,7 +5,7 @@ import CenterLayout from "./layouts/CenterLayout"
 import RootLayout from "./layouts/RootLayout"
 import GamePage from "@/pages/GamePage"
 import { QueryProvider } from "./provider/queryProvider"
-import { Toaster } from "sonner"
+import { Toaster } from "@/shared/ui/sonner"
 
 const router = createBrowserRouter([
   {
