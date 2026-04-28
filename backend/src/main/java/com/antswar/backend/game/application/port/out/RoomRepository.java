@@ -1,4 +1,4 @@
-package com.antswar.backend.game.application.port.out.persistence;
+package com.antswar.backend.game.application.port.out;
 
 import com.antswar.backend.game.domain.room.Room;
 import jakarta.persistence.LockModeType;
@@ -16,8 +16,8 @@ public interface RoomRepository extends JpaRepository<Room, String> {
     @Query("select r from Room r where r.game is null and r.name like %:name%")
     List<Room> findAllWaitingByName(@Param("name") String name);
 
-    @Query("select r from Room r left join r.game g where g is null or g.endedAt is null")
-    List<Room> findAllNotFinished();
+    @Query("select r.id from Room r left join r.game g where g is null or g.endedAt is null")
+    List<String> findAllNotFinishedIds();
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select r from Room r where r.id = :id")

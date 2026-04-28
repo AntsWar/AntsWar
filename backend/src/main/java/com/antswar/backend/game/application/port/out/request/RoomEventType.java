@@ -1,4 +1,4 @@
-package com.antswar.backend.game.application.port.out.publisher;
+package com.antswar.backend.game.application.port.out.request;
 
 public enum RoomEventType {
     ROOM_UPDATED,

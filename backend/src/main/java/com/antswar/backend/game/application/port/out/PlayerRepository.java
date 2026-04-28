@@ -1,4 +1,4 @@
-package com.antswar.backend.game.application.port.out.persistence;
+package com.antswar.backend.game.application.port.out;
 
 import com.antswar.backend.game.domain.player.Player;
 import org.springframework.data.jpa.repository.JpaRepository;

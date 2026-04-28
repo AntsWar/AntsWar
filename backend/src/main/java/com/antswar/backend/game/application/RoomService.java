@@ -2,23 +2,30 @@ package com.antswar.backend.game.application;
 
 import com.antswar.backend.game.application.dto.GameInfo;
 import com.antswar.backend.game.application.dto.RoomInfo;
+import com.antswar.backend.game.application.dto.TickResult;
 import com.antswar.backend.game.application.port.in.room.*;
 import com.antswar.backend.game.application.port.in.room.response.JoinRoomResult;
 import com.antswar.backend.game.application.port.in.room.response.RegisterRoomResult;
-import com.antswar.backend.game.application.port.out.persistence.RoomRepository;
+import com.antswar.backend.game.application.port.out.NewsGenerator;
+import com.antswar.backend.game.application.port.out.RoomRepository;
 import com.antswar.backend.game.application.port.in.room.request.JoinRoomCommand;
 import com.antswar.backend.game.application.port.in.room.request.RegisterRoomCommand;
-import com.antswar.backend.game.application.port.out.publisher.RoomEvent;
-import com.antswar.backend.game.application.port.out.publisher.RoomEventPublisher;
-import com.antswar.backend.game.application.port.out.publisher.RoomEventType;
+import com.antswar.backend.game.application.port.out.request.RoomEvent;
+import com.antswar.backend.game.application.port.out.RoomEventPublisher;
+import com.antswar.backend.game.application.port.out.request.RoomEventType;
+import com.antswar.backend.game.domain.event.GameDomainEvent;
+import com.antswar.backend.game.domain.event.GameStartedEvent;
 import com.antswar.backend.game.domain.player.Player;
 import com.antswar.backend.game.domain.room.Room;
+import com.antswar.backend.game.domain.room.RoomStatus;
 import com.antswar.backend.game.exception.GameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.antswar.backend.game.exception.GameErrorCode.ROOM_NOT_FOUND;
@@ -27,9 +34,10 @@ import static org.springframework.util.StringUtils.hasText;
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, StartGame {
+public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, ReadyGame {
     private final RoomRepository repository;
     private final RoomEventPublisher roomEventPublisher;
+    private final NewsGenerator newsGenerator;
     private final Clock clock;
 
     @Override
@@ -58,9 +66,26 @@ public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, StartGam
     }
 
     @Override
-    public void start(String roomId, String hostId) {
+    public void ready(String roomId, String hostId) {
         Room room = repository.findById(roomId).orElseThrow(() -> new GameException(ROOM_NOT_FOUND));
         room.ready(hostId);
         roomEventPublisher.publish(roomId, new RoomEvent(RoomEventType.GAME_READY, null));
+    }
+
+    public TickResult tick(String roomId, Instant now){
+        Room room = repository.findById(roomId).orElseThrow(() -> new GameException(ROOM_NOT_FOUND));
+        List<GameDomainEvent> events = new ArrayList<>();
+
+        if(room.getStatus() == RoomStatus.READY){
+            room.getGame().start(now);
+            events.add(new GameStartedEvent());
+        }else if(room.getStatus() == RoomStatus.RUNNING){
+            room.finishIfEnded(now);
+            if(room.getStatus() == RoomStatus.RUNNING) {
+                events.addAll(room.getGame().tick(newsGenerator));
+            }
+        }
+
+        return new TickResult(GameInfo.of(room, now), events);
     }
 }

@@ -7,7 +7,7 @@ import com.antswar.backend.game.domain.market.Purchase;
 import com.antswar.backend.game.domain.market.PurchaseMeta;
 import com.antswar.backend.game.domain.market.PurchaseRespawn;
 import com.antswar.backend.game.domain.news.News;
-import com.antswar.backend.game.domain.news.NewsGenerator;
+import com.antswar.backend.game.application.port.out.NewsGenerator;
 import com.antswar.backend.game.domain.news.NewsMeta;
 import com.antswar.backend.game.domain.player.OrderType;
 import com.antswar.backend.game.domain.player.Player;

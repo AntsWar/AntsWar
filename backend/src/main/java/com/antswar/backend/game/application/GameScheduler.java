@@ -1,21 +1,19 @@
 package com.antswar.backend.game.application;
 
 import com.antswar.backend.game.application.dto.PurchaseMetaInfo;
-import com.antswar.backend.game.application.port.out.persistence.RoomRepository;
-import com.antswar.backend.game.application.port.out.publisher.RoomEventPublisher;
-import com.antswar.backend.game.application.port.out.publisher.RoomEvent;
-import com.antswar.backend.game.application.port.out.publisher.RoomEventType;
+import com.antswar.backend.game.application.port.out.RoomRepository;
+import com.antswar.backend.game.application.port.out.RoomEventPublisher;
+import com.antswar.backend.game.application.port.out.request.RoomEvent;
+import com.antswar.backend.game.application.port.out.request.RoomEventType;
 import com.antswar.backend.game.application.dto.GameInfo;
 import com.antswar.backend.game.domain.event.GameDomainEvent;
+import com.antswar.backend.game.domain.event.GameStartedEvent;
 import com.antswar.backend.game.domain.event.NewsEvent;
 import com.antswar.backend.game.domain.event.PurchaseDelistedEvent;
-import com.antswar.backend.game.domain.news.NewsGenerator;
 import com.antswar.backend.game.domain.room.Room;
-import com.antswar.backend.game.domain.room.RoomStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -23,53 +21,41 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-@Transactional
 public class GameScheduler {
     private final RoomRepository roomRepository;
     private final RoomEventPublisher roomEventPublisher;
-    private final NewsGenerator newsGenerator;
+    private final RoomService roomService;
     private final Clock clock;
 
     @Scheduled(fixedRate = 5000)
     void tickGame() {
-        List<Room> rooms = roomRepository.findAllNotFinished();
+        List<String> roomIds = roomRepository.findAllNotFinishedIds();
         Instant now = clock.instant();
-        rooms.forEach(room-> {
-            if(room.getStatus() == RoomStatus.READY){
-                room.getGame().start(now);
-                publishGameStarted(room);
-            }else if(room.getStatus() == RoomStatus.RUNNING){
-                room.finishIfEnded(now);
-                if(room.getStatus() == RoomStatus.RUNNING) {
-                    List<GameDomainEvent> events = room.getGame().tick(newsGenerator);
-                    events.forEach(event -> publishEvent(room, event));
-                }
-            }
-            publishGame(room, now);
+        roomIds.forEach(roomId-> {
+            var result = roomService.tick(roomId, now);
+            publishGame(roomId, result.game());
+            result.events().forEach(event -> publishEvent(roomId, event));
         });
     }
-
-    void publishGameStarted(Room room) {
-        roomEventPublisher.publish(room.getId(),
-                new RoomEvent(RoomEventType.GAME_STARTED, null));
+    void publishGame(String roomId, GameInfo game) {
+        roomEventPublisher.publish(roomId, new RoomEvent(RoomEventType.ROOM_UPDATED, game));
     }
 
-    void publishGame(Room room, Instant now) {
-        roomEventPublisher.publish(room.getId(),
-                new RoomEvent(RoomEventType.ROOM_UPDATED, GameInfo.of(room, now))
-        );
-    }
-
-    void publishEvent(Room room, GameDomainEvent event) {
+    void publishEvent(String roomId, GameDomainEvent event) {
         if (event instanceof PurchaseDelistedEvent e) {
             roomEventPublisher.publish(
-                    room.getId(),
+                    roomId,
                     new RoomEvent(RoomEventType.PURCHASE_DELIST, PurchaseMetaInfo.from(e.meta()))
             );
         }else if(event instanceof NewsEvent e){
             roomEventPublisher.publish(
-                    room.getId(),
+                    roomId,
                     new RoomEvent(RoomEventType.NOTICE, e.meta().getCode())
+            );
+        }else if(event instanceof GameStartedEvent){
+            roomEventPublisher.publish(
+                    roomId,
+                    new RoomEvent(RoomEventType.GAME_STARTED, null)
             );
         }
     }

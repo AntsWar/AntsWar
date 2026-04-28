@@ -1,5 +1,7 @@
-package com.antswar.backend.game.domain.news;
+package com.antswar.backend.game.infrastructure;
 
+import com.antswar.backend.game.application.port.out.NewsGenerator;
+import com.antswar.backend.game.domain.news.NewsMeta;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
