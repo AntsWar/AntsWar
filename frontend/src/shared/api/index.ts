@@ -1,5 +1,5 @@
 import axios from "axios"
-import { getGuestId, getGuestName } from "../lib/guestStorage"
+import { getGuestId } from "../lib/guestStorage"
 import type { ApiError, ErrorResponse } from "./apiError"
 
 export const api = axios.create({
@@ -9,7 +9,6 @@ export const api = axios.create({
 
 api.interceptors.request.use((config) => {
   config.headers["GUEST_ID"] = getGuestId()
-  config.headers["GUEST_NAME"] = getGuestName()
 
   return config
 })

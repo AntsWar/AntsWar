@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 
 public record RegisterGameRequest(
         @NotBlank @Size(max = 20) String name
+        , String playerName
         , String password
         , int capacity
         , @NotNull GameModeRequest mode){
@@ -17,7 +18,7 @@ public record RegisterGameRequest(
             @NotNull Integer target
     ) {}
 
-    public RegisterRoomCommand toCommand(String playerId, String playerName){
-        return new RegisterRoomCommand(this.name, this.password, playerId, playerName, new RoomMode(this.mode.type, this.mode.target),capacity);
+    public RegisterRoomCommand toCommand(String playerId){
+        return new RegisterRoomCommand(this.name, this.password, playerId, this.playerName, new RoomMode(this.mode.type, this.mode.target),capacity);
     }
 }

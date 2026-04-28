@@ -30,7 +30,7 @@ public class RoomController {
     @PostMapping
     public ResponseEntity<RegisterRoomResult> register(@RequestBody @Valid RegisterGameRequest request,
                                                        @Auth PlayerPrincipal player){
-        RegisterRoomResult result = registerRoom.register(request.toCommand(player.id(), player.name()));
+        RegisterRoomResult result = registerRoom.register(request.toCommand(player.id()));
         return ResponseEntity.ok(result);
     }
 
@@ -44,7 +44,7 @@ public class RoomController {
     public ResponseEntity<JoinRoomResult> join(@PathVariable @NotBlank String roomId,
                                                @RequestBody @Valid JoinGameRequest request,
                                                @Auth PlayerPrincipal player){
-        JoinRoomResult result = joinRoom.join(new JoinRoomCommand(roomId, request.password(), player.id(), player.name()));
+        JoinRoomResult result = joinRoom.join(new JoinRoomCommand(roomId, request.password(), player.id(), request.playerName()));
         return ResponseEntity.ok(result);
     }
 

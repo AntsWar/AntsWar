@@ -14,9 +14,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
-
     private static final String GUEST_ID_HEADER = "GUEST_ID";
-    private static final String GUEST_NAME_HEADER = "GUEST_NAME";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -34,17 +32,17 @@ public class GuestArgumentResolver implements HandlerMethodArgumentResolver {
 
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
         String guestId = request != null ? request.getHeader(GUEST_ID_HEADER) : null;
-        String guestName = request != null ? request.getHeader(GUEST_NAME_HEADER) : null;
+//        String guestName = request != null ? request.getHeader(GUEST_NAME_HEADER) : null;
 
         boolean required = annotation == null || annotation.required();
-        if (guestId == null || guestId.isBlank() || guestName == null || guestName.isBlank()) {
+        if (guestId == null || guestId.isBlank()) {
             if (!required) {
                 return null;
             }
             throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
         }
 
-        return new PlayerPrincipal(guestId, guestName);
+        return new PlayerPrincipal(guestId);
     }
 
 }
