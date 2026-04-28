@@ -35,7 +35,8 @@ public class Room {
     @Embedded
     private RoomMode mode;
 
-    @OneToOne(mappedBy = "room", cascade = CascadeType.PERSIST)
+    @JoinColumn
+    @OneToOne(cascade = CascadeType.PERSIST)
     private Game game;
 
     public Room(String name, String password, String hostId, RoomMode mode, int capacity){

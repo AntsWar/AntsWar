@@ -34,9 +34,7 @@ public class Game {
     private Instant startedAt;
     private Instant endedAt;
 
-    @MapsId
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "id")
+    @OneToOne(mappedBy = "game", optional = false)
     private Room room;
 
     @OneToMany(mappedBy = "game")
@@ -53,6 +51,7 @@ public class Game {
     private final List<News> news = new ArrayList<>();
 
     public Game(Room room){
+        this.id = room.getId();
         this.room = room;
         for (PurchaseMeta meta : PurchaseMeta.values()) {
             purchases.add(new Purchase(this, meta, Money.of(200)));
