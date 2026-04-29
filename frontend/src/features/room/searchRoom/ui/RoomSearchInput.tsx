@@ -16,12 +16,11 @@ export default function RoomSearchInput(props: {
     e.preventDefault()
     setSearch(input)
   }
-
   return (
     <form onSubmit={handleSubmit}>
-      <InputGroup>
+      <InputGroup className="border-primary has-[[data-slot=input-group-control]:focus-visible]:border-primary has-[[data-slot=input-group-control]:focus-visible]:ring-3 has-[[data-slot=input-group-control]:focus-visible]:ring-primary/50">
         <InputGroupAddon align="inline-start">
-          <Search className="size-5" />
+          <Search className="size-5 text-primary" />
         </InputGroupAddon>
 
         <InputGroupInput

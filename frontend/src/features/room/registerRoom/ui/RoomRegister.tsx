@@ -20,6 +20,7 @@ import RoomTitleInput from "./RoomTitleInput"
 import RoomPasswordInput from "./RoomPasswordInput"
 import RoomModeSelect from "./RoomModeSelect"
 import RoomCapacitySelect from "./RoomCapacitySelect"
+import { CirclePlus } from "lucide-react"
 
 export default function RoomRegister() {
   const [name, setName] = useState<string>("")
@@ -52,44 +53,48 @@ export default function RoomRegister() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="w-fit">방 만들기</Button>
+        <Button className="w-fit">
+          <CirclePlus className="size-5" />방 만들기
+        </Button>
       </DialogTrigger>
       <DialogContent className="w-lg">
-        <DialogHeader>
+        <DialogHeader className="border-b">
           <DialogTitle>방 만들기</DialogTitle>
         </DialogHeader>
-        <FieldGroup className="gap-4">
-          <Field>
-            <FieldLabel>방 제목</FieldLabel>
-            <RoomTitleInput
-              placeholder="방 제목"
-              value={name}
-              onChange={setName}
-            />
-          </Field>
+        <div>
+          <FieldGroup className="gap-4">
+            <Field>
+              <FieldLabel>방 제목</FieldLabel>
+              <RoomTitleInput
+                placeholder="방 제목"
+                value={name}
+                onChange={setName}
+              />
+            </Field>
 
-          <Field>
-            <FieldLabel>비밀번호</FieldLabel>
-            <RoomPasswordInput
-              placeholder="비밀번호"
-              value={password}
-              onChange={setPassword}
-            />
-          </Field>
+            <Field>
+              <FieldLabel>비밀번호</FieldLabel>
+              <RoomPasswordInput
+                placeholder="비밀번호"
+                value={password}
+                onChange={setPassword}
+              />
+            </Field>
 
-          <Field>
-            <FieldLabel>모드 선택</FieldLabel>
-            <RoomModeSelect mode={mode} onChange={setMode} />
-          </Field>
-          <Field>
-            <FieldLabel>인원 수 선택</FieldLabel>
-            <RoomCapacitySelect
-              value={String(capacity)}
-              onValueChange={(value) => setCapacity(Number(value))}
-            />
-          </Field>
-        </FieldGroup>
-        <DialogFooter className="py-3" showCloseButton>
+            <Field>
+              <FieldLabel>모드 선택</FieldLabel>
+              <RoomModeSelect mode={mode} onChange={setMode} />
+            </Field>
+            <Field>
+              <FieldLabel>인원 수 선택</FieldLabel>
+              <RoomCapacitySelect
+                value={String(capacity)}
+                onValueChange={(value) => setCapacity(Number(value))}
+              />
+            </Field>
+          </FieldGroup>
+        </div>
+        <DialogFooter className="" showCloseButton>
           <Button onClick={handleClick} disabled={isPending || !name.trim()}>
             {isPending && <Spinner className="mr-2 h-4 w-4 animate-spin" />}
             생성

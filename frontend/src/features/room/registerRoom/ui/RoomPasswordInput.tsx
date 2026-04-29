@@ -43,7 +43,7 @@ export default function RoomPasswordInput({
       <InputGroupAddon align="inline-end">
         <div>
           <Button
-            className="bg-transparent text-muted-foreground"
+            variant={"ghost"}
             onClick={() => setShowPassword((prev) => !prev)}
             aria-label={showPassword ? "비밀번호 숨기기" : "비밀번호 보기"}
           >

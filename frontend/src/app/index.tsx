@@ -23,7 +23,7 @@ const router = createBrowserRouter([
 export function App() {
   return (
     <QueryProvider>
-      <ThemeProvider>
+      <ThemeProvider defaultTheme="dark">
         <RouterProvider router={router} />
         <Toaster position="top-center" />
       </ThemeProvider>

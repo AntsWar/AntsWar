@@ -13,7 +13,7 @@ export default function NameInput() {
 
   return (
     <Input
-      className="w-32"
+      className="w-32 text-center"
       value={value}
       onChange={handleChange}
       maxLength={10}
