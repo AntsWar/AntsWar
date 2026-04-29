@@ -1,1 +1,1 @@
-export { default as MarketSection } from "./ui/MarketSection"
+export { default as MarketInfo } from "./ui/MarketInfo"

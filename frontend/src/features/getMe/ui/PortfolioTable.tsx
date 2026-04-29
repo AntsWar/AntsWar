@@ -23,12 +23,23 @@ export default function PortfolioTable(props: { positions: Array<Position> }) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {positions.map((position) => (
-          <PositionRow
-            key={position.meta.code + position.type}
-            position={position}
-          />
-        ))}
+        {positions && positions.length > 0 ? (
+          positions.map((position) => (
+            <PositionRow
+              key={position.meta.code + position.type}
+              position={position}
+            />
+          ))
+        ) : (
+          <TableRow>
+            <TableCell
+              colSpan={5}
+              className="text-center text-muted-foreground"
+            >
+              보유한 포지션이 없습니다.
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   )

@@ -1,4 +1,4 @@
-export { default as PortfolioSection } from "./ui/PortfolioSection"
+export { default as PortfolioInfo } from "./ui/PortfolioInfo"
 export { default as PortfolioTable } from "./ui/PortfolioTable"
 export { default as NameInput } from "./ui/NameInput"
 

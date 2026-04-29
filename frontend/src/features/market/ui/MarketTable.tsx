@@ -31,14 +31,25 @@ export default function MarketTable(props: {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {purchases.map((purchase) => (
-          <PurchaseRow
-            key={purchase.meta.code}
-            purchase={purchase}
-            gameId={roomId!}
-            quantity={quantity}
-          />
-        ))}
+        {purchases && purchases.length > 0 ? (
+          purchases.map((purchase) => (
+            <PurchaseRow
+              key={purchase.meta.code}
+              purchase={purchase}
+              gameId={roomId!}
+              quantity={quantity}
+            />
+          ))
+        ) : (
+          <TableRow>
+            <TableCell
+              colSpan={2}
+              className="text-center text-muted-foreground"
+            >
+              남은 종목이 없습니다.
+            </TableCell>
+          </TableRow>
+        )}
       </TableBody>
     </Table>
   )
@@ -100,6 +111,7 @@ function PurchaseRow(props: {
       <TableCell className="text-center">
         <Button
           className="w-full"
+          variant={"outline"}
           onClick={() => submitOrder("BUY", "LONG")}
           disabled={isPending}
         >
@@ -109,6 +121,7 @@ function PurchaseRow(props: {
       <TableCell className="text-center">
         <Button
           className="w-full"
+          variant={"outline"}
           onClick={() => submitOrder("SELL", "LONG")}
           disabled={isPending}
         >
@@ -118,6 +131,7 @@ function PurchaseRow(props: {
       <TableCell className="text-center">
         <Button
           className="w-full"
+          variant={"outline"}
           onClick={() => submitOrder("BUY", "SHORT")}
           disabled={isPending}
         >
@@ -127,6 +141,7 @@ function PurchaseRow(props: {
       <TableCell className="text-center">
         <Button
           className="w-full"
+          variant={"outline"}
           onClick={() => submitOrder("SELL", "SHORT")}
           disabled={isPending}
         >

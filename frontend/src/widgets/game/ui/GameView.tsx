@@ -1,19 +1,27 @@
 import { PlayerTable } from "@/entities/player"
 import { StartGameButton, StartGameOverlay } from "@/features/game/startGame"
-import { MarketSection } from "@/features/market"
-import { PortfolioSection, useMeQuery } from "@/features/getMe"
+import { MarketInfo } from "@/features/market"
+import { PortfolioInfo, useMeQuery } from "@/features/getMe"
 import { Money } from "@/shared/model/Money"
 import { qk } from "@/shared/quries/keys"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatTimeToHMS } from "@/shared/lib/formatTime"
-import { Banknote } from "lucide-react"
-import { RoomSection, type Room } from "@/entities/room"
+import { Banknote, BriefcaseBusiness, Clock, Gift, Users } from "lucide-react"
+import { RoomInfo, type Room } from "@/entities/room"
 import { TapToEarnButton } from "@/features/earn/earnByClick"
 import { toast } from "sonner"
 import { useEffect, useMemo, useState } from "react"
 import { useGame } from "@/features/game/getGame"
 import type { Game, GameMeta } from "@/entities/game"
 import { FinishedOverlay } from "@/features/game/finishedGame"
+import {
+  Field,
+  FieldContent,
+  FieldDescription,
+  FieldGroup,
+  FieldTitle,
+} from "@/shared/ui/field"
+import MarketIcon from "@/assets/icon/market_icon.svg?react"
 
 const NEWS_TOAST_MESSAGES: Record<string, string> = {
   SAMSON_GOOD_PERFORMANCE: "삼손전자 실적. 시장 기대치를 넘어",
@@ -98,16 +106,58 @@ export default function GameView(props: {
         serverTime={serverTime}
         balance={me?.player.balance ?? { amount: 0 }}
       />
-      <div className="flex flex-col gap-7">
-        <div>
-          <RoomSection name={room.name} mode={room.mode} />
-          <PlayerTable players={players} />
-        </div>
-
-        <MarketSection purchases={purchases} />
-        <PortfolioSection positions={me?.positions ?? []} />
-        <TapToEarnButton gameId={room.id} disable={meta.status !== "RUNNING"} />
-      </div>
+      <FieldGroup>
+        <Field className="px-2">
+          <RoomInfo name={room.name} mode={room.mode} />
+        </Field>
+        <Field className="rounded-xl border bg-popover p-4">
+          <FieldTitle className="text-xl font-semibold">
+            <Users className="text-primary" /> 참가자
+          </FieldTitle>
+          <FieldContent>
+            <PlayerTable players={players} />
+          </FieldContent>
+        </Field>
+        <Field className="w-full rounded-xl border bg-popover p-4">
+          <FieldTitle className="text-xl font-semibold">
+            <MarketIcon className="size-8 text-primary" />
+            시장
+          </FieldTitle>
+          <FieldDescription>
+            가격이 <Money money={{ amount: 100 }} /> 아래로 떨어지면 상폐됩니다.
+          </FieldDescription>
+          <FieldContent>
+            <MarketInfo purchases={purchases} />
+          </FieldContent>
+        </Field>
+        <Field className="rounded-xl border bg-popover p-4">
+          <FieldTitle className="text-xl font-semibold">
+            <BriefcaseBusiness className="size-6 text-primary" />
+            포트폴리오
+          </FieldTitle>
+          <FieldDescription>
+            상장폐지된 종목은 자동으로 청산됩니다.
+          </FieldDescription>
+          <FieldContent>
+            <PortfolioInfo positions={me?.positions ?? []} />
+          </FieldContent>
+        </Field>
+        <Field className="rounded-xl border bg-popover p-4">
+          <FieldTitle className="text-xl font-semibold">
+            <Gift className="size-6 text-primary" />
+            시드벌기
+          </FieldTitle>
+          <FieldDescription>
+            돈이 모자라면 여기서 버실 수 있습니다.
+          </FieldDescription>
+          <FieldContent>
+            <TapToEarnButton
+              gameId={room.id}
+              disable={meta.status !== "RUNNING"}
+            />
+          </FieldContent>
+        </Field>
+      </FieldGroup>
     </>
   )
 }
@@ -150,23 +200,22 @@ function Header(props: {
       <div className="flex flex-col gap-2">
         <div>
           {isHost && meta.status === "WAITING" && (
-            <StartGameButton className="w-full" gameId={room.id} />
+            <StartGameButton className="w-full self-center" gameId={room.id} />
           )}
         </div>
         <div className="flex flex-row items-start justify-between">
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row items-center gap-2 rounded-xl">
+            <Clock className="size-5 text-primary" />
             {formatTimeToHMS(meta.status === "RUNNING" ? elapsed : 0)}
-            <div>
-              {room.mode.type === "TIME" && meta.status === "RUNNING" && (
-                <span>
-                  (남은시간 : {formatTimeToHMS(room.mode.target - elapsed)})
-                </span>
-              )}
-            </div>
+            {room.mode.type === "TIME" && meta.status === "RUNNING" && (
+              <div className="text-base text-muted-foreground">
+                (남은시간 : {formatTimeToHMS(room.mode.target - elapsed)})
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
-            <Banknote />
+            <Banknote className="text-primary" />
             <Money money={balance} />
           </div>
         </div>

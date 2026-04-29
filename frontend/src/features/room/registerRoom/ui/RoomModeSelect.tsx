@@ -9,6 +9,7 @@ import {
 import { MONEY_OPTIONS, TIME_OPTIONS } from "../config"
 import { formatTime } from "@/shared/lib/formatTime"
 import type { RoomMode } from "../../../../entities/room/model/types"
+import { Clock } from "lucide-react"
 
 type ModeSelectProps = {
   mode: RoomMode
@@ -51,7 +52,9 @@ export default function RoomModeSelect({ mode, onChange }: ModeSelectProps) {
           <SelectValue />
         </SelectTrigger>
         <SelectContent className="min-w-0">
-          <SelectItem value="TIME">시간 모드</SelectItem>
+          <SelectItem value="TIME">
+            <Clock className="text-primary" /> 시간 모드
+          </SelectItem>
           {/* <SelectItem target="MONEY">목표 금액</SelectItem> */}
         </SelectContent>
       </Select>

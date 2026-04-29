@@ -80,25 +80,21 @@ export default function TapToEarnButton(props: {
   }
 
   return (
-    <section className="flex flex-col gap-3">
-      <div>시드 벌기</div>
-
-      <Button
-        className="w-full"
-        onClick={handleClick}
-        disabled={state.charge <= 0 || isPending || disable}
-      >
-        <div className="flex flex-row items-center gap-2">
-          <span>
-            클릭 당 {REWARD_PER_CLICK}원 ({state.charge}/{MAX})
-          </span>
-          <span className="text-xs text-muted">
-            {state.nextChargeSec != null
-              ? `${formatTimeToMS(state.nextChargeSec)}`
-              : ""}
-          </span>
-        </div>
-      </Button>
-    </section>
+    <Button
+      className="w-full"
+      onClick={handleClick}
+      disabled={state.charge <= 0 || isPending || disable}
+    >
+      <div className="flex flex-row items-center gap-2">
+        <span>
+          클릭 당 {REWARD_PER_CLICK}원 ({state.charge}/{MAX})
+        </span>
+        <span className="text-xs text-muted">
+          {state.nextChargeSec != null
+            ? `${formatTimeToMS(state.nextChargeSec)}`
+            : ""}
+        </span>
+      </div>
+    </Button>
   )
 }

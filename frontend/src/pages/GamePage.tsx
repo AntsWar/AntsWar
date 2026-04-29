@@ -37,10 +37,10 @@ export default function GamePage() {
     )
   }, [mutate])
   return (
-    <div>
+    <>
       <JoinDialog roomId={roomId} open={!join} apiCode={apiCode} />
 
       {room && game && <GameView room={room} game={game} isHost={isHost} />}
-    </div>
+    </>
   )
 }

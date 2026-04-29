@@ -13,15 +13,8 @@ import {
   type TradeQuantity,
 } from "@/entities/purchase"
 import MarketTable from "./MarketTable"
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldTitle,
-} from "@/shared/ui/field"
-import { Money } from "@/shared/model/Money"
 
-export default function MarketSection(props: { purchases: Array<Purchase> }) {
+export default function MarketInfo(props: { purchases: Array<Purchase> }) {
   const { purchases } = props
   const [selectedType, setSelectedType] = useState<PurchaseType>("STOCK")
   const [selectedQuantity, setSelectedQuantity] = useState<TradeQuantity>(1)
@@ -35,28 +28,22 @@ export default function MarketSection(props: { purchases: Array<Purchase> }) {
   )
 
   return (
-    <Field>
-      <FieldTitle className="text-lg font-semibold">시장</FieldTitle>
-      <FieldDescription>
-        가격이 <Money money={{ amount: 100 }} /> 아래로 떨어지면 상폐됩니다.
-      </FieldDescription>
-      <FieldContent>
-        <div className="flex flex-row justify-between">
-          <PurchaseTypeTabs
-            value={selectedType}
-            onValueChange={setSelectedType}
-          />
-          <QuantitySelect
-            value={selectedQuantity}
-            onValueChange={setSelectedQuantity}
-          />
-        </div>
-        <MarketTable
-          purchases={filteredInstruments}
-          quantity={selectedQuantity}
+    <>
+      <div className="flex flex-row justify-between">
+        <PurchaseTypeTabs
+          value={selectedType}
+          onValueChange={setSelectedType}
         />
-      </FieldContent>
-    </Field>
+        <QuantitySelect
+          value={selectedQuantity}
+          onValueChange={setSelectedQuantity}
+        />
+      </div>
+      <MarketTable
+        purchases={filteredInstruments}
+        quantity={selectedQuantity}
+      />
+    </>
   )
 }
 
@@ -105,8 +92,8 @@ function PurchaseTypeTabs(props: {
       onValueChange={(value) => onValueChange(value as PurchaseType)}
     >
       <TabsList>
-        <TabsTrigger value={"STOCK"}>주식보기</TabsTrigger>
-        <TabsTrigger value={"CRYPTO"}>코인보기</TabsTrigger>
+        <TabsTrigger value={"STOCK"}>주식</TabsTrigger>
+        <TabsTrigger value={"CRYPTO"}>코인</TabsTrigger>
       </TabsList>
     </Tabs>
   )
