@@ -12,8 +12,10 @@ import { useParams } from "react-router"
 import type { Purchase, TradeQuantity } from "@/entities/purchase"
 import { type OrderRequest } from "../api/order"
 import { useOrderMutation } from "../api/useOrderMutation"
-import { useMeQuery } from "@/features/getMe"
+import { type Me } from "@/features/getMe"
 import { toast } from "sonner"
+import { useQueryClient } from "@tanstack/react-query"
+import { qk } from "@/shared/quries/keys"
 
 export default function MarketTable(props: {
   purchases: Array<Purchase>
@@ -62,14 +64,14 @@ function PurchaseRow(props: {
 }) {
   const { purchase, gameId, quantity } = props
   const { mutate, isPending } = useOrderMutation(gameId)
-
-  // 같은 feature라 원래 안됨. 고칠 필요 있음
-  const { data: me } = useMeQuery(gameId)
+  const queryClient = useQueryClient()
 
   const submitOrder = (
     orderType: OrderRequest["orderType"],
     positionType: OrderRequest["positionType"]
   ) => {
+    const me = queryClient.getQueryData<Me>(qk.getMe(gameId))
+
     let qty = 0
     if (orderType === "BUY") {
       qty =
