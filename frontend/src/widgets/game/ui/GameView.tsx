@@ -6,7 +6,7 @@ import { Money } from "@/shared/model/Money"
 import { qk } from "@/shared/quries/keys"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatTimeToHMS } from "@/shared/lib/formatTime"
-import { Banknote, BriefcaseBusiness, Clock, Gift, Users } from "lucide-react"
+import { Banknote, BriefcaseBusiness, Clock, Gift } from "lucide-react"
 import { RoomInfo, type Room } from "@/entities/room"
 import { TapToEarnButton } from "@/features/earn/earnByClick"
 import { toast } from "sonner"
@@ -111,9 +111,6 @@ export default function GameView(props: {
           <RoomInfo name={room.name} mode={room.mode} />
         </Field>
         <Field className="rounded-xl border bg-popover p-4">
-          <FieldTitle className="text-xl font-semibold">
-            <Users className="text-primary" /> 참가자
-          </FieldTitle>
           <FieldContent>
             <PlayerTable players={players} />
           </FieldContent>

@@ -1,10 +1,5 @@
 import { Button } from "@/shared/ui/button"
-import {
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/shared/ui/dialog"
+import { DialogFooter, DialogHeader, DialogTitle } from "@/shared/ui/dialog"
 import { useNavigate } from "react-router"
 
 export default function BlockForm(props: { apiCode: string }) {
@@ -30,9 +25,9 @@ export default function BlockForm(props: { apiCode: string }) {
     <>
       <DialogHeader>
         <DialogTitle>입장 불가</DialogTitle>
-        <DialogDescription>{getErrorMessage(apiCode)}</DialogDescription>
       </DialogHeader>
-      <DialogFooter className="py-3">
+      {getErrorMessage(apiCode)}
+      <DialogFooter>
         <Button variant={"outline"} onClick={() => navigate("/")}>
           돌아가기
         </Button>

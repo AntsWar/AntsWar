@@ -3,6 +3,7 @@ import { Button } from "@/shared/ui/button"
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog"
@@ -28,9 +29,11 @@ export default function FinishedOverlay(props: {
         </DialogHeader>
         <PlayerTable players={sortedPlayers ?? []} />
 
-        <Button variant={"outline"} onClick={() => navigate("/")}>
-          나가기
-        </Button>
+        <DialogFooter>
+          <Button variant={"outline"} onClick={() => navigate("/")}>
+            나가기
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
