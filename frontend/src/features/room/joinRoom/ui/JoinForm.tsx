@@ -8,18 +8,14 @@ import {
 import { Input } from "@/shared/ui/input"
 import { useState } from "react"
 import { useNavigate } from "react-router"
-import { useJoinRoomMutation } from "../api/useJoinRoomMutation"
 
-export default function JoinForm(props: { roomId: string; apiCode: string }) {
-  const { apiCode, roomId } = props
+export default function JoinForm(props: {
+  onJoin: (password: string) => void
+  apiCode: string
+}) {
+  const { apiCode, onJoin } = props
   const [password, setPassword] = useState("")
   const navigate = useNavigate()
-
-  const { mutate, isPending } = useJoinRoomMutation(roomId)
-
-  const handleSubmit = () => {
-    mutate({ password: password.trim() ?? "" })
-  }
 
   const getErrorMessage = (apiCode: string) => {
     switch (apiCode) {
@@ -50,7 +46,10 @@ export default function JoinForm(props: { roomId: string; apiCode: string }) {
       </p>
 
       <DialogFooter className="py-3">
-        <Button disabled={!password.trim() || isPending} onClick={handleSubmit}>
+        <Button
+          disabled={!password.trim()}
+          onClick={() => onJoin(password.trim())}
+        >
           입장하기
         </Button>
         <Button variant={"outline"} onClick={() => navigate("/")}>

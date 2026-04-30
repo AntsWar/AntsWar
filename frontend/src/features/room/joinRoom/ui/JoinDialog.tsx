@@ -3,11 +3,11 @@ import JoinForm from "./JoinForm"
 import BlockForm from "./BlockForm"
 
 export default function JoinDialog(props: {
-  roomId: string
   open: boolean
+  onJoin: (password: string) => void
   apiCode: string
 }) {
-  const { roomId, open, apiCode } = props
+  const { open, onJoin, apiCode } = props
 
   return (
     <Dialog open={open}>
@@ -16,9 +16,9 @@ export default function JoinDialog(props: {
         onEscapeKeyDown={(e) => e.preventDefault()}
         showCloseButton={false}
       >
-        {apiCode === "GAME_INVALID_PASSWORD" ||
-        apiCode === "GAME_REQUIRE_PASSWORD" ? (
-          <JoinForm roomId={roomId} apiCode={apiCode} />
+        {apiCode === "ROOM_INVALID_PASSWORD" ||
+        apiCode === "ROOM_REQUIRE_PASSWORD" ? (
+          <JoinForm onJoin={onJoin} apiCode={apiCode} />
         ) : (
           <BlockForm apiCode={apiCode} />
         )}

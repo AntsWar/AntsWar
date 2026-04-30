@@ -1,6 +1,6 @@
 import { JoinDialog, useJoinRoomMutation } from "@/features/room/joinRoom"
 import { isApiError } from "@/shared/api/apiError"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { useParams } from "react-router"
 import { type Room } from "@/entities/room"
 import { GameView } from "@/widgets/game"
@@ -15,30 +15,39 @@ export default function GamePage() {
   const [isHost, setIsHost] = useState(false)
 
   const { mutate } = useJoinRoomMutation(roomId)
-  const [join, setJoin] = useState<boolean>(true)
+  const [joined, setJoined] = useState<boolean>(true)
   const [apiCode, setApiCode] = useState("")
 
+  const onJoin = useCallback(
+    (password: string) => {
+      mutate(
+        { password },
+        {
+          onSuccess: (data) => {
+            setJoined(true)
+            setApiCode("")
+            setRoom(data.room)
+            setGame(data.game)
+            setIsHost(data.isHost)
+          },
+          onError: (err) => {
+            if (!isApiError(err)) return
+            setApiCode(err.apiCode)
+            setJoined(false)
+          },
+        }
+      )
+    },
+    [mutate]
+  )
+
   useEffect(() => {
-    mutate(
-      { password: "" },
-      {
-        onSuccess: (data) => {
-          setJoin(true)
-          setRoom(data.room)
-          setGame(data.game)
-          setIsHost(data.isHost)
-        },
-        onError: (err) => {
-          if (!isApiError(err)) return
-          setApiCode(err.apiCode)
-          setJoin(false)
-        },
-      }
-    )
-  }, [mutate])
+    onJoin("")
+  }, [onJoin])
+
   return (
     <>
-      <JoinDialog roomId={roomId} open={!join} apiCode={apiCode} />
+      <JoinDialog open={!joined} onJoin={onJoin} apiCode={apiCode} />
 
       {room && game && <GameView room={room} game={game} isHost={isHost} />}
     </>
