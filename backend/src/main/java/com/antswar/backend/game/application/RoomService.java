@@ -10,9 +10,6 @@ import com.antswar.backend.game.application.port.out.NewsGenerator;
 import com.antswar.backend.game.application.port.out.RoomRepository;
 import com.antswar.backend.game.application.port.in.room.request.JoinRoomCommand;
 import com.antswar.backend.game.application.port.in.room.request.RegisterRoomCommand;
-import com.antswar.backend.game.application.port.out.request.RoomEvent;
-import com.antswar.backend.game.application.port.out.RoomEventPublisher;
-import com.antswar.backend.game.application.port.out.request.RoomEventType;
 import com.antswar.backend.game.domain.event.GameDomainEvent;
 import com.antswar.backend.game.domain.event.GameStartedEvent;
 import com.antswar.backend.game.domain.player.Player;
@@ -34,9 +31,8 @@ import static org.springframework.util.StringUtils.hasText;
 @Transactional
 @RequiredArgsConstructor
 @Service
-public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, ReadyGame {
+public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, ReadyGame, LeaveRoom {
     private final RoomRepository repository;
-    private final RoomEventPublisher roomEventPublisher;
     private final NewsGenerator newsGenerator;
     private final Clock clock;
 
@@ -61,7 +57,6 @@ public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, ReadyGam
         Room room = repository.findByIdWithLock(command.roomId()).orElseThrow(() -> new GameException(ROOM_NOT_FOUND));
         Player player = new Player(command.playerId(), command.playerName());
         room.join(player, command.password());
-        roomEventPublisher.publish(room.getId(), new RoomEvent(RoomEventType.ROOM_UPDATED, GameInfo.of(room,clock.instant())));
         return new JoinRoomResult(RoomInfo.from(room), GameInfo.of(room, clock.instant()), room.isHost(command.playerId()));
     }
 
@@ -69,7 +64,6 @@ public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, ReadyGam
     public void ready(String roomId, String hostId) {
         Room room = repository.findById(roomId).orElseThrow(() -> new GameException(ROOM_NOT_FOUND));
         room.ready(hostId);
-        roomEventPublisher.publish(roomId, new RoomEvent(RoomEventType.GAME_READY, null));
     }
 
     public TickResult tick(String roomId, Instant now){
@@ -87,5 +81,11 @@ public class RoomService implements RegisterRoom, JoinRoom, SearchRoom, ReadyGam
         }
 
         return new TickResult(GameInfo.of(room, now), events);
+    }
+
+    @Override
+    public void leave(String roomId, String playerId) {
+        Room room = repository.findById(roomId).orElseThrow(() -> new GameException(ROOM_NOT_FOUND));
+        room.leave(playerId);
     }
 }

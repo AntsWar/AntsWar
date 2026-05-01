@@ -28,6 +28,7 @@ public class Room {
     @Column(nullable = false)
     private String hostId;
 
+    @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "room", cascade = CascadeType.PERSIST)
     private final Set<Player> players = new HashSet<>();
     private int capacity;
@@ -60,15 +61,23 @@ public class Room {
 
     public void join(Player player, String password){
         if(this.getStatus() == RoomStatus.FINISHED) throw new GameException(GAME_FINISHED);
-        if (hasPlayer(player)) return;
+        if (hasPlayer(player)) {
+            Player existingPlayer = findPlayer(player.getPlayerId());
+            existingPlayer.reJoin();
+            return;
+        }
         if (this.getStatus() != RoomStatus.WAITING) throw new GameException(GAME_NOT_WAITING);
         if (hasPassword()){
             if (!hasText(password)) throw new GameException(ROOM_REQUIRE_PASSWORD);
             if (!this.password.equals(password))throw new GameException(ROOM_INVALID_PASSWORD);
         }
-        if(this.players.size() >= capacity) throw new GameException(ROOM_FULL);
+        if(this.getPlayers().size() >= capacity) throw new GameException(ROOM_FULL);
         player.join(this);
         this.players.add(player);
+    }
+
+    public List<Player> getPlayers(){
+        return players.stream().filter(p -> !p.isDeActive()).toList();
     }
 
     public boolean hasPlayer(Player player) {
@@ -101,5 +110,16 @@ public class Room {
     public RoomStatus getStatus() {
         if (game == null) return  RoomStatus.WAITING;
         return this.game.getStatus();
+    }
+
+    public void leave(String playerId) {
+        findPlayer(playerId).leave();
+    }
+
+    private Player findPlayer(String playerId) {
+        return players.stream()
+                .filter(player -> player.getPlayerId().equals(playerId))
+                .findFirst()
+                .orElseThrow();
     }
 }

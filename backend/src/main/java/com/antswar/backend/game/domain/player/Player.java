@@ -43,6 +43,8 @@ public class Player{
     @Embedded
     private Money money;
 
+    private boolean deActive;
+
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
     @Getter(AccessLevel.NONE)
     private final List<Position> positions = new ArrayList<>();
@@ -51,6 +53,7 @@ public class Player{
         this.playerId = Objects.requireNonNull(playerId);
         this.name = Objects.requireNonNull(name);
         this.money = Money.of(1000);
+        this.deActive = false;
         validate();
     }
 
@@ -110,6 +113,14 @@ public class Player{
         return positions.stream()
                 .filter(position -> !position.isEmpty())
                 .toList();
+    }
+
+    public void reJoin(){
+        if(deActive) this.deActive = false;
+    }
+
+    public void leave() {
+        if(!deActive) this.deActive = true;
     }
 
     @Override

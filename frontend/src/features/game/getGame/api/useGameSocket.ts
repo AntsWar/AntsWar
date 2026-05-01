@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from "react"
 import { Client, type IMessage } from "@stomp/stompjs"
+import { getGuestId } from "@/shared/lib/guestStorage"
 
 type GameSocketMessage = {
   type: string
@@ -49,7 +50,13 @@ export function useGameSocket({
 
       onConnect: () => {
         reconnectFailCountRef.current = 0
+        client.publish({
+          destination: `/app/room/${gameId}/bind`,
 
+          body: JSON.stringify({
+            playerId: getGuestId(),
+          }),
+        })
         client.subscribe(`/topic/game/${gameId}`, (message: IMessage) => {
           try {
             const parsed = JSON.parse(message.body) as GameSocketMessage

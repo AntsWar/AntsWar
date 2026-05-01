@@ -22,6 +22,8 @@ import {
   FieldTitle,
 } from "@/shared/ui/field"
 import MarketIcon from "@/assets/icon/market_icon.svg?react"
+import { Button } from "@/shared/ui/button"
+import { useNavigate } from "react-router"
 
 const NEWS_TOAST_MESSAGES: Record<string, string> = {
   SAMSON_GOOD_PERFORMANCE: "삼손전자 실적. 시장 기대치를 넘어",
@@ -71,6 +73,7 @@ export default function GameView(props: {
   const { data: me } = useMeQuery(room.id)
 
   const queryClient = useQueryClient()
+  const navigate = useNavigate()
 
   const gameStateOptions = useMemo(
     () => ({
@@ -107,8 +110,13 @@ export default function GameView(props: {
         balance={me?.player.balance ?? { amount: 0 }}
       />
       <FieldGroup>
-        <Field className="px-2">
+        <Field className="flex flex-row justify-between px-2">
           <RoomInfo name={room.name} mode={room.mode} />
+          {meta.status === "WAITING" && (
+            <Button className="w-fit!" onClick={() => navigate("/")}>
+              나가기
+            </Button>
+          )}
         </Field>
         <Field className="rounded-xl border bg-popover p-4">
           <FieldContent>
