@@ -1,10 +1,9 @@
 package com.antswar.backend.game.domain.player;
 
-import com.antswar.backend.game.domain.Game;
-import com.antswar.backend.game.domain.Money;
-import com.antswar.backend.game.domain.market.Purchase;
-import com.antswar.backend.game.domain.market.PurchaseMeta;
-import com.antswar.backend.game.domain.room.Room;
+import com.antswar.backend.game.domain.purchase.Purchase;
+import com.antswar.backend.game.domain.purchase.PurchaseMeta;
+import com.antswar.backend.game.domain.game.Game;
+import com.antswar.backend.game.domain.vo.Money;
 import com.antswar.backend.game.exception.GameException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -18,64 +17,44 @@ import static org.springframework.util.StringUtils.hasText;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Getter
-@Table(
-        uniqueConstraints = {
-                @UniqueConstraint(name = "uk_room_player", columnNames = {"room_id", "player_id"})
-        }
-)
 public class Player{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
 
-    @Column(nullable = false)
-    private String playerId;
-
+    @Getter
     private String name;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Room room;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Game game;
 
+    @Getter
     @Embedded
     private Money money;
 
     private boolean deActive;
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
-    @Getter(AccessLevel.NONE)
     private final List<Position> positions = new ArrayList<>();
 
-    public Player(String playerId, String name) {
-        this.playerId = Objects.requireNonNull(playerId);
-        this.name = Objects.requireNonNull(name);
+    public Player(String name, Game game) {
+        this.name = validateName(name);
+        this.game = Objects.requireNonNull(game);
         this.money = Money.of(1000);
-        this.deActive = false;
-        validate();
-    }
-
-    public void join(Room room){
-        this.room = Objects.requireNonNull(room);
-    }
-
-    public void joinGame(Game game) {
-        this.game = game;
         for (PurchaseMeta meta : PurchaseMeta.values()) {
             positions.add(new Position(this, meta, PositionType.LONG));
             positions.add(new Position(this, meta, PositionType.SHORT));
         }
     }
 
-    private void validate(){
+    private String validateName(String name){
         if (!hasText(name)) throw new IllegalArgumentException("이름 필수");
-        if (name.length() > 10) throw new IllegalArgumentException("이름 10자 이하");
-        if (playerId.isBlank()) throw new IllegalArgumentException("플레이어 아이디 필수");
+        return name;
     }
 
     public void buy(Purchase purchase, PositionType type, int quantity) {
+        if(purchase.isDelisted()) throw new GameException(PURCHASE_DELISTED);
         Position position = getPosition(purchase.getMeta(), type);
         Money totalPrice = purchase.calculateTotalPrice(quantity);
         if(money.compareTo(totalPrice) < 0) throw new GameException(PLAYER_NOT_ENOUGH_MONEY);
@@ -84,6 +63,7 @@ public class Player{
     }
 
     public void sell(Purchase purchase, PositionType type, int quantity) {
+        if(purchase.isDelisted()) throw new GameException(PURCHASE_DELISTED);
         Position position = getPosition(purchase.getMeta(), type);
         Money totalPrice = type == PositionType.LONG
                 ?purchase.calculateTotalPrice(quantity)
@@ -98,15 +78,15 @@ public class Player{
         });
     }
 
-    public Position getPosition(PurchaseMeta meta, PositionType type) {
+    public void earn(Money money){
+        this.money = this.money.add(money);
+    }
+
+    private Position getPosition(PurchaseMeta meta, PositionType type) {
         return positions.stream()
                 .filter(position -> position.match(meta, type))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("초기 포지션이 존재해야 함"));
-    }
-
-    public void earn(Money money){
-        this.money = this.money.add(money);
     }
 
     public List<Position> getPositions(){
@@ -115,23 +95,8 @@ public class Player{
                 .toList();
     }
 
-    public void reJoin(){
-        if(deActive) this.deActive = false;
-    }
-
-    public void leave() {
-        if(!deActive) this.deActive = true;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Player other)) return false;
-        return Objects.equals(playerId, other.playerId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(playerId);
+    public void leave(){
+        if(this.deActive) return;
+        this.deActive = true;
     }
 }

@@ -1,7 +1,7 @@
 package com.antswar.backend.game.domain.player;
 
-import com.antswar.backend.game.domain.Money;
-import com.antswar.backend.game.domain.market.PurchaseMeta;
+import com.antswar.backend.game.domain.purchase.PurchaseMeta;
+import com.antswar.backend.game.domain.vo.Money;
 import com.antswar.backend.game.exception.GameException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

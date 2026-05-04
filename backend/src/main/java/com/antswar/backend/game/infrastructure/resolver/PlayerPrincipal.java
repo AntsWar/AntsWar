@@ -1,3 +1,3 @@
 package com.antswar.backend.game.infrastructure.resolver;
 
-public record PlayerPrincipal(String id) { }
+public record PlayerPrincipal(long id) { }

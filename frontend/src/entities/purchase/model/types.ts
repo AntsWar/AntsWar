@@ -1,6 +1,7 @@
 import type { Money } from "@/shared/model/Money"
 
 export type Purchase = {
+  id: number
   meta: PurchaseMeta
   price: Money
 }

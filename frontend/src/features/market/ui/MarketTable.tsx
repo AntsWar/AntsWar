@@ -8,7 +8,6 @@ import {
   TableRow,
 } from "@/shared/ui/table"
 import { Money } from "@/shared/model/Money"
-import { useParams } from "react-router"
 import type { Purchase, TradeQuantity } from "@/entities/purchase"
 import { type OrderRequest } from "../api/order"
 import { useOrderMutation } from "../api/useOrderMutation"
@@ -21,7 +20,6 @@ export default function MarketTable(props: {
   purchases: Array<Purchase>
   quantity: TradeQuantity
 }) {
-  const { roomId } = useParams()
   const { purchases, quantity } = props
 
   return (
@@ -38,7 +36,6 @@ export default function MarketTable(props: {
             <PurchaseRow
               key={purchase.meta.code}
               purchase={purchase}
-              gameId={roomId!}
               quantity={quantity}
             />
           ))
@@ -57,20 +54,16 @@ export default function MarketTable(props: {
   )
 }
 
-function PurchaseRow(props: {
-  purchase: Purchase
-  gameId: string
-  quantity: TradeQuantity
-}) {
-  const { purchase, gameId, quantity } = props
-  const { mutate, isPending } = useOrderMutation(gameId)
+function PurchaseRow(props: { purchase: Purchase; quantity: TradeQuantity }) {
+  const { purchase, quantity } = props
+  const { mutate, isPending } = useOrderMutation()
   const queryClient = useQueryClient()
 
   const submitOrder = (
     orderType: OrderRequest["orderType"],
     positionType: OrderRequest["positionType"]
   ) => {
-    const me = queryClient.getQueryData<Me>(qk.getMe(gameId))
+    const me = queryClient.getQueryData<Me>(qk.getMe())
 
     let qty = 0
     if (orderType === "BUY") {
@@ -98,7 +91,7 @@ function PurchaseRow(props: {
 
     mutate({
       orderType,
-      meta: purchase.meta.code,
+      purchaseId: purchase.id,
       positionType,
       quantity: qty,
     } as OrderRequest)

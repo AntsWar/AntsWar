@@ -1,4 +1,5 @@
 package com.antswar.backend.game.api.request;
 
-public record JoinGameRequest(String playerName, String password) {
-}
+import jakarta.validation.constraints.NotBlank;
+
+public record JoinGameRequest(@NotBlank String playerName) { }

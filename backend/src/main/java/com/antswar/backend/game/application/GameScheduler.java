@@ -1,61 +1,50 @@
 package com.antswar.backend.game.application;
 
 import com.antswar.backend.game.application.dto.PurchaseMetaInfo;
-import com.antswar.backend.game.application.port.out.RoomRepository;
-import com.antswar.backend.game.application.port.out.RoomEventPublisher;
-import com.antswar.backend.game.application.port.out.request.RoomEvent;
-import com.antswar.backend.game.application.port.out.request.RoomEventType;
+import com.antswar.backend.game.application.dto.TickResult;
+import com.antswar.backend.game.application.port.out.GameEventPublisher;
+import com.antswar.backend.game.application.port.out.request.GameEvent;
+import com.antswar.backend.game.application.port.out.request.GameEventType;
 import com.antswar.backend.game.application.dto.GameInfo;
 import com.antswar.backend.game.domain.event.GameDomainEvent;
-import com.antswar.backend.game.domain.event.GameStartedEvent;
 import com.antswar.backend.game.domain.event.NewsEvent;
 import com.antswar.backend.game.domain.event.PurchaseDelistedEvent;
-import com.antswar.backend.game.domain.room.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
-import java.time.Instant;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class GameScheduler {
-    private final RoomRepository roomRepository;
-    private final RoomEventPublisher roomEventPublisher;
-    private final RoomService roomService;
+    private final GameEventPublisher roomGameEventPublisher;
+    private final GameService gameService;
     private final Clock clock;
 
-    @Scheduled(fixedRate = 5000)
+    @Scheduled(cron = "0/5 * * * * *")
     void tickGame() {
-        List<String> roomIds = roomRepository.findAllNotFinishedIds();
-        Instant now = clock.instant();
-        roomIds.forEach(roomId-> {
-            var result = roomService.tick(roomId, now);
-            publishGame(roomId, result.game());
-            result.events().forEach(event -> publishEvent(roomId, event));
-        });
-    }
-    void publishGame(String roomId, GameInfo game) {
-        roomEventPublisher.publish(roomId, new RoomEvent(RoomEventType.ROOM_UPDATED, game));
+        TickResult result = gameService.tick(clock.instant());
+        publishGame(result.game());
+        result.events().forEach(event->
+                publishEvent(result.game().id(), event)
+        );
     }
 
-    void publishEvent(String roomId, GameDomainEvent event) {
+    void publishGame(GameInfo game) {
+        roomGameEventPublisher.publish(game.id(), new GameEvent(GameEventType.GAME_UPDATED, game));
+    }
+
+    void publishEvent(long id, GameDomainEvent event) {
         if (event instanceof PurchaseDelistedEvent e) {
-            roomEventPublisher.publish(
-                    roomId,
-                    new RoomEvent(RoomEventType.PURCHASE_DELIST, PurchaseMetaInfo.from(e.meta()))
+            roomGameEventPublisher.publish(
+                    id,
+                    new GameEvent(GameEventType.PURCHASE_DELIST, PurchaseMetaInfo.from(e.meta()))
             );
         }else if(event instanceof NewsEvent e){
-            roomEventPublisher.publish(
-                    roomId,
-                    new RoomEvent(RoomEventType.NOTICE, e.meta().getCode())
-            );
-        }else if(event instanceof GameStartedEvent){
-            roomEventPublisher.publish(
-                    roomId,
-                    new RoomEvent(RoomEventType.GAME_STARTED, null)
+            roomGameEventPublisher.publish(
+                    id,
+                    new GameEvent(GameEventType.NOTICE, e.meta().getCode())
             );
         }
     }

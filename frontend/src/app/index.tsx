@@ -1,6 +1,5 @@
 import { ThemeProvider } from "./provider/theme-provider"
 import { createBrowserRouter, RouterProvider } from "react-router"
-import HomePage from "@/pages/HomePage"
 import RootLayout from "./layouts/RootLayout"
 import GamePage from "@/pages/GamePage"
 import { QueryProvider } from "./provider/queryProvider"
@@ -11,8 +10,8 @@ const router = createBrowserRouter([
     path: "/",
     element: <RootLayout />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "room/:roomId", element: <GamePage /> },
+      { index: true, element: <GamePage /> },
+      // { path: "room/:roomId", element: <GamePage /> },
     ],
   },
 ])

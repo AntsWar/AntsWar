@@ -5,25 +5,18 @@ import type { Player } from "@/entities/player"
 import type { Purchase } from "@/entities/purchase"
 
 type GameStateOptions = {
-  onGameReady?: () => void
-  onGameStart?: () => void
   onPurchaseDelist?: (payload: { name: string }) => void
   onNotice?: (code: string) => void
 }
 
-export function useGame(
-  roomId: string,
-  options: GameStateOptions = {},
-  initGame: Game
-) {
+export function useGame(initGame: Game, options: GameStateOptions = {}) {
+  const [id] = useState<number>(initGame.id)
   const [meta, setMeta] = useState<GameMeta>(initGame.meta)
   const [players, setPlayers] = useState<Array<Player>>(initGame.players)
   const [purchases, setPurchases] = useState<Array<Purchase>>(
     initGame.purchases
   )
-  const [serverTime, setServerTime] = useState<number>(
-    new Date(initGame.serverTime).getTime()
-  )
+  const [serverTime, setServerTime] = useState<string>(initGame.serverTime)
 
   const disconnectRef = useRef<() => void>(null)
   const optionsRef = useRef(options)
@@ -35,22 +28,12 @@ export function useGame(
   const handleSocketMessage = useCallback(
     (message: { type: string; payload: unknown }) => {
       switch (message.type) {
-        case "GAME_READY": {
-          optionsRef.current.onGameReady?.()
-          break
-        }
-        case "GAME_STARTED": {
-          optionsRef.current.onGameStart?.()
-          break
-        }
-        case "ROOM_UPDATED": {
+        case "GAME_UPDATED": {
           const game = message.payload as Game
           setMeta(game.meta)
           setPlayers(game.players)
           setPurchases(game.purchases)
-          setServerTime(new Date(game.serverTime).getTime())
-
-          if (game.meta.status === "FINISHED") disconnectRef.current?.()
+          setServerTime(game.serverTime)
           break
         }
         case "PURCHASE_DELIST": {
@@ -68,7 +51,7 @@ export function useGame(
   )
 
   const { disconnect } = useGameSocket({
-    gameId: roomId,
+    id: id,
     onMessage: handleSocketMessage,
   })
 

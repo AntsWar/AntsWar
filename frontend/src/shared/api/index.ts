@@ -1,16 +1,9 @@
 import axios from "axios"
-import { getGuestId } from "../lib/guestStorage"
 import type { ApiError, ErrorResponse } from "./apiError"
 
 export const api = axios.create({
   baseURL: "/api",
   withCredentials: true,
-})
-
-api.interceptors.request.use((config) => {
-  config.headers["GUEST_ID"] = getGuestId()
-
-  return config
 })
 
 api.interceptors.response.use(

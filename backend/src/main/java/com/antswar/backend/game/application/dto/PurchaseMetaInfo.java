@@ -1,7 +1,7 @@
 package com.antswar.backend.game.application.dto;
 
-import com.antswar.backend.game.domain.market.PurchaseMeta;
-import com.antswar.backend.game.domain.market.PurchaseType;
+import com.antswar.backend.game.domain.purchase.PurchaseMeta;
+import com.antswar.backend.game.domain.purchase.PurchaseType;
 
 public record PurchaseMetaInfo(String code, String name, PurchaseType type){
     public static PurchaseMetaInfo from(PurchaseMeta meta){

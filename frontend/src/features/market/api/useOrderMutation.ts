@@ -3,13 +3,13 @@ import { useMutation } from "@tanstack/react-query"
 import { order, type OrderRequest } from "./order"
 import { queryClient } from "@/shared/quries/queryClient"
 
-export function useOrderMutation(gameId: string) {
+export function useOrderMutation() {
   return useMutation({
-    mutationKey: qk.order(gameId),
-    mutationFn: (request: OrderRequest) => order(gameId, request),
+    mutationKey: qk.order(),
+    mutationFn: (request: OrderRequest) => order(request),
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: qk.getMe(gameId),
+        queryKey: qk.getMe(),
       })
     },
   })

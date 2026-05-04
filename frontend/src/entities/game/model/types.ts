@@ -2,6 +2,7 @@ import type { Player } from "@/entities/player/@x/game"
 import type { Purchase } from "@/entities/purchase/@x/game"
 
 export type Game = Readonly<{
+  id: number
   meta: GameMeta
   players: Array<Player>
   purchases: Array<Purchase>
@@ -9,8 +10,6 @@ export type Game = Readonly<{
 }>
 
 export type GameMeta = {
-  status: GameStatus
   startedAt: string
+  endedAt: string
 }
-
-export type GameStatus = "WAITING" | "READY" | "RUNNING" | "FINISHED"

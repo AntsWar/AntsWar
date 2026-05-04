@@ -1,6 +1,6 @@
 package com.antswar.backend.config;
 
-import com.antswar.backend.game.infrastructure.resolver.GuestArgumentResolver;
+import com.antswar.backend.game.infrastructure.resolver.PlayerArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -12,10 +12,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final GuestArgumentResolver guestArgumentResolver;
+    private final PlayerArgumentResolver playerArgumentResolver;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(guestArgumentResolver);
+        resolvers.add(playerArgumentResolver);
     }
 }

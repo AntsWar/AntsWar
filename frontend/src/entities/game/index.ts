@@ -1,1 +1,1 @@
-export type { Game, GameMeta, GameStatus } from "./model/types"
+export type { Game, GameMeta } from "./model/types"

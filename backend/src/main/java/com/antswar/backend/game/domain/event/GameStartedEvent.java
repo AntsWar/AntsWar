@@ -1,4 +1,4 @@
 package com.antswar.backend.game.domain.event;
 
-public class GameStartedEvent implements GameDomainEvent{
+public record GameStartedEvent() implements GameDomainEvent {
 }

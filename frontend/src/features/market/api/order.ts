@@ -2,13 +2,13 @@ import { api } from "@/shared/api"
 import { API_PATH } from "@/shared/api/path"
 import type { PositionType } from "@/entities/position"
 
-export async function order(gameId: string, request: OrderRequest) {
-  await api.post(`${API_PATH.GAME(gameId)}/order`, request)
+export async function order(request: OrderRequest) {
+  await api.post(`${API_PATH.GAME}/order`, request)
 }
 
 export type OrderRequest = {
   orderType: OrderType
-  meta: string
+  purchaseId: number
   positionType: PositionType
   quantity: number
 }

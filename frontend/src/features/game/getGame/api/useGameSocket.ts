@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef } from "react"
 import { Client, type IMessage } from "@stomp/stompjs"
-import { getGuestId } from "@/shared/lib/guestStorage"
 
 type GameSocketMessage = {
   type: string
@@ -11,10 +10,10 @@ const RECONNECT_DELAY_MS = 5000
 const CONNECTION_TIMEOUT_MS = 4000
 
 export function useGameSocket({
-  gameId,
+  id,
   onMessage,
 }: {
-  gameId: string
+  id: number
   onMessage: (message: GameSocketMessage) => void
 }) {
   const clientRef = useRef<Client | null>(null)
@@ -38,8 +37,6 @@ export function useGameSocket({
   }, [])
 
   useEffect(() => {
-    if (!gameId) return
-
     reconnectFailCountRef.current = 0
     let closedByCleanup = false
 
@@ -50,14 +47,7 @@ export function useGameSocket({
 
       onConnect: () => {
         reconnectFailCountRef.current = 0
-        client.publish({
-          destination: `/app/room/${gameId}/bind`,
-
-          body: JSON.stringify({
-            playerId: getGuestId(),
-          }),
-        })
-        client.subscribe(`/topic/game/${gameId}`, (message: IMessage) => {
+        client.subscribe(`/topic/game/${id}`, (message: IMessage) => {
           try {
             const parsed = JSON.parse(message.body) as GameSocketMessage
             onMessageRef.current(parsed)
@@ -92,7 +82,7 @@ export function useGameSocket({
         clientRef.current = null
       }
     }
-  }, [gameId])
+  }, [id])
 
   return { disconnect }
 }

@@ -14,22 +14,18 @@ type ChargeState = {
   nextChargeSec: number | null
 }
 
-export default function TapToEarnButton(props: {
-  gameId: string
-  disable: boolean
-}) {
-  const { gameId, disable } = props
+export default function TapToEarnButton() {
   const [state, setState] = useState<ChargeState>({
     charge: MAX,
     nextChargeSec: null,
   })
 
   const { mutate, isPending } = useMutation({
-    mutationKey: qk.earn(gameId),
+    mutationKey: qk.earn(),
     mutationFn: earnByClick,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: qk.getMe(gameId),
+        queryKey: qk.getMe(),
       })
     },
   })
@@ -76,14 +72,14 @@ export default function TapToEarnButton(props: {
         nextChargeSec: prev.nextChargeSec ?? COOLDOWN,
       }
     })
-    mutate(gameId)
+    mutate()
   }
 
   return (
     <Button
       className="w-full"
       onClick={handleClick}
-      disabled={state.charge <= 0 || isPending || disable}
+      disabled={state.charge <= 0 || isPending}
     >
       <div className="flex flex-row items-center gap-2">
         <span>

@@ -1,5 +1,4 @@
 import { PlayerTable } from "@/entities/player"
-import { StartGameButton, StartGameOverlay } from "@/features/game/startGame"
 import { MarketInfo } from "@/features/market"
 import { PortfolioInfo, useMeQuery } from "@/features/getMe"
 import { Money } from "@/shared/model/Money"
@@ -7,13 +6,11 @@ import { qk } from "@/shared/quries/keys"
 import { useQueryClient } from "@tanstack/react-query"
 import { formatTimeToHMS } from "@/shared/lib/formatTime"
 import { Banknote, BriefcaseBusiness, Clock, Gift } from "lucide-react"
-import { RoomInfo, type Room } from "@/entities/room"
 import { TapToEarnButton } from "@/features/earn/earnByClick"
 import { toast } from "sonner"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useGame } from "@/features/game/getGame"
 import type { Game, GameMeta } from "@/entities/game"
-import { FinishedOverlay } from "@/features/game/finishedGame"
 import {
   Field,
   FieldContent,
@@ -22,8 +19,6 @@ import {
   FieldTitle,
 } from "@/shared/ui/field"
 import MarketIcon from "@/assets/icon/market_icon.svg?react"
-import { Button } from "@/shared/ui/button"
-import { useNavigate } from "react-router"
 
 const NEWS_TOAST_MESSAGES: Record<string, string> = {
   SAMSON_GOOD_PERFORMANCE: "삼손전자 실적. 시장 기대치를 넘어",
@@ -63,25 +58,17 @@ const NEWS_TOAST_MESSAGES: Record<string, string> = {
   COINS_ARE_NOT_FUTURE: "코인. 정말 미래가 맞나?",
 }
 
-export default function GameView(props: {
-  room: Room
-  game: Game
-  isHost: boolean
-}) {
-  const { room, game, isHost } = props
-  const [isStarting, setIsStarting] = useState<boolean>(false)
-  const { data: me } = useMeQuery(room.id)
+export default function GameView(props: { game: Game }) {
+  const { game } = props
+  const { data: me } = useMeQuery()
 
   const queryClient = useQueryClient()
-  const navigate = useNavigate()
 
   const gameStateOptions = useMemo(
     () => ({
-      onGameReady: () => setIsStarting(true),
-      onGameStart: () => setIsStarting(false),
       onPurchaseDelist: ({ name }: { name: string }) => {
         toast.info(`${name}(이)가 상폐되었습니다.`)
-        queryClient.invalidateQueries({ queryKey: qk.getMe(room.id) })
+        queryClient.invalidateQueries({ queryKey: qk.getMe() })
       },
       onNotice: (code: string) => {
         const message = NEWS_TOAST_MESSAGES[code] ?? code
@@ -89,35 +76,22 @@ export default function GameView(props: {
         toast.info(message)
       },
     }),
-    [queryClient, room.id]
+    [queryClient]
   )
 
   const { meta, players, purchases, serverTime } = useGame(
-    room.id,
-    gameStateOptions,
-    game
+    game,
+    gameStateOptions
   )
 
   return (
     <>
-      <StartGameOverlay open={isStarting} />
-      <FinishedOverlay open={meta.status === "FINISHED"} players={players} />
       <Header
-        room={room}
-        isHost={isHost}
         meta={meta}
         serverTime={serverTime}
         balance={me?.player.balance ?? { amount: 0 }}
       />
       <FieldGroup>
-        <Field className="flex flex-row justify-between px-2">
-          <RoomInfo name={room.name} mode={room.mode} />
-          {meta.status === "WAITING" && (
-            <Button className="w-fit!" onClick={() => navigate("/")}>
-              나가기
-            </Button>
-          )}
-        </Field>
         <Field className="rounded-xl border bg-popover p-4">
           <FieldContent>
             <PlayerTable players={players} />
@@ -156,73 +130,56 @@ export default function GameView(props: {
             돈이 모자라면 여기서 버실 수 있습니다.
           </FieldDescription>
           <FieldContent>
-            <TapToEarnButton
-              gameId={room.id}
-              disable={meta.status !== "RUNNING"}
-            />
+            <TapToEarnButton />
           </FieldContent>
         </Field>
       </FieldGroup>
     </>
   )
 }
+function Header(props: { meta: GameMeta; serverTime: string; balance: Money }) {
+  const { meta, serverTime, balance } = props
+  const [remainingSeconds, setRemainingSeconds] = useState<number>(0)
 
-function Header(props: {
-  room: Room
-  isHost: boolean
-  meta: GameMeta
-  serverTime: number
-  balance: Money
-}) {
-  const { room, isHost, meta, serverTime, balance } = props
-  const [elapsed, setElapsed] = useState<number>(0)
+  const offsetRef = useRef(0)
+  const endedAtRef = useRef(new Date(meta.endedAt).getTime())
 
   useEffect(() => {
-    if (meta.status !== "RUNNING") return
+    offsetRef.current = new Date(serverTime).getTime() - Date.now()
+  }, [serverTime])
 
-    const offset = serverTime - Date.now()
-    const startedAt = new Date(meta.startedAt).getTime()
+  useEffect(() => {
+    const update = () => {
+      const expectedServerTime = Date.now() + offsetRef.current
 
-    const updateElapsed = () => {
-      const expectedServerTime = Date.now() + offset
-      const nextElapsed = Math.max(
+      const next = Math.max(
         0,
-        Math.floor((expectedServerTime - startedAt) / 1000)
+        Math.floor((endedAtRef.current - expectedServerTime) / 1000)
       )
 
-      setElapsed(nextElapsed)
+      setRemainingSeconds((prev) => (prev === next ? prev : next))
     }
 
-    updateElapsed()
+    update()
 
-    const timer = window.setInterval(updateElapsed, 250)
+    const timer = window.setInterval(update, 500)
 
     return () => window.clearInterval(timer)
-  }, [meta.startedAt, meta.status, serverTime])
+  }, [])
 
   return (
     <div className="sticky top-0 z-10 bg-background py-2">
-      <div className="flex flex-col gap-2">
-        <div>
-          {isHost && meta.status === "WAITING" && (
-            <StartGameButton className="w-full self-center" gameId={room.id} />
-          )}
+      <div className="flex flex-row items-start justify-between">
+        <div className="flex flex-row items-center gap-2 rounded-xl">
+          <Clock className="size-5 text-primary" />
+          <div className="text-base text-muted-foreground">
+            {formatTimeToHMS(remainingSeconds)}
+          </div>
         </div>
-        <div className="flex flex-row items-start justify-between">
-          <div className="flex flex-row items-center gap-2 rounded-xl">
-            <Clock className="size-5 text-primary" />
-            {formatTimeToHMS(meta.status === "RUNNING" ? elapsed : 0)}
-            {room.mode.type === "TIME" && meta.status === "RUNNING" && (
-              <div className="text-base text-muted-foreground">
-                (남은시간 : {formatTimeToHMS(room.mode.target - elapsed)})
-              </div>
-            )}
-          </div>
 
-          <div className="flex items-center gap-2">
-            <Banknote className="text-primary" />
-            <Money money={balance} />
-          </div>
+        <div className="flex items-center gap-2">
+          <Banknote className="text-primary" />
+          <Money money={balance} />
         </div>
       </div>
     </div>

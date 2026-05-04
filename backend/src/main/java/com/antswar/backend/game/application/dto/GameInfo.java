@@ -1,27 +1,16 @@
 package com.antswar.backend.game.application.dto;
 
-import com.antswar.backend.game.domain.room.Room;
-import com.antswar.backend.game.domain.room.RoomStatus;
+import com.antswar.backend.game.domain.game.Game;
 
 import java.time.Instant;
 import java.util.List;
 
-public record GameInfo(GameMeta meta, List<PlayerInfo> players, List<PurchaseInfo> purchases, Instant serverTime){
-    public record GameMeta(RoomStatus status, Instant startedAt){ }
+public record GameInfo(long id, GameMeta meta, List<PurchaseInfo> purchases, List<PlayerInfo> players, Instant serverTime){
+    public record GameMeta(Instant startedAt, Instant endedAt){ }
 
-    public static GameInfo of(Room room, Instant now){
-        List<PlayerInfo> players = room.getPlayers().stream()
-                .map(PlayerInfo::from).toList();
+    public static GameInfo of(Game game, List<PurchaseInfo> purchases, List<PlayerInfo> players, Instant now){
+        GameMeta meta = new GameMeta(game.getStartedAt(), game.getEndedAt());
 
-        RoomStatus status = room.getStatus();
-
-        GameMeta meta = new GameMeta(status, status == RoomStatus.WAITING ? null : room.getGame().getStartedAt());
-        List<PurchaseInfo> purchases = status == RoomStatus.WAITING
-                ? List.of()
-                : room.getGame().getPurchases().stream()
-                .map(PurchaseInfo::from)
-                .toList();
-
-        return new GameInfo(meta, players, purchases, now);
+        return new GameInfo(game.getId(), meta, purchases, players, now);
     }
 }

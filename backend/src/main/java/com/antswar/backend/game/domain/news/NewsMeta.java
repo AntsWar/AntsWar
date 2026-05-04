@@ -4,7 +4,7 @@ import lombok.Getter;
 
 import java.util.List;
 
-import static com.antswar.backend.game.domain.market.PurchaseMeta.*;
+import static com.antswar.backend.game.domain.purchase.PurchaseMeta.*;
 
 @Getter
 public enum NewsMeta {
