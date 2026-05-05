@@ -1,24 +1,13 @@
-import { PlayerTable } from "@/entities/player"
-import { MarketInfo } from "@/features/market"
-import { PortfolioInfo, useMeQuery } from "@/features/getMe"
-import { Money } from "@/shared/model/Money"
+import { useMeQuery } from "@/features/getMe"
 import { qk } from "@/shared/quries/keys"
 import { useQueryClient } from "@tanstack/react-query"
-import { formatTimeToHMS } from "@/shared/lib/formatTime"
-import { Banknote, BriefcaseBusiness, Clock, Gift } from "lucide-react"
-import { TapToEarnButton } from "@/features/earn/earnByClick"
 import { toast } from "sonner"
-import { useEffect, useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 import { useGame } from "@/features/game/getGame"
-import type { Game, GameMeta } from "@/entities/game"
-import {
-  Field,
-  FieldContent,
-  FieldDescription,
-  FieldGroup,
-  FieldTitle,
-} from "@/shared/ui/field"
-import MarketIcon from "@/assets/icon/market_icon.svg?react"
+import type { Game } from "@/entities/game"
+import GameSection from "./GameSection"
+import GameStatusBar from "./GameStatusBar"
+import { FinishedDialog } from "@/features/game/finishedGame"
 
 const NEWS_TOAST_MESSAGES: Record<string, string> = {
   SAMSON_GOOD_PERFORMANCE: "삼손전자 실적. 시장 기대치를 넘어",
@@ -61,6 +50,7 @@ const NEWS_TOAST_MESSAGES: Record<string, string> = {
 export default function GameView(props: { game: Game }) {
   const { game } = props
   const { data: me } = useMeQuery()
+  const [finished, setFinished] = useState(false)
 
   const queryClient = useQueryClient()
 
@@ -75,6 +65,9 @@ export default function GameView(props: { game: Game }) {
 
         toast.info(message)
       },
+      onFinished: () => {
+        setFinished(true)
+      },
     }),
     [queryClient]
   )
@@ -86,102 +79,17 @@ export default function GameView(props: { game: Game }) {
 
   return (
     <>
-      <Header
+      <FinishedDialog open={finished} players={players} />
+      <GameStatusBar
         meta={meta}
         serverTime={serverTime}
         balance={me?.player.balance ?? { amount: 0 }}
       />
-      <FieldGroup>
-        <Field className="rounded-xl border bg-popover p-4">
-          <FieldContent>
-            <PlayerTable players={players} />
-          </FieldContent>
-        </Field>
-        <Field className="w-full rounded-xl border bg-popover p-4">
-          <FieldTitle className="text-xl font-semibold">
-            <MarketIcon className="size-8 text-primary" />
-            시장
-          </FieldTitle>
-          <FieldDescription>
-            가격이 <Money money={{ amount: 100 }} /> 아래로 떨어지면 상폐됩니다.
-          </FieldDescription>
-          <FieldContent>
-            <MarketInfo purchases={purchases} />
-          </FieldContent>
-        </Field>
-        <Field className="rounded-xl border bg-popover p-4">
-          <FieldTitle className="text-xl font-semibold">
-            <BriefcaseBusiness className="size-6 text-primary" />
-            포트폴리오
-          </FieldTitle>
-          <FieldDescription>
-            상장폐지된 종목은 자동으로 청산됩니다.
-          </FieldDescription>
-          <FieldContent>
-            <PortfolioInfo positions={me?.positions ?? []} />
-          </FieldContent>
-        </Field>
-        <Field className="rounded-xl border bg-popover p-4">
-          <FieldTitle className="text-xl font-semibold">
-            <Gift className="size-6 text-primary" />
-            시드벌기
-          </FieldTitle>
-          <FieldDescription>
-            돈이 모자라면 여기서 버실 수 있습니다.
-          </FieldDescription>
-          <FieldContent>
-            <TapToEarnButton />
-          </FieldContent>
-        </Field>
-      </FieldGroup>
+      <GameSection
+        players={players}
+        purchases={purchases}
+        positions={me?.positions ?? []}
+      />
     </>
-  )
-}
-function Header(props: { meta: GameMeta; serverTime: string; balance: Money }) {
-  const { meta, serverTime, balance } = props
-  const [remainingSeconds, setRemainingSeconds] = useState<number>(0)
-
-  const offsetRef = useRef(0)
-  const endedAtRef = useRef(new Date(meta.endedAt).getTime())
-
-  useEffect(() => {
-    offsetRef.current = new Date(serverTime).getTime() - Date.now()
-  }, [serverTime])
-
-  useEffect(() => {
-    const update = () => {
-      const expectedServerTime = Date.now() + offsetRef.current
-
-      const next = Math.max(
-        0,
-        Math.floor((endedAtRef.current - expectedServerTime) / 1000)
-      )
-
-      setRemainingSeconds((prev) => (prev === next ? prev : next))
-    }
-
-    update()
-
-    const timer = window.setInterval(update, 500)
-
-    return () => window.clearInterval(timer)
-  }, [])
-
-  return (
-    <div className="sticky top-0 z-10 bg-background py-2">
-      <div className="flex flex-row items-start justify-between">
-        <div className="flex flex-row items-center gap-2 rounded-xl">
-          <Clock className="size-5 text-primary" />
-          <div className="text-base text-muted-foreground">
-            {formatTimeToHMS(remainingSeconds)}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Banknote className="text-primary" />
-          <Money money={balance} />
-        </div>
-      </div>
-    </div>
   )
 }

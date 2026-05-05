@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default:
           "border-2 [background-image:linear-gradient(var(--primary-gradient)),linear-gradient(var(--primary-gradient-border))] ![background-clip:padding-box,border-box] bg-origin-border text-primary-foreground [a]:hover:bg-primary/80",
         outline:
-          "border-border bg-background hover:bg-muted hover:text-primary aria-expanded:bg-muted aria-expanded:text-foreground dark:border-primary/40 dark:bg-input/30 dark:hover:bg-input/50",
+          "border-secondary/40 bg-input/30 hover:bg-input/50 hover:text-primary aria-expanded:bg-muted aria-expanded:text-foreground",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:

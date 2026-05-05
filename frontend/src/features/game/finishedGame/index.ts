@@ -1,1 +1,1 @@
-export { default as FinishedOverlay } from "./ui/FinishedOverlay"
+export { default as FinishedDialog } from "./ui/FinishedDialog"

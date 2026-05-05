@@ -85,7 +85,7 @@ export default function TapToEarnButton() {
         <span>
           클릭 당 {REWARD_PER_CLICK}원 ({state.charge}/{MAX})
         </span>
-        <span className="text-xs text-muted">
+        <span className="text-xs text-muted-foreground">
           {state.nextChargeSec != null
             ? `${formatTimeToMS(state.nextChargeSec)}`
             : ""}

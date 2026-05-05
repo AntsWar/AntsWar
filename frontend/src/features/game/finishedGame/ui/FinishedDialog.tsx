@@ -7,9 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog"
-import { useNavigate } from "react-router"
-
-export default function FinishedOverlay(props: {
+export default function FinishedDialog(props: {
   open: boolean
   players: Array<Player>
 }) {
@@ -17,8 +15,6 @@ export default function FinishedOverlay(props: {
   const sortedPlayers = [...players].sort(
     (a, b) => b.balance.amount - a.balance.amount
   )
-  const navigate = useNavigate()
-
   return (
     <Dialog open={open}>
       <DialogContent showCloseButton={false}>
@@ -30,7 +26,7 @@ export default function FinishedOverlay(props: {
         <PlayerTable players={sortedPlayers ?? []} />
 
         <DialogFooter>
-          <Button variant={"outline"} onClick={() => navigate("/")}>
+          <Button variant={"outline"} onClick={() => window.location.reload()}>
             나가기
           </Button>
         </DialogFooter>
