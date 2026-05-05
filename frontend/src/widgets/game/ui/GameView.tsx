@@ -65,6 +65,9 @@ export default function GameView(props: { game: Game }) {
 
         toast.info(message)
       },
+      onBeforeFinish: () => {
+        toast.info("장 마감 1분 전!!! 액시트 준비하세요")
+      },
       onFinished: () => {
         setFinished(true)
       },

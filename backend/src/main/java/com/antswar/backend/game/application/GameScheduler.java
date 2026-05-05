@@ -18,10 +18,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
-import java.time.temporal.ChronoUnit;
-import java.util.Date;
 
-import static com.antswar.backend.game.application.port.out.request.GameEventType.GAME_FINISHED;
+import static com.antswar.backend.game.application.port.out.request.GameEventType.*;
 import static com.antswar.backend.game.exception.GameErrorCode.GAME_NOT_FOUND;
 
 @Component
@@ -45,7 +43,10 @@ public class GameScheduler {
     @Scheduled(cron = "0 59 * * * *")
     public void scheduleEnd() {
         Game game = gameRepository.findCurrentGame(clock.instant()).orElseThrow(()-> new GameException(GAME_NOT_FOUND));
-        taskScheduler.schedule(() -> publishFinished(game.getId()), game.getEndedAt());
+        gameEventPublisher.publish(game.getId(), new GameEvent(BEFORE_FINISH, null));
+        taskScheduler.schedule(() ->
+                        gameEventPublisher.publish(game.getId(), new GameEvent(GAME_FINISHED, null))
+                , game.getEndedAt());
     }
 
     void publishGame(GameInfo game) {

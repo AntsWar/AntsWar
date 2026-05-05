@@ -7,6 +7,7 @@ import type { Purchase } from "@/entities/purchase"
 type GameStateOptions = {
   onPurchaseDelist?: (payload: { name: string }) => void
   onNotice?: (code: string) => void
+  onBeforeFinish?: () => void
   onFinished?: () => void
 }
 
@@ -45,6 +46,10 @@ export function useGame(initGame: Game, options: GameStateOptions = {}) {
         }
         case "NOTICE": {
           optionsRef.current.onNotice?.(message.payload as string)
+          break
+        }
+        case "BEFORE_FINISH": {
+          optionsRef.current.onBeforeFinish?.()
           break
         }
         case "GAME_FINISHED": {
