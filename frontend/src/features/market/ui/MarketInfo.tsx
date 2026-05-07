@@ -16,6 +16,7 @@ import MarketTable from "./MarketTable"
 
 export default function MarketInfo(props: { purchases: Array<Purchase> }) {
   const { purchases } = props
+
   const [selectedType, setSelectedType] = useState<PurchaseType>("STOCK")
   const [selectedQuantity, setSelectedQuantity] = useState<TradeQuantity>(1)
 

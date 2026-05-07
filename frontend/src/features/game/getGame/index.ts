@@ -1,1 +1,1 @@
-export { useGame } from "./api/useGame"
+export { GameSocketListener } from "./ui/GameSocketListener"

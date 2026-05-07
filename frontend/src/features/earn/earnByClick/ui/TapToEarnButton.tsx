@@ -1,10 +1,9 @@
 import { Button } from "@/shared/ui/button"
 import { useEffect, useState } from "react"
 import { formatTimeToMS } from "@/shared/lib/formatTime"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { qk } from "@/shared/quries/keys"
 import { earnByClick } from "../api/earnByClick"
-import { queryClient } from "@/shared/quries/queryClient"
 
 const MAX = 3
 const COOLDOWN = 10
@@ -15,6 +14,7 @@ type ChargeState = {
 }
 
 export default function TapToEarnButton() {
+  const queryClient = useQueryClient()
   const [state, setState] = useState<ChargeState>({
     charge: MAX,
     nextChargeSec: null,

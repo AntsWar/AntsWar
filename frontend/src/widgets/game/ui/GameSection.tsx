@@ -7,25 +7,22 @@ import {
   FieldTitle,
 } from "@/shared/ui/field"
 import { Money } from "@/shared/model/Money"
-import { PlayerTable, type Player } from "@/entities/player"
-import type { Position } from "@/entities/position"
-import type { Purchase } from "@/entities/purchase"
+import { PlayerTable } from "@/entities/player"
 import { TapToEarnButton } from "@/features/earn/earnByClick"
 import { MarketInfo } from "@/features/market"
-import { PortfolioInfo } from "@/features/getMe"
+import { PortfolioInfo, useMeQuery } from "@/features/getMe"
 import MarketIcon from "@/assets/icon/chart_icon.svg?react"
+import { useGame } from "@/entities/game"
 
-export default function GameSection(props: {
-  players: Array<Player>
-  purchases: Array<Purchase>
-  positions: Array<Position>
-}) {
-  const { players, purchases, positions } = props
+export default function GameSection() {
+  const { game } = useGame()
+  const { data: me } = useMeQuery()
+
   return (
     <FieldGroup>
       <Field className="rounded-xl border bg-popover p-4">
         <FieldContent>
-          <PlayerTable players={players} />
+          <PlayerTable players={game?.players ?? []} />
         </FieldContent>
       </Field>
       <Field className="w-full rounded-xl border bg-popover p-4">
@@ -37,7 +34,7 @@ export default function GameSection(props: {
           가격이 <Money money={{ amount: 100 }} /> 아래로 떨어지면 상폐됩니다.
         </FieldDescription>
         <FieldContent>
-          <MarketInfo purchases={purchases} />
+          <MarketInfo purchases={game?.purchases ?? []} />
         </FieldContent>
       </Field>
       <Field className="rounded-xl border bg-popover p-4">
@@ -49,7 +46,7 @@ export default function GameSection(props: {
           상장폐지된 종목은 자동으로 청산됩니다.
         </FieldDescription>
         <FieldContent>
-          <PortfolioInfo positions={positions} />
+          <PortfolioInfo positions={me?.positions ?? []} />
         </FieldContent>
       </Field>
       <Field className="rounded-xl border bg-popover p-4">

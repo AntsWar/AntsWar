@@ -11,6 +11,7 @@ import { Money } from "@/shared/model/Money"
 
 export default function PortfolioTable(props: { positions: Array<Position> }) {
   const { positions } = props
+
   return (
     <Table>
       <TableHeader>
@@ -48,6 +49,10 @@ export default function PortfolioTable(props: { positions: Array<Position> }) {
 function PositionRow({ position }: { position: Position }) {
   const instrumentType = position.meta.type === "STOCK" ? "주식" : "코인"
   const positionType = position.type === "LONG" ? "매수" : "공매도"
+
+  // const {game} = useGame()
+  // const purchases = game?.purchases
+  // const purchase = purchases?.filter()
 
   return (
     <TableRow>

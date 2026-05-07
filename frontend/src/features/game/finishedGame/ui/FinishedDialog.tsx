@@ -1,4 +1,5 @@
-import { PlayerTable, type Player } from "@/entities/player"
+import { useGame } from "@/entities/game"
+import { PlayerTable } from "@/entities/player"
 import { Button } from "@/shared/ui/button"
 import {
   Dialog,
@@ -7,16 +8,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog"
-export default function FinishedDialog(props: {
-  open: boolean
-  players: Array<Player>
-}) {
-  const { open, players } = props
+
+export default function FinishedDialog() {
+  const { game, finished } = useGame()
+  const players = game?.players ?? []
+
   const sortedPlayers = [...players].sort(
     (a, b) => b.balance.amount - a.balance.amount
   )
+
   return (
-    <Dialog open={open}>
+    <Dialog open={finished}>
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">

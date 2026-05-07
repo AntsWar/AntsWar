@@ -1,13 +1,71 @@
-import { useMeQuery } from "@/features/getMe"
-import { qk } from "@/shared/quries/keys"
-import { useQueryClient } from "@tanstack/react-query"
+import { useStompClient } from "@/shared/lib/stomp/StompProvider"
+import { useGame, type Game } from "@/entities/game"
+import { useEffect } from "react"
 import { toast } from "sonner"
-import { useMemo, useState } from "react"
-import { useGame } from "@/features/game/getGame"
-import type { Game } from "@/entities/game"
-import GameSection from "./GameSection"
-import GameStatusBar from "./GameStatusBar"
-import { FinishedDialog } from "@/features/game/finishedGame"
+import { useQueryClient } from "@tanstack/react-query"
+import { qk } from "@/shared/quries/keys"
+
+type GameSocketMessage = {
+  type: string
+  payload: unknown
+}
+
+export function GameSocketListener() {
+  const { connected, getClient } = useStompClient()
+  const { game, setGame, setFinished } = useGame()
+  const gameId = game?.id
+  const queryClient = useQueryClient()
+
+  useEffect(() => {
+    if (!gameId || !connected) return
+
+    const client = getClient()
+    if (!client) return
+
+    const sub = client.subscribe(`/topic/game/${gameId}`, (message) => {
+      try {
+        const { type, payload } = JSON.parse(message.body) as GameSocketMessage
+
+        switch (type) {
+          case "GAME_UPDATED":
+            setGame(payload as Game)
+            break
+
+          case "PURCHASE_DELIST": {
+            const { name } = payload as { name: string }
+            toast.info(`${name}(이)가 상폐되었습니다.`)
+            queryClient.invalidateQueries({
+              queryKey: qk.getMe(),
+            })
+            break
+          }
+
+          case "NOTICE": {
+            const code = payload as string
+            const message = NEWS_TOAST_MESSAGES[code] ?? code
+
+            toast.info(message)
+            break
+          }
+
+          case "BEFORE_FINISH":
+            toast.info("장 마감 1분 전!!! 액시트 준비하세요")
+            break
+
+          case "GAME_FINISHED":
+            setFinished(true)
+            break
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    })
+
+    return () => sub.unsubscribe()
+  }, [connected, gameId, getClient, queryClient, setFinished, setGame])
+
+  return null
+}
 
 const NEWS_TOAST_MESSAGES: Record<string, string> = {
   SAMSON_GOOD_PERFORMANCE: "삼손전자 실적. 시장 기대치를 넘어",
@@ -45,54 +103,4 @@ const NEWS_TOAST_MESSAGES: Record<string, string> = {
   DECREASE_INTEREST_RATE: "금리 인하",
   SEMICONDUCTOR_SUPPLY_CHAIN_DISRUPTIONS: "반도체 공급망 차질 우려",
   COINS_ARE_NOT_FUTURE: "코인. 정말 미래가 맞나?",
-}
-
-export default function GameView(props: { game: Game }) {
-  const { game } = props
-  const { data: me } = useMeQuery()
-  const [finished, setFinished] = useState(false)
-
-  const queryClient = useQueryClient()
-
-  const gameStateOptions = useMemo(
-    () => ({
-      onPurchaseDelist: ({ name }: { name: string }) => {
-        toast.info(`${name}(이)가 상폐되었습니다.`)
-        queryClient.invalidateQueries({ queryKey: qk.getMe() })
-      },
-      onNotice: (code: string) => {
-        const message = NEWS_TOAST_MESSAGES[code] ?? code
-
-        toast.info(message)
-      },
-      onBeforeFinish: () => {
-        toast.info("장 마감 1분 전!!! 액시트 준비하세요")
-      },
-      onFinished: () => {
-        setFinished(true)
-      },
-    }),
-    [queryClient]
-  )
-
-  const { meta, players, purchases, serverTime } = useGame(
-    game,
-    gameStateOptions
-  )
-
-  return (
-    <>
-      <FinishedDialog open={finished} players={players} />
-      <GameStatusBar
-        meta={meta}
-        serverTime={serverTime}
-        balance={me?.player.balance ?? { amount: 0 }}
-      />
-      <GameSection
-        players={players}
-        purchases={purchases}
-        positions={me?.positions ?? []}
-      />
-    </>
-  )
 }
