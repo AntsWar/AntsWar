@@ -30,7 +30,7 @@ export default function JoinDialog() {
     mutate(finalName, {
       onSuccess: async ({ game }) => {
         setGame(game)
-        setFinished(true)
+        setFinished(false)
 
         queryClient.invalidateQueries({
           queryKey: qk.getMe(),
