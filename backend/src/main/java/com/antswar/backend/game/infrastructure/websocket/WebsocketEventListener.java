@@ -11,8 +11,7 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class RoomEventListener {
-
+public class WebsocketEventListener {
     private final LeavePlayer leavePlayer;
 
     @EventListener

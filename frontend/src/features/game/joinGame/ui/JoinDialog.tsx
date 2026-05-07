@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog"
 import { useState } from "react"
 import { useJoinGameMutation } from "../api/useJoinGameMutation"
 import { useGame } from "@/entities/game"
-import { Coins, Shield, Swords, TrendingUp } from "lucide-react"
+import { MessageCircle, Shield, Swords, TrendingUp } from "lucide-react"
 import {
   InputGroup,
   InputGroupAddon,
@@ -93,11 +93,11 @@ function Footer() {
 
         <CarouselItem className="flex basis-1/3 flex-col items-center gap-1">
           <div className="flex items-center gap-2 text-lg font-bold text-secondary/80">
-            <Coins />
-            수익
+            <MessageCircle />
+            소통
           </div>
           <div className="text-center text-sm text-muted-foreground">
-            쟁취하라
+            정보를 공유해라
           </div>
         </CarouselItem>
 

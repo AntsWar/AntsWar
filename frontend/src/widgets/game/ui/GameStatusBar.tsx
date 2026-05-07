@@ -43,19 +43,17 @@ export default function GameStatusBar() {
   }, [endedAt])
 
   return (
-    <div className="sticky top-0 z-10 bg-background py-2">
-      <div className="flex flex-row items-start justify-between">
-        <div className="flex flex-row items-center gap-2 rounded-xl">
-          <Clock className="size-5 text-secondary" />
-          <div className="text-base text-muted-foreground">
-            {formatTimeToHMS(remainingSeconds)}
-          </div>
+    <div className="flex flex-row justify-between py-3">
+      <div className="flex flex-row items-center gap-2 rounded-xl">
+        <Clock className="size-5 text-secondary" />
+        <div className="text-base text-muted-foreground">
+          {formatTimeToHMS(remainingSeconds)}
         </div>
+      </div>
 
-        <div className="flex items-center gap-2">
-          <Banknote className="text-secondary" />
-          <Money money={me?.player.balance} />
-        </div>
+      <div className="flex items-center gap-2">
+        <Banknote className="text-secondary" />
+        <Money money={me?.player.balance} />
       </div>
     </div>
   )

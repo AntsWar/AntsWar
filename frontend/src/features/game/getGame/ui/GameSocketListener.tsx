@@ -10,10 +10,10 @@ type GameSocketMessage = {
   payload: unknown
 }
 
-export function GameSocketListener() {
+export function GameSocketListener(props: { gameId: number }) {
+  const { gameId } = props
   const { connected, getClient } = useStompClient()
-  const { game, setGame, setFinished } = useGame()
-  const gameId = game?.id
+  const { setGame, setFinished } = useGame()
   const queryClient = useQueryClient()
 
   useEffect(() => {

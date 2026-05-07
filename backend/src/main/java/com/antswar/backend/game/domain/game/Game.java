@@ -1,5 +1,6 @@
 package com.antswar.backend.game.domain.game;
 
+import com.antswar.backend.common.jpa.BaseEntity;
 import com.antswar.backend.game.domain.player.Player;
 import com.antswar.backend.game.domain.purchase.Purchase;
 import com.antswar.backend.game.domain.purchase.PurchaseMeta;
