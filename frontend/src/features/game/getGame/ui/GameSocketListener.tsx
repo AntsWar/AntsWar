@@ -41,10 +41,14 @@ export function GameSocketListener(props: { gameId: number }) {
           }
 
           case "NOTICE": {
-            const code = payload as string
-            const message = NEWS_TOAST_MESSAGES[code] ?? code
+            if (Math.random() < 0.3) {
+              const code = payload as string
 
-            toast.info(message)
+              const message = NEWS_TOAST_MESSAGES[code] ?? code
+
+              toast.info(message)
+            }
+
             break
           }
 
