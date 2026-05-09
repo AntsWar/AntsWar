@@ -18,7 +18,7 @@ export function ItemCard({ item }: { item: Item }) {
         toast.error(error.message)
       },
       onSuccess: () => {
-        toast.success(`${item.name} 구매 완료`)
+        toast.success(`${meta.name} 구매 완료`)
       },
     })
   }
