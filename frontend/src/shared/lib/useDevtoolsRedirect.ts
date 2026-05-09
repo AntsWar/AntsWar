@@ -2,6 +2,7 @@ import { useEffect } from "react"
 
 export function useDevtoolsRedirect() {
   useEffect(() => {
+    if (import.meta.env.DEV) return
     const isBlockedPage = window.location.pathname === "/blocked"
 
     const blockKeys = (e: KeyboardEvent) => {
