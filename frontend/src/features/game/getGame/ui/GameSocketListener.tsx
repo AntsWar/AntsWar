@@ -6,8 +6,8 @@ import { useQueryClient } from "@tanstack/react-query"
 import { qk } from "@/shared/quries/keys"
 import type { Purchase } from "@/entities/purchase"
 import type { Player } from "@/entities/player"
-import { NEWS_TOAST_MESSAGES } from "./newsMeta"
 import type { Me } from "@/features/getMe"
+import { NEWS_META } from "@/entities/news"
 
 type GameSocketMessage = {
   type: string
@@ -66,7 +66,7 @@ export function GameSocketListener(props: { gameId: number }) {
             if (Math.random() < noticeRate) {
               const code = payload as string
 
-              const message = NEWS_TOAST_MESSAGES[code] ?? code
+              const message = NEWS_META[code] ?? code
 
               toast.info(message)
             }

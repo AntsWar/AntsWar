@@ -1,10 +1,12 @@
 package com.antswar.backend.game.domain.news;
 
+import com.antswar.backend.game.exception.GameException;
 import lombok.Getter;
 
 import java.util.List;
 
 import static com.antswar.backend.game.domain.purchase.PurchaseMeta.*;
+import static com.antswar.backend.game.exception.GameErrorCode.INVALID_NEWS_CODE;
 
 @Getter
 public enum NewsMeta {
@@ -244,5 +246,13 @@ public enum NewsMeta {
     NewsMeta(String code, List<NewsEffect> effects) {
         this.code = code;
         this.effects = effects;
+    }
+
+    public static NewsMeta from(String code) {
+        try {
+            return NewsMeta.valueOf(code);
+        } catch (IllegalArgumentException e) {
+            throw new GameException(INVALID_NEWS_CODE);
+        }
     }
 }

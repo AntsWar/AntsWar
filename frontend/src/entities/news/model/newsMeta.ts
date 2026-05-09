@@ -1,4 +1,4 @@
-export const NEWS_TOAST_MESSAGES: Record<string, string> = {
+export const NEWS_META: Record<string, string> = {
   SAMSON_GOOD_PERFORMANCE: "삼손전자 실적. 시장 기대치를 넘어",
   SKY_HIGH_GOOD_PERFORMANCE: "SKY하이 호실적 발표",
   NVIDEO_GOOD_PERFORMANCE: "엔비디오 실적 크게 개선",

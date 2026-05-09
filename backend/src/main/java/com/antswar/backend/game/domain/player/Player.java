@@ -26,6 +26,7 @@ public class Player{
     @Getter
     private String name;
 
+    @Getter
     @ManyToOne(fetch = FetchType.LAZY)
     private Game game;
 
@@ -69,7 +70,10 @@ public class Player{
     public void buy(Item item) {
         validateEnoughMoney(item);
         pay(item.getPrice());
-        applyItemEffect(item);
+
+        if (item == Item.NEWS_RADAR) {
+            this.noticeRate = 1.0;
+        }
     }
 
     public void sell(Purchase purchase, PositionType type, int quantity) {
@@ -118,11 +122,5 @@ public class Player{
 
     private void pay(Money price) {
         this.money = this.money.subtract(price);
-    }
-
-    private void applyItemEffect(Item item) {
-        switch (item) {
-            case NEWS_RADAR -> this.noticeRate = 1.0;
-        }
     }
 }

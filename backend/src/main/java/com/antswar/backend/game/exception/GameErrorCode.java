@@ -23,5 +23,7 @@ public enum GameErrorCode implements ErrorCode {
 
     PURCHASE_NOT_FOUND,
     PURCHASE_DELISTED,
+
+    INVALID_NEWS_CODE
     ;
 }
