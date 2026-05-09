@@ -69,7 +69,7 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
         Player player = getPlayer(playerId);
         List<PositionInfo> positionInfos= player.getPositions().stream()
                 .map(PositionInfo::from).toList();
-        return new GetMeResult(PlayerInfo.from(player), positionInfos);
+        return new GetMeResult(PlayerInfo.from(player), positionInfos, player.getNoticeRate());
     }
 
     @Override
@@ -122,8 +122,8 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
         });
 
         return new TickResult(
-                GameInfo.of(
-                        game,
+                game.getId(),
+                GameMessage.of(
                         PurchaseInfo.from(purchases),
                         PlayerInfo.from(players),
                         now),

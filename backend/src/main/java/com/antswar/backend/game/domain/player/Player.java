@@ -33,6 +33,9 @@ public class Player{
     @Embedded
     private Money money;
 
+    @Getter
+    private double noticeRate;
+
     private boolean deActive;
 
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
@@ -41,7 +44,8 @@ public class Player{
     public Player(String name, Game game) {
         this.name = validateName(name);
         this.game = Objects.requireNonNull(game);
-        this.money = Money.of(1000);
+        this.money = Money.of(3000);
+        this.noticeRate = 0.3;
         for (PurchaseMeta meta : PurchaseMeta.values()) {
             positions.add(new Position(this, meta, PositionType.LONG));
             positions.add(new Position(this, meta, PositionType.SHORT));
@@ -59,7 +63,13 @@ public class Player{
         Money totalPrice = purchase.calculateTotalPrice(quantity);
         if(money.compareTo(totalPrice) < 0) throw new GameException(PLAYER_NOT_ENOUGH_MONEY);
         position.add(quantity, purchase.getPrice());
-        this.money = this.money.subtract(totalPrice);
+        pay(totalPrice);
+    }
+
+    public void buy(Item item) {
+        validateEnoughMoney(item);
+        pay(item.getPrice());
+        applyItemEffect(item);
     }
 
     public void sell(Purchase purchase, PositionType type, int quantity) {
@@ -98,5 +108,21 @@ public class Player{
     public void leave(){
         if(this.deActive) return;
         this.deActive = true;
+    }
+
+    private void validateEnoughMoney(Item item) {
+        if (this.money.compareTo(item.getPrice()) < 0) {
+            throw new GameException(PLAYER_NOT_ENOUGH_MONEY);
+        }
+    }
+
+    private void pay(Money price) {
+        this.money = this.money.subtract(price);
+    }
+
+    private void applyItemEffect(Item item) {
+        switch (item) {
+            case NEWS_RADAR -> this.noticeRate = 1.0;
+        }
     }
 }

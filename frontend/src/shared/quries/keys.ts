@@ -7,4 +7,5 @@ export const qk = {
   getMe: () => ["getMe"] as const,
   order: () => ["order"] as const,
   earn: () => ["earn"] as const,
+  buyItem: () => ["item"] as const,
 }

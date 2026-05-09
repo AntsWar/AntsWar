@@ -1,12 +1,12 @@
 package com.antswar.backend.game.application;
 
+import com.antswar.backend.game.application.dto.GameMessage;
 import com.antswar.backend.game.application.dto.PurchaseMetaInfo;
 import com.antswar.backend.game.application.dto.TickResult;
 import com.antswar.backend.game.application.port.out.GameEventPublisher;
 import com.antswar.backend.game.application.port.out.GameRepository;
 import com.antswar.backend.game.application.port.out.request.GameEvent;
 import com.antswar.backend.game.application.port.out.request.GameEventType;
-import com.antswar.backend.game.application.dto.GameInfo;
 import com.antswar.backend.game.domain.event.GameDomainEvent;
 import com.antswar.backend.game.domain.event.NewsEvent;
 import com.antswar.backend.game.domain.event.PurchaseDelistedEvent;
@@ -34,9 +34,9 @@ public class GameScheduler {
     @Scheduled(cron = "0/5 * * * * *")
     void tickGame() {
         TickResult result = gameService.tick(clock.instant());
-        publishGame(result.game());
+        publishGame(result.gameId(), result.game());
         result.events().forEach(event->
-                publishEvent(result.game().id(), event)
+                publishEvent(result.gameId(), event)
         );
     }
 
@@ -49,12 +49,8 @@ public class GameScheduler {
                 , game.getEndedAt());
     }
 
-    void publishGame(GameInfo game) {
-        gameEventPublisher.publish(game.id(), new GameEvent(GameEventType.GAME_UPDATED, game));
-    }
-
-    void publishFinished(long id){
-        gameEventPublisher.publish(id, new GameEvent(GAME_FINISHED, null));
+    void publishGame(long id, GameMessage game) {
+        gameEventPublisher.publish(id, new GameEvent(GameEventType.GAME_UPDATED, game));
     }
 
     void publishEvent(long id, GameDomainEvent event) {

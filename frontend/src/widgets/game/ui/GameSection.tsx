@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Gift } from "lucide-react"
+import { BriefcaseBusiness, Gift, Store } from "lucide-react"
 import {
   Field,
   FieldContent,
@@ -13,6 +13,7 @@ import { MarketInfo } from "@/features/market"
 import { PortfolioInfo, useMeQuery } from "@/features/getMe"
 import MarketIcon from "@/assets/icon/chart_icon.svg?react"
 import { useGame } from "@/entities/game"
+import { ItemShop } from "@/features/itemShop"
 
 export default function GameSection() {
   const { game } = useGame()
@@ -59,6 +60,16 @@ export default function GameSection() {
         </FieldDescription>
         <FieldContent>
           <TapToEarnButton />
+        </FieldContent>
+      </Field>
+      <Field className="rounded-xl border bg-popover p-4">
+        <FieldTitle className="text-xl font-semibold">
+          <Store className="size-6 text-primary" />
+          상점
+        </FieldTitle>
+        <FieldDescription>아이템을 살 수 있습니다.</FieldDescription>
+        <FieldContent>
+          <ItemShop items={game?.items ?? []} />
         </FieldContent>
       </Field>
     </FieldGroup>
