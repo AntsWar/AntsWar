@@ -32,6 +32,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.antswar.backend.game.exception.GameErrorCode.*;
 
@@ -42,6 +43,8 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
     private final PurchaseRepository purchaseRepository;
+
+    private final Random random = new Random();
 
     private final NewsBoard newsBoard;
     private final PurchaseRespawnBoard respawnBoard;
@@ -82,7 +85,7 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
     public JoinGameResult join(JoinGameCommand command) {
         Instant now = clock.instant();
         Game game = gameRepository.findCurrentGame(now).orElseThrow(()-> new GameException(GAME_NOT_FOUND));
-        Player player = playerRepository.save(new Player(command.playerName(), game));
+        Player player = playerRepository.save(Player.user(command.playerName(), game));
 
         return new JoinGameResult(
                 GameInfo.of(game,
@@ -120,6 +123,7 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
             newsBoard.add(new News(meta));
             events.add(new NewsEvent(meta));
         });
+        updateBotBalances(game);
 
         return new TickResult(
                 game.getId(),
@@ -128,6 +132,19 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
                         PlayerInfo.from(players),
                         now),
                 events);
+    }
+
+    public void updateBotBalances(Game game) {
+        List<Player> bots = playerRepository.findAllByGameAndBotIsTrue(game);
+
+        for (Player bot : bots) {
+            if (random.nextDouble() > 0.35) {
+                continue;
+            }
+            double multiplier = random.nextDouble(0.95, 1.06);
+            Money money = bot.getMoney().times(multiplier);
+            bot.changeMoney(money);
+        }
     }
 
     @Override
@@ -146,6 +163,7 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
     private Purchase getPurchase(long id){
         return purchaseRepository.findById(id).orElseThrow(() -> new GameException(PURCHASE_NOT_FOUND));
     }
+
 
     private Game getOrStartCurrentGame(Instant now) {
         Instant startedAt = now.truncatedTo(ChronoUnit.HOURS);

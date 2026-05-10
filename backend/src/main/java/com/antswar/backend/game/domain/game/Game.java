@@ -29,6 +29,9 @@ public class Game {
     @OneToMany(mappedBy = "game", cascade = CascadeType.PERSIST)
     private final List<Purchase> purchases = new ArrayList<>();
 
+    @OneToMany(mappedBy = "game", cascade = CascadeType.PERSIST)
+    private final List<Player> players = new ArrayList<>();
+
     private Game(Instant startedAt, Instant endedAt){
         this.startedAt = startedAt;
         this.endedAt = endedAt;
@@ -50,6 +53,7 @@ public class Game {
     public static Game start(Instant startedAt, Instant endedAt) {
         Game game = new Game(startedAt, endedAt);
         game.initializePurchases();
+        game.initializeBot();
         return game;
     }
 
@@ -57,5 +61,13 @@ public class Game {
         for (PurchaseMeta meta : PurchaseMeta.values()) {
             purchases.add(new Purchase(this, meta));
         }
+    }
+
+    private void initializeBot(){
+        players.add(Player.bot("거미",this));
+        players.add(Player.bot("불개미",this));
+        players.add(Player.bot("흰개미",this));
+        players.add(Player.bot("큰개미",this));
+        players.add(Player.bot("영웅개미",this));
     }
 }

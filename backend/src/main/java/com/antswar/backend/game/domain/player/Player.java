@@ -39,18 +39,31 @@ public class Player{
 
     private boolean deActive;
 
+    @Getter
+    private boolean bot;
+
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
     private final List<Position> positions = new ArrayList<>();
 
-    public Player(String name, Game game) {
+    private Player(String name, Money money, Game game) {
         this.name = validateName(name);
         this.game = Objects.requireNonNull(game);
-        this.money = Money.of(3000);
+        this.money = money;
         this.noticeRate = 0.3;
         for (PurchaseMeta meta : PurchaseMeta.values()) {
             positions.add(new Position(this, meta, PositionType.LONG));
             positions.add(new Position(this, meta, PositionType.SHORT));
         }
+    }
+
+    public static Player user(String name, Game game) {
+        return new Player(name, Money.of(3_000), game);
+    }
+
+    public static Player bot(String name, Game game) {
+        Player player = new Player(name, Money.of(3_000), game);
+        player.bot = true;
+        return player;
     }
 
     private String validateName(String name){
@@ -122,5 +135,9 @@ public class Player{
 
     private void pay(Money price) {
         this.money = this.money.subtract(price);
+    }
+
+    public void changeMoney(Money money){
+        this.money = money;
     }
 }

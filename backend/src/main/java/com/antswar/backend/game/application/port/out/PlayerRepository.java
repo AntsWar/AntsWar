@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface PlayerRepository extends JpaRepository<Player, Long> {
     List<Player> findAllByGameAndDeActiveIsFalse(Game game);
+    List<Player> findAllByGameAndBotIsTrue(Game game);
 }
