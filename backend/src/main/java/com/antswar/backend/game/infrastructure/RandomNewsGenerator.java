@@ -9,7 +9,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 @Component
 public class RandomNewsGenerator implements NewsGenerator {
-    private static final double GENERATE_PROBABILITY = 0.3;
+    private static final double GENERATE_PROBABILITY = 0.15;
 
     public Optional<NewsMeta> generate() {
         if (ThreadLocalRandom.current().nextDouble() > GENERATE_PROBABILITY) {return Optional.empty();}

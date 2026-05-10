@@ -143,6 +143,9 @@ public class GameService implements GetMe, Trade, EarnByClick, JoinGame, LeavePl
             }
             double multiplier = random.nextDouble(0.95, 1.06);
             Money money = bot.getMoney().times(multiplier);
+            if(money.compareTo(Money.of(1_000)) <0){
+                money = Money.of(3_000);
+            }
             bot.changeMoney(money);
         }
     }

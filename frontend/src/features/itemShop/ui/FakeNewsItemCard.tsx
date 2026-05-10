@@ -46,7 +46,7 @@ export function FakeNewsItemCard() {
           {meta.name}
         </div>
 
-        <Money money={{ amount: 200 }} />
+        <Money money={{ amount: 10000 }} />
       </div>
 
       <Separator />
