@@ -19,6 +19,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 
@@ -52,16 +54,24 @@ public class GameController {
 
     @PostMapping("/join")
     public ResponseEntity<JoinGameResult> join(@RequestBody @Valid JoinGameRequest request) {
-        JoinGameResult result = joinGame.join(new JoinGameCommand(request.playerName()));
+        JoinGameResult result =
+                joinGame.join(new JoinGameCommand(request.playerName()));
 
-        ResponseCookie cookie = ResponseCookie.from("playerId", String.valueOf(result.player().id()))
-                .httpOnly(true)
-                .path("/")
-                .maxAge(Duration.ofHours(2))
-                .build();
+        ResponseCookie playerIdCookie = ResponseCookie.from("playerId", String.valueOf(result.player().id()))
+                        .httpOnly(true)
+                        .path("/")
+                        .maxAge(Duration.ofHours(2))
+                        .build();
+
+        ResponseCookie playerNameCookie = ResponseCookie.from("playerName",
+                        URLEncoder.encode(result.player().name(), StandardCharsets.UTF_8))
+                        .path("/")
+                        .maxAge(Duration.ofDays(30))
+                        .build();
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .header(HttpHeaders.SET_COOKIE, playerIdCookie.toString())
+                .header(HttpHeaders.SET_COOKIE, playerNameCookie.toString())
                 .body(result);
     }
 }

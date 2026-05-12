@@ -92,20 +92,23 @@ export default function ChatBox(props: {
         <div ref={bottomRef} />
       </div>
 
-      <div className="flex gap-2">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          send()
+        }}
+        className="flex gap-2"
+      >
         <Input
           value={text}
           maxLength={50}
           placeholder="메시지 보내기"
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") send()
-          }}
         />
-        <Button onClick={send}>
+        <Button>
           <Send />
         </Button>
-      </div>
+      </form>
     </Field>
   )
 }

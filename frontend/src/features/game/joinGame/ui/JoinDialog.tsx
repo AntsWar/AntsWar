@@ -21,11 +21,15 @@ export default function JoinDialog() {
   const { game, setGame, setFinished } = useGame()
   const queryClient = useQueryClient()
 
-  const [name, setName] = useState<string>("")
+  const [name, setName] = useState(() => {
+    const saved = getCookie("playerName")
+
+    return saved ? decodeURIComponent(saved) : ""
+  })
   const { mutate, isPending } = useJoinGameMutation()
 
   const handleJoin = () => {
-    const finalName = name.trim() || "작은 개미"
+    const finalName = name.trim() || "작은개미"
 
     mutate(finalName, {
       onSuccess: async ({ game }) => {
@@ -113,4 +117,11 @@ function Footer() {
       </CarouselContent>
     </Carousel>
   )
+}
+
+function getCookie(name: string) {
+  return document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${name}=`))
+    ?.split("=")[1]
 }

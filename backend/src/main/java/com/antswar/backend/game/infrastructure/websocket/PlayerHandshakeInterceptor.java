@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.HandshakeInterceptor;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 @Component
@@ -25,11 +27,11 @@ public class PlayerHandshakeInterceptor implements HandshakeInterceptor {
         if (cookies == null) {
             return true;
         }
-
+        
         for (Cookie cookie : cookies) {
             switch (cookie.getName()) {
                 case PLAYER_ID -> attributes.put(PLAYER_ID, Long.parseLong(cookie.getValue()));
-                case PLAYER_NAME -> attributes.put(PLAYER_NAME, cookie.getValue());
+                case PLAYER_NAME -> attributes.put(PLAYER_NAME, URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8));
                 default -> {
                 }
             }
