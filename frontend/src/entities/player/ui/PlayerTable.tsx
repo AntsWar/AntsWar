@@ -9,8 +9,13 @@ import {
 import type { Player } from "../model/types"
 import { Money } from "@/shared/model/Money"
 
-export default function PlayerTable(props: { players: Array<Player> }) {
-  const { players } = props
+export default function PlayerTable({
+  players,
+  me,
+}: {
+  players: Array<Player>
+  me?: Player
+}) {
   const sorted = [...players].sort(
     (a, b) => b.balance.amount - a.balance.amount
   )
@@ -27,16 +32,29 @@ export default function PlayerTable(props: { players: Array<Player> }) {
       <TableBody>
         {sorted &&
           sorted.map((player, index) => (
-            <PlayerRow key={player.id} player={player} rank={index + 1} />
+            <PlayerRow
+              key={player.id}
+              player={player}
+              rank={index + 1}
+              isMe={me?.id === player.id}
+            />
           ))}
       </TableBody>
     </Table>
   )
 }
 
-function PlayerRow({ player, rank }: { player: Player; rank: number }) {
+function PlayerRow({
+  player,
+  rank,
+  isMe,
+}: {
+  player: Player
+  rank: number
+  isMe: boolean
+}) {
   return (
-    <TableRow>
+    <TableRow className={isMe ? "text-primary" : ""}>
       <TableCell>{rank}</TableCell>
       <TableCell>{player.name}</TableCell>
       <TableCell className="text-right">

@@ -1,5 +1,6 @@
 import { useGame } from "@/entities/game"
 import { PlayerTable } from "@/entities/player"
+import { useMeQuery } from "@/features/getMe"
 import { Button } from "@/shared/ui/button"
 import {
   Dialog,
@@ -11,6 +12,7 @@ import {
 
 export default function FinishedDialog() {
   const { game, finished } = useGame()
+  const { data: me } = useMeQuery()
   const players = game?.players ?? []
 
   const sortedPlayers = [...players].sort(
@@ -25,7 +27,7 @@ export default function FinishedDialog() {
             랭킹
           </DialogTitle>
         </DialogHeader>
-        <PlayerTable players={sortedPlayers ?? []} />
+        <PlayerTable players={sortedPlayers ?? []} me={me?.player} />
 
         <DialogFooter>
           <Button variant={"outline"} onClick={() => window.location.reload()}>

@@ -23,7 +23,7 @@ export default function GameSection() {
     <FieldGroup>
       <Field className="rounded-xl border bg-popover p-4">
         <FieldContent>
-          <PlayerTable players={game?.players ?? []} />
+          <PlayerTable players={game?.players ?? []} me={me?.player} />
         </FieldContent>
       </Field>
       <Field className="w-full rounded-xl border bg-popover p-4">
