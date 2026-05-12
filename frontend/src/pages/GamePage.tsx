@@ -25,7 +25,7 @@ export default function GamePage() {
 
 function GameView() {
   const { game } = useGame()
-  const [chatOpen, setChatOpen] = useState(true)
+  const [chatOpen, setChatOpen] = useState(false)
   const { data: me } = useMeQuery()
 
   if (!game) return null
