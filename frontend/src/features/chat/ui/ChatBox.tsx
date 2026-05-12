@@ -2,7 +2,7 @@ import { useStompClient } from "@/shared/lib/stomp/StompProvider"
 import { Button } from "@/shared/ui/button"
 import { Field, FieldLabel } from "@/shared/ui/field"
 import { Input } from "@/shared/ui/input"
-import { MessageCircle, Send } from "lucide-react"
+import { MessageCircle, Send, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
 type ChatSocketMessage = {
@@ -10,8 +10,11 @@ type ChatSocketMessage = {
   content: string
 }
 
-export default function ChatBox(props: { gameId: number }) {
-  const { gameId } = props
+export default function ChatBox(props: {
+  gameId: number
+  onClose: () => void
+}) {
+  const { gameId, onClose } = props
   const { connected, getClient } = useStompClient()
 
   const [messages, setMessages] = useState<Array<ChatSocketMessage>>([])
@@ -67,9 +70,14 @@ export default function ChatBox(props: { gameId: number }) {
   }
 
   return (
-    <Field className="flex h-full w-80 flex-col gap-5 rounded-xl border bg-popover p-4">
-      <FieldLabel className="text-xl">
-        <MessageCircle className="text-secondary" /> 채팅
+    <Field className="flex h-full flex-col gap-5 rounded-xl border bg-popover p-4">
+      <FieldLabel className="justify-between">
+        <div className="flex gap-2 text-xl">
+          <MessageCircle className="text-secondary" /> 채팅
+        </div>
+        <Button variant={"ghost"} onClick={onClose}>
+          <X />
+        </Button>
       </FieldLabel>
 
       <div

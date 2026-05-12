@@ -1,13 +1,9 @@
 import { useGame } from "@/entities/game"
-import { useMeQuery } from "@/features/getMe"
 import { formatTimeToHMS } from "@/shared/lib/formatTime"
-import { Money } from "@/shared/model/Money"
-import { Banknote, Clock } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 
-export default function GameStatusBar() {
+export default function RemainingTime() {
   const { game } = useGame()
-  const { data: me } = useMeQuery()
 
   const endedAt = game?.meta.endedAt
   const serverTime = game?.serverTime
@@ -42,19 +38,5 @@ export default function GameStatusBar() {
     return () => window.clearInterval(timer)
   }, [endedAt])
 
-  return (
-    <div className="flex flex-row justify-between py-3">
-      <div className="flex flex-row items-center gap-2 rounded-xl">
-        <Clock className="size-5 text-secondary" />
-        <div className="text-base text-muted-foreground">
-          {formatTimeToHMS(remainingSeconds)}
-        </div>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <Banknote className="text-secondary" />
-        <Money money={me?.player.balance} />
-      </div>
-    </div>
-  )
+  return <>{formatTimeToHMS(remainingSeconds)}</>
 }
