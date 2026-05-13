@@ -22,6 +22,7 @@ services:
       JAVA_TOOL_OPTIONS: "-Xms256m -Xmx512m"
     expose:
       - "8080"
+      - "9090"
     mem_limit: 768m
     networks:
       - app

@@ -14,6 +14,17 @@ spring:
     hibernate:
       ddl-auto: create
 
+management:
+  server:
+    port: 9091
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: never
+
 server:
   forward-headers-strategy: framework
   servlet:
