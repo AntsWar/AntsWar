@@ -83,7 +83,4 @@ volumes:
   alertmanager_data:
 
 networks:
-  app:
-    external: true
-    name: antswar_app
   monitoring:
