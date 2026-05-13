@@ -1,10 +1,10 @@
 services:
   nginx:
-    image: ghcr.io/goldapple-ce/hanplace-nginx:latest
+    image: ghcr.io/antswar/nginx:latest
     volumes:
       - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
       - /var/www/certbot:/var/www/certbot:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
 
   backend:
-    image: ghcr.io/goldapple-ce/hanplace-backend:latest
+    image: ghcr.io/antswar/backend:latest
