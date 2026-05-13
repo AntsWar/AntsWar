@@ -1,0 +1,16 @@
+services:
+  nginx:
+    # image: ghcr.io/goldapple-ce/hanplace-nginx:latest
+    build:
+      context: .
+      dockerfile: ./nginx/Dockerfile
+    volumes:
+      - ./nginx/nginx.dev.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+  backend:
+    # image: ghcr.io/goldapple-ce/hanplace-backend:latest
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"

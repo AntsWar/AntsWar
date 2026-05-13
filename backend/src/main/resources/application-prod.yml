@@ -3,10 +3,16 @@ spring:
     activate:
       on-profile: prod
 
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    hibernate:
+      ddl-auto: none
+
 server:
-#  compression:
-#    enabled: true
-#    mime-types: application/x-protobuf
+  #  compression:
+  #    enabled: true
+  #    mime-types: application/x-protobuf
 
   servlet:
     session:

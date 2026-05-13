@@ -1,0 +1,89 @@
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9090:9090"
+    volumes:
+      - prometheus_data:/prometheus
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/alerts.yml:/etc/prometheus/alerts.yml:ro
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=3d"
+    mem_limit: 128m
+    networks:
+      - app
+      - monitoring
+
+  mysqld-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld-exporter
+    restart: unless-stopped
+    command:
+      - "--mysqld.username=${MYSQL_EXPORTER_USER}:${MYSQL_EXPORTER_PASSWORD}"
+      - "--mysqld.address=mysql:3306"
+    expose:
+      - "9104"
+    mem_limit: 32m
+    networks:
+      - app
+      - monitoring
+
+  cadvisor:
+    image: ghcr.io/google/cadvisor:0.54.0
+    container_name: cadvisor
+    restart: unless-stopped
+    privileged: true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro # 이유는 모르겠지만, mac에서는 이게 없으면 컨테이너 라벨이 안보임.(https://github.com/google/cadvisor/issues/1565)
+    mem_limit: 64m
+    command:
+      - "--docker_only"
+      - "--disable_metrics=percpu,hugetlb,referenced_memory,cpu_topology,resctrl"
+      - "--housekeeping_interval=30s"
+    networks:
+      - app
+      - monitoring
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: unless-stopped
+    volumes:
+      - alertmanager_data:/alertmanager
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+    mem_limit: 32m
+    ports:
+      - "127.0.0.1:9093:9093"
+    networks:
+      - monitoring
+
+  alertmanager-discord:
+    image: benjojo/alertmanager-discord
+    container_name: alertmanager-discord
+    restart: unless-stopped
+    environment:
+      DISCORD_WEBHOOK: ${DISCORD_WEBHOOK_URL}
+    mem_limit: 32m
+    networks:
+      - monitoring
+
+volumes:
+  prometheus_data:
+  alertmanager_data:
+
+networks:
+  app:
+    external: true
+    name: antswar_app
+  monitoring:

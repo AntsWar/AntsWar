@@ -1,1 +1,1 @@
-export { default as GameView } from "./ui/GameView"
+export { default as GameSection } from "./ui/GameSection"

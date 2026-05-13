@@ -1,0 +1,89 @@
+groups:
+  - name: core-alerts
+    rules:
+      - alert: BackendDown
+        expr: up{job="backend"} == 0
+        for: 2m # 스크랩 주기가 1분이라, 2번 확인으로 함.
+        labels:
+          severity: critical
+        annotations:
+          summary: "백엔드 서버 다운"
+          description: "백엔드 컨테이너가 응답하지 않습니다."
+
+      - alert: MySQLDown
+        expr: up{job="mysql"} == 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "MySQL 다운"
+          description: "MySQL exporter가 응답하지 않습니다."
+
+      - alert: BackendRestarted
+        expr: changes(container_start_time_seconds{container_label_com_docker_compose_service="backend"}[5m]) > 0
+        labels:
+          severity: warning
+        annotations:
+          summary: "백엔드 재시작 감지"
+          description: "backend 컨테이너가 최근 5분 내 재시작되었습니다."
+
+      - alert: MySQLRestarted
+        expr: changes(
+          container_start_time_seconds{container_label_com_docker_compose_service="mysql"}[5m]) > 0
+        labels:
+          severity: critical
+        annotations:
+          summary: "MySQL 재시작 감지"
+          description: "MySQL 컨테이너가 최근 5분 내 재시작되었습니다."
+
+      - alert: HighHeapUsage
+        expr: sum(jvm_memory_used_bytes{area="heap"})
+          / sum(jvm_memory_max_bytes{area="heap"})
+          > 0.8
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Heap 사용량 높음"
+          description: "JVM Heap 사용량이 80% 이상입니다."
+
+      - alert: BackendMemoryHigh
+        expr:
+          container_memory_working_set_bytes{container_label_com_docker_compose_service="backend"}
+          / container_spec_memory_limit_bytes{container_label_com_docker_compose_service="backend"}
+          > 0.8
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "백엔드 메모리 사용량 높음"
+          description: "백엔드 컨테이너 메모리 사용량이 80% 이상입니다."
+
+      - alert: MySQLMemoryHigh
+        expr:
+          container_memory_working_set_bytes{container_label_com_docker_compose_service="mysql"}
+          / container_spec_memory_limit_bytes{container_label_com_docker_compose_service="mysql"}
+          > 0.8
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MySQL 메모리 사용량 높음"
+          description: "MySQL 메모리 사용량이 80% 이상입니다."
+
+      - alert: MySQLConnectionsHigh
+        expr: mysql_global_status_threads_connected > 20
+        for: 3m
+        labels:
+          severity: warning
+        annotations:
+          summary: "MySQL 커넥션 많음"
+          description: "MySQL 연결 수가 많습니다."
+
+      - alert: MySQLSlowQueries
+        expr: rate(mysql_global_status_slow_queries[5m]) > 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "슬로우 쿼리 발생"
+          description: "최근 5분 동안 슬로우 쿼리가 발생했습니다."
