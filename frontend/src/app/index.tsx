@@ -5,7 +5,7 @@ import { QueryProvider } from "./provider/queryProvider"
 import { Toaster } from "@/shared/ui/sonner"
 import GamePage from "@/pages/GamePage"
 import BlockedPage from "@/pages/BlockedPage"
-// import { useDevtoolsRedirect } from "@/shared/lib/useDevtoolsRedirect"
+import { useDevtoolsRedirect } from "@/shared/lib/useDevtoolsRedirect"
 
 const router = createBrowserRouter([
   {
@@ -19,7 +19,7 @@ const router = createBrowserRouter([
 ])
 
 export function App() {
-  // useDevtoolsRedirect()
+  useDevtoolsRedirect()
   return (
     <QueryProvider>
       <ThemeProvider defaultTheme="dark">
