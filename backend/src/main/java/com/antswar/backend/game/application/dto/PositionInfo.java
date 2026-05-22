@@ -7,7 +7,7 @@ import com.antswar.backend.game.domain.player.PositionType;
 public record PositionInfo(PurchaseMetaInfo meta, PositionType type, int quantity, Money averagePrice) {
     public static PositionInfo from(Position position){
         return new PositionInfo(PurchaseMetaInfo.from(
-                position.getPurchaseMeta()),
+                position.getPurchase().getMeta()),
                 position.getType(),
                 position.getQuantity(),
                 position.getAveragePrice());

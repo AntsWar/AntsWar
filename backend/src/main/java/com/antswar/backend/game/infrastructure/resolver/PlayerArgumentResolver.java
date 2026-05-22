@@ -5,6 +5,7 @@ import com.antswar.backend.exception.GlobalErrorCode;
 import com.antswar.backend.exception.GlobalException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -15,7 +16,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 public class PlayerArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private static final String PLAYER_ID_COOKIE = "playerId";
+    private static final String PLAYER_ID_SESSION_KEY = "playerId";
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
@@ -35,29 +36,44 @@ public class PlayerArgumentResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest request =
                 webRequest.getNativeRequest(HttpServletRequest.class);
 
-        String playerId = extractPlayerIdFromCookie(request);
-
         boolean required = annotation == null || annotation.required();
 
-        if (playerId == null || playerId.isBlank()) {
+        Long playerId = extractPlayerIdFromSession(request);
+
+        if (playerId == null) {
             if (!required) {
                 return null;
             }
+
             throw new GlobalException(GlobalErrorCode.UNAUTHORIZED);
         }
 
-        return new PlayerPrincipal(Long.parseLong(playerId));
+        return new PlayerPrincipal(playerId);
     }
 
-    private String extractPlayerIdFromCookie(HttpServletRequest request) {
-        if (request == null || request.getCookies() == null) {
+    private Long extractPlayerIdFromSession(HttpServletRequest request) {
+        if (request == null) {
             return null;
         }
 
-        for (Cookie cookie : request.getCookies()) {
-            if (PLAYER_ID_COOKIE.equals(cookie.getName())) {
-                return cookie.getValue();
-            }
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            return null;
+        }
+
+        Object value = session.getAttribute(PLAYER_ID_SESSION_KEY);
+
+        if (value instanceof Long playerId) {
+            return playerId;
+        }
+
+        if (value instanceof Number number) {
+            return number.longValue();
+        }
+
+        if (value instanceof String string && !string.isBlank()) {
+            return Long.parseLong(string);
         }
 
         return null;

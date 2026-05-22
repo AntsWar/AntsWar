@@ -1,26 +1,36 @@
 import { Button } from "@/shared/ui/button"
 import { useBuyItemMutation } from "../model/useBuyItemMutation"
-import { itemMeta, type Item } from "@/entities/item"
 import { toast } from "sonner"
 import { Money } from "@/shared/model/Money"
 import { Separator } from "@/shared/ui/separator"
-import { ShoppingCart } from "lucide-react"
+import { ShoppingCart, type LucideIcon } from "lucide-react"
+import type { Item } from "../model/types"
 
-export function ItemCard({ item }: { item: Item }) {
+export function ItemCard({
+  item,
+  name,
+  Icon,
+  description,
+}: {
+  item: Item
+  name: string
+  Icon: LucideIcon
+  description: string
+}) {
   const { mutate, isPending } = useBuyItemMutation()
-  const meta = itemMeta[item.name]
-
-  const Icon = meta.icon
 
   const handleClick = () => {
-    mutate(item, {
-      onError: (error) => {
-        toast.error(error.message)
-      },
-      onSuccess: () => {
-        toast.success(`${meta.name} 구매 완료`)
-      },
-    })
+    mutate(
+      { item: item.code, price: item.price },
+      {
+        onError: (error) => {
+          toast.error(error.message)
+        },
+        onSuccess: () => {
+          toast.success(`${name} 구매 완료`)
+        },
+      }
+    )
   }
 
   return (
@@ -28,7 +38,7 @@ export function ItemCard({ item }: { item: Item }) {
       <div className="flex justify-between">
         <div className="flex flex-row gap-3">
           <Icon />
-          {meta.name}
+          {name}
         </div>
 
         <Money money={item.price} />
@@ -36,7 +46,7 @@ export function ItemCard({ item }: { item: Item }) {
       <Separator />
 
       <div className="flex items-center justify-between">
-        <p className="text-muted-foreground">{meta.description}</p>
+        <p className="text-muted-foreground">{description}</p>
         <Button variant="outline" onClick={handleClick} disabled={isPending}>
           <ShoppingCart />
           구매

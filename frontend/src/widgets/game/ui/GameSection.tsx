@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, Gift, Store } from "lucide-react"
+import { BriefcaseBusiness, Store } from "lucide-react"
 import {
   Field,
   FieldContent,
@@ -8,7 +8,6 @@ import {
 } from "@/shared/ui/field"
 import { Money } from "@/shared/model/Money"
 import { PlayerTable } from "@/entities/player"
-import { TapToEarnButton } from "@/features/earn/earnByClick"
 import { MarketInfo } from "@/features/market"
 import { PortfolioInfo, useMeQuery } from "@/features/getMe"
 import MarketIcon from "@/assets/icon/chart_icon.svg?react"
@@ -48,18 +47,6 @@ export default function GameSection() {
         </FieldDescription>
         <FieldContent>
           <PortfolioInfo positions={me?.positions ?? []} />
-        </FieldContent>
-      </Field>
-      <Field className="rounded-xl border bg-popover p-4">
-        <FieldTitle className="text-xl font-semibold">
-          <Gift className="size-6 text-primary" />
-          시드벌기
-        </FieldTitle>
-        <FieldDescription>
-          돈이 모자라면 여기서 버실 수 있습니다.
-        </FieldDescription>
-        <FieldContent>
-          <TapToEarnButton />
         </FieldContent>
       </Field>
       <Field className="rounded-xl border bg-popover p-4">

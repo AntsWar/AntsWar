@@ -1,8 +1,7 @@
 package com.antswar.backend.game.domain.player;
 
 import com.antswar.backend.game.domain.purchase.Purchase;
-import com.antswar.backend.game.domain.purchase.PurchaseMeta;
-import com.antswar.backend.game.domain.game.Game;
+import com.antswar.backend.game.domain.Game;
 import com.antswar.backend.game.domain.vo.Money;
 import com.antswar.backend.game.exception.GameException;
 import jakarta.persistence.*;
@@ -15,8 +14,8 @@ import java.util.*;
 import static com.antswar.backend.game.exception.GameErrorCode.*;
 import static org.springframework.util.StringUtils.hasText;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Player{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,10 +31,7 @@ public class Player{
 
     @Getter
     @Embedded
-    private Money money;
-
-    @Getter
-    private double noticeRate;
+    private Money balance;
 
     private boolean deActive;
 
@@ -45,23 +41,22 @@ public class Player{
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
     private final List<Position> positions = new ArrayList<>();
 
-    private Player(String name, Money money, Game game) {
+    public Player(String name, Game game, Money balance) {
         this.name = validateName(name);
         this.game = Objects.requireNonNull(game);
-        this.money = money;
-        this.noticeRate = 0.3;
-        for (PurchaseMeta meta : PurchaseMeta.values()) {
-            positions.add(new Position(this, meta, PositionType.LONG));
-            positions.add(new Position(this, meta, PositionType.SHORT));
+        this.balance = balance;
+        for (Purchase purchase : game.getPurchases()) {
+            positions.add(new Position(this, purchase, PositionType.LONG));
+            positions.add(new Position(this, purchase, PositionType.SHORT));
         }
     }
 
     public static Player user(String name, Game game) {
-        return new Player(name, Money.of(3_000), game);
+        return new Player(name, game, Money.of(3_000));
     }
 
     public static Player bot(String name, Game game) {
-        Player player = new Player(name, Money.of(3_000), game);
+        Player player = new Player(name, game, Money.of(3_000));
         player.bot = true;
         return player;
     }
@@ -73,45 +68,26 @@ public class Player{
 
     public void buy(Purchase purchase, PositionType type, int quantity) {
         if(purchase.isDelisted()) throw new GameException(PURCHASE_DELISTED);
-        Position position = getPosition(purchase.getMeta(), type);
+        Position position = getPosition(purchase, type);
         Money totalPrice = purchase.calculateTotalPrice(quantity);
-        if(money.compareTo(totalPrice) < 0) throw new GameException(PLAYER_NOT_ENOUGH_MONEY);
-        position.add(quantity, purchase.getPrice());
         pay(totalPrice);
-    }
-
-    public void buy(Item item) {
-        validateEnoughMoney(item);
-        pay(item.getPrice());
-
-        if (item == Item.NEWS_RADAR) {
-            this.noticeRate = 1.0;
-        }
+        position.add(quantity, purchase.getPrice());
     }
 
     public void sell(Purchase purchase, PositionType type, int quantity) {
         if(purchase.isDelisted()) throw new GameException(PURCHASE_DELISTED);
-        Position position = getPosition(purchase.getMeta(), type);
+        Position position = getPosition(purchase, type);
         Money totalPrice = type == PositionType.LONG
-                ?purchase.calculateTotalPrice(quantity)
-                :position.getAveragePrice().times(2).subtract(purchase.getPrice()).times(quantity);
-        this.money = this.money.add(totalPrice);
+                ? purchase.calculateTotalPrice(quantity)
+                : position.getAveragePrice().times(2).subtract(purchase.getPrice()).times(quantity);
+        earn(totalPrice);
         position.subtract(quantity);
     }
 
-    public void onDelisted(PurchaseMeta meta){
-        positions.forEach(position -> {
-            if(position.match(meta)) position.delist();
-        });
-    }
-
-    public void earn(Money money){
-        this.money = this.money.add(money);
-    }
-
-    private Position getPosition(PurchaseMeta meta, PositionType type) {
+    private Position getPosition(Purchase purchase, PositionType type) {
         return positions.stream()
-                .filter(position -> position.match(meta, type))
+                .filter(position -> position.getType().equals(type))
+                .filter(position -> position.getPurchase().getId().equals(purchase.getId()))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("초기 포지션이 존재해야 함"));
     }
@@ -127,17 +103,16 @@ public class Player{
         this.deActive = true;
     }
 
-    private void validateEnoughMoney(Item item) {
-        if (this.money.compareTo(item.getPrice()) < 0) {
-            throw new GameException(PLAYER_NOT_ENOUGH_MONEY);
-        }
+    public void earn(Money money){
+        this.balance = this.balance.add(money);
     }
 
-    private void pay(Money price) {
-        this.money = this.money.subtract(price);
+    public void pay(Money price) {
+        if(balance.compareTo(price) < 0) throw new GameException(PLAYER_NOT_ENOUGH_MONEY);
+        this.balance = this.balance.subtract(price);
     }
 
-    public void changeMoney(Money money){
-        this.money = money;
+    public void changeBalance(Money balance){
+        this.balance = balance;
     }
 }

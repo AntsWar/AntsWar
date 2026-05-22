@@ -7,7 +7,7 @@ import java.util.List;
 
 public record PlayerInfo(long id, String name, Money balance) {
     public static PlayerInfo from(Player player){
-        return new PlayerInfo(player.getId(), player.getName(), player.getMoney());
+        return new PlayerInfo(player.getId(), player.getName(), player.getBalance());
     }
 
     public static List<PlayerInfo> from(List<Player> players){

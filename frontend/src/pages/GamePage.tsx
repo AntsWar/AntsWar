@@ -37,7 +37,7 @@ function GameView() {
       <GameSocketListener gameId={gameId} />
 
       <div className="flex h-screen justify-center">
-        <div className="flex w-full max-w-2xl flex-col px-3">
+        <div className="flex w-full max-w-3xl flex-col px-3">
           <div className="flex justify-between py-3">
             <div className="flex items-center gap-2 rounded-xl">
               <Clock className="size-5 text-secondary" />

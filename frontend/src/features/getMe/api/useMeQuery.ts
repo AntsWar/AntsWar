@@ -13,7 +13,7 @@ export function useMeQuery() {
 }
 
 async function getMe() {
-  const res = await api.get(`${API_PATH.GAME}/me`)
+  const res = await api.get(`${API_PATH.PLAYER}/me`)
 
   return res.data as Me
 }

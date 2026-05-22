@@ -1,6 +1,5 @@
-package com.antswar.backend.game.domain.game;
+package com.antswar.backend.game.domain;
 
-import com.antswar.backend.common.jpa.BaseEntity;
 import com.antswar.backend.game.domain.player.Player;
 import com.antswar.backend.game.domain.purchase.Purchase;
 import com.antswar.backend.game.domain.purchase.PurchaseMeta;
@@ -26,48 +25,29 @@ public class Game {
     @Getter
     private Instant endedAt;
 
+    @Getter
     @OneToMany(mappedBy = "game", cascade = CascadeType.PERSIST)
     private final List<Purchase> purchases = new ArrayList<>();
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.PERSIST)
     private final List<Player> players = new ArrayList<>();
 
-    private Game(Instant startedAt, Instant endedAt){
+    public Game(Instant startedAt, Instant endedAt){
         this.startedAt = startedAt;
         this.endedAt = endedAt;
-    }
-
-    public List<Purchase> getPurchases(){
-        return purchases.stream()
-                .filter(purchase -> !purchase.isDelisted())
-                .toList();
-    }
-
-    public Purchase getPurchase(PurchaseMeta meta){
-        return purchases.stream()
-                .filter(purchase -> purchase.match(meta))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 상품"));
-    }
-
-    public static Game start(Instant startedAt, Instant endedAt) {
-        Game game = new Game(startedAt, endedAt);
-        game.initializePurchases();
-        game.initializeBot();
-        return game;
-    }
-
-    private void initializePurchases() {
         for (PurchaseMeta meta : PurchaseMeta.values()) {
             purchases.add(new Purchase(this, meta));
         }
+        players.add(Player.bot("거미",this));
+        players.add(Player.bot("여왕개미",this));
+        players.add(Player.bot("큰개미",this));
+        players.add(Player.bot("황금사과",this));
+        players.add(Player.bot("금개미",this));
     }
 
-    private void initializeBot(){
-        players.add(Player.bot("거미",this));
-        players.add(Player.bot("불개미",this));
-        players.add(Player.bot("흰개미",this));
-        players.add(Player.bot("큰개미",this));
-        players.add(Player.bot("영웅개미",this));
+    public List<Purchase> getPurchases(boolean isDelisted) {
+        return purchases.stream()
+                .filter(purchase -> purchase.isDelisted() == isDelisted)
+                .toList();
     }
 }

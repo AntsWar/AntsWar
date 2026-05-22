@@ -16,7 +16,6 @@ public record PurchaseInfo(long id, PurchaseMetaInfo meta, Money price) {
 
     public static List<PurchaseInfo> from(List<Purchase> purchases){
         return purchases.stream()
-                .filter(purchase -> !purchase.isDelisted())
                 .map(PurchaseInfo::from)
                 .toList();
     }

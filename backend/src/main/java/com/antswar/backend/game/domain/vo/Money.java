@@ -35,10 +35,6 @@ public class Money{
         return new Money(BigDecimal.valueOf(amount), DEFAULT_CURRENCY);
     }
 
-    private void validate() {
-        if (amount.compareTo(BigDecimal.ZERO) < 0)  throw new IllegalArgumentException("금액은 음수일 수 없음");
-    }
-
     public int compareTo(Money other){
         return amount.compareTo(other.amount);
     }
@@ -69,7 +65,11 @@ public class Money{
             throw new IllegalArgumentException("통화 다름");
     }
 
-    public Currency getCurrency() {
+    private void validate() {
+        if (amount.compareTo(BigDecimal.ZERO) < 0)  throw new IllegalArgumentException("금액은 음수일 수 없음");
+    }
+
+    private Currency getCurrency() {
         return Currency.getInstance(this.currencyCode);
     }
 }

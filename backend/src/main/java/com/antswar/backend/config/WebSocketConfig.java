@@ -1,6 +1,6 @@
 package com.antswar.backend.config;
 
-import com.antswar.backend.game.infrastructure.websocket.PlayerHandshakeInterceptor;
+import com.antswar.backend.game.infrastructure.websocket.WebsocketHandshakeInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -12,7 +12,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 @Configuration
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
-    private final PlayerHandshakeInterceptor playerHandshakeInterceptor;
+    private final WebsocketHandshakeInterceptor handshakeInterceptor;
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -23,7 +23,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")
-                .addInterceptors(playerHandshakeInterceptor)
+                .addInterceptors(handshakeInterceptor)
                 .setAllowedOriginPatterns("*");
     }
 

@@ -1,11 +1,13 @@
-package com.antswar.backend.game.domain.player;
+package com.antswar.backend.game.domain.item;
 
 import com.antswar.backend.game.domain.vo.Money;
 import lombok.Getter;
 
 public enum Item {
-    NEWS_RADAR(Money.of(5_000)),
-    FAKE_NEWS(Money.of(10_000)),
+    NEWS_RADAR(Money.of(3_000)),
+    FAKE_NEWS(Money.of(3_000)),
+    GOLDEN_FINGER(Money.of(0)),
+    LUCKY_BOX(Money.of(1000)),
     ;
 
     @Getter

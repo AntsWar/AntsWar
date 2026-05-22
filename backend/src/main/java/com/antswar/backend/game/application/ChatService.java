@@ -1,6 +1,6 @@
 package com.antswar.backend.game.application;
 
-import com.antswar.backend.game.application.port.out.request.ChatInfo;
+import com.antswar.backend.game.application.dto.ChatInfo;
 import com.antswar.backend.game.application.port.out.ChatPublisher;
 import com.antswar.backend.game.application.port.out.ChatRepository;
 import com.antswar.backend.game.domain.chat.Chat;

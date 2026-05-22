@@ -1,10 +1,8 @@
-import { itemMeta } from "@/entities/item"
-import { useBuyFakeNewsItemMutation } from "../model/useBuyFakeNewsItemMutation"
 import { toast } from "sonner"
 import { Money } from "@/shared/model/Money"
 import { Separator } from "@/shared/ui/separator"
 import { Button } from "@/shared/ui/button"
-import { ShoppingCart } from "lucide-react"
+import { ShoppingCart, type LucideIcon } from "lucide-react"
 import { useState } from "react"
 import {
   Select,
@@ -14,13 +12,20 @@ import {
   SelectValue,
 } from "@/shared/ui/select"
 import { NEWS_META } from "@/entities/news"
+import { useBuyItemMutation } from "../model/useBuyItemMutation"
+import type { Item } from "../model/types"
 
-export function FakeNewsItemCard() {
-  const { mutate, isPending } = useBuyFakeNewsItemMutation()
-  const meta = itemMeta["FAKE_NEWS"]
+export function FakeNewsItemCard({
+  item,
+  name,
+  Icon,
+}: {
+  item: Item
+  name: string
+  Icon: LucideIcon
+}) {
+  const { mutate, isPending } = useBuyItemMutation()
   const [code, setCode] = useState<string>("")
-
-  const Icon = meta.icon
 
   const handleClick = () => {
     if (!code) {
@@ -28,14 +33,17 @@ export function FakeNewsItemCard() {
       return
     }
 
-    mutate(code, {
-      onError: (error) => {
-        toast.error(error.message)
-      },
-      onSuccess: () => {
-        toast.success(`${meta.name} 사용 완료`)
-      },
-    })
+    mutate(
+      { item: item.code, price: item.price, code },
+      {
+        onError: (error) => {
+          toast.error(error.message)
+        },
+        onSuccess: () => {
+          toast.success(`${name} 사용 완료`)
+        },
+      }
+    )
   }
 
   return (
@@ -43,10 +51,10 @@ export function FakeNewsItemCard() {
       <div className="flex justify-between">
         <div className="flex flex-row gap-3">
           <Icon />
-          {meta.name}
+          {name}
         </div>
 
-        <Money money={{ amount: 10000 }} />
+        <Money money={item.price} />
       </div>
 
       <Separator />
@@ -59,9 +67,9 @@ export function FakeNewsItemCard() {
             </SelectTrigger>
 
             <SelectContent>
-              {NEWS_OPTIONS.map((item) => (
-                <SelectItem key={item.code} value={item.code}>
-                  {item.label}
+              {NEWS_OPTIONS.map((opt) => (
+                <SelectItem key={opt.code} value={opt.code}>
+                  {opt.label}
                 </SelectItem>
               ))}
             </SelectContent>

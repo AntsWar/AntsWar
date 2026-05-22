@@ -1,28 +1,40 @@
 package com.antswar.backend.game.domain.purchase;
 
-import com.antswar.backend.game.domain.game.Game;
+import com.antswar.backend.game.domain.Game;
+import com.antswar.backend.game.domain.player.Position;
 import com.antswar.backend.game.domain.vo.Money;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Purchase {
+    @Getter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Game game;
+    @Getter
     private PurchaseMeta meta;
+    @Getter
     private Money price;
+
+    private int respawnTick;
+    @Getter
     private boolean isDelisted;
 
+    @OneToMany(mappedBy = "purchase")
+    private final List<Position> positions = new ArrayList<>();
+
+    private static final int RESPAWN_TICKS = 4;
     private static final Money BASE_PRICE = Money.of(200);
     private static final Money MIN_ACTIVE_PRICE = Money.of(100);
     private static final Money ZERO_PRICE = Money.of(0);
@@ -31,36 +43,45 @@ public class Purchase {
         this.game = Objects.requireNonNull(game);
         this.meta = Objects.requireNonNull(meta);
         this.price = BASE_PRICE;
+        this.respawnTick = 0;
+        this.isDelisted = false;
     }
 
     public Money calculateTotalPrice(int quantity) {
-        validateQuantity(quantity);
+        if (quantity <= 0) throw new IllegalArgumentException("수량은 1 이상");
         return price.times(quantity);
     }
 
-    private void validateQuantity(int quantity) {
-        if (quantity <= 0) throw new IllegalArgumentException("수량은 1 이상");
-    }
+    public void updatePrice(double rate) {
+        if (isDelisted) return;
 
-    public boolean match(PurchaseMeta meta){
-        return this.meta.equals(meta);
-    }
-
-    public void updatePrices(double rate) {
         this.price = price.times(1 + rate);
+    }
 
-        if (this.price.compareTo(MIN_ACTIVE_PRICE) <= 0) {
-            delisted();
+    public boolean shouldDelist() {
+        return !isDelisted && price.compareTo(MIN_ACTIVE_PRICE) <= 0;
+    }
+
+    public void delist() {
+        this.price = ZERO_PRICE;
+        this.isDelisted = true;
+        this.respawnTick = RESPAWN_TICKS;
+        this.positions.forEach(Position::delist);
+    }
+
+    public void decreaseRespawnTick() {
+        if (!isDelisted) return;
+
+        this.respawnTick--;
+
+        if (this.respawnTick <= 0) {
+            respawn();
         }
     }
 
-    private void delisted(){
-        this.price = ZERO_PRICE;
-        this.isDelisted = true;
-    }
-
-    public void respawn() {
+    private void respawn() {
         this.price = BASE_PRICE;
         this.isDelisted = false;
+        this.respawnTick = 0;
     }
 }

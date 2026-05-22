@@ -1,7 +1,5 @@
-package com.antswar.backend.game.domain.game;
+package com.antswar.backend.game.domain.news;
 
-import com.antswar.backend.game.domain.news.News;
-import com.antswar.backend.game.domain.news.NewsMeta;
 import com.antswar.backend.game.domain.purchase.PurchaseMeta;
 import org.springframework.stereotype.Component;
 
@@ -14,13 +12,10 @@ public class NewsBoard {
 
     public void add(News news) {
         newsList.add(news);
-        apply(news.getMeta());
-    }
-
-    public void remove(News news) {
-        if (newsList.remove(news)) {
-            revert(news.getMeta());
-        }
+        NewsMeta meta = news.getMeta();
+        meta.getEffects().forEach(effect ->
+                impactMap.merge(effect.meta(), effect.impact(), Integer::sum)
+        );
     }
 
     public void tick() {
@@ -28,9 +23,12 @@ public class NewsBoard {
 
         while (it.hasNext()) {
             News news = it.next();
+            NewsMeta meta = news.getMeta();
 
             if (news.tickAndExpired()) {
-                revert(news.getMeta());
+                meta.getEffects().forEach(effect ->
+                        impactMap.merge(effect.meta(), -effect.impact(), Integer::sum)
+                );
                 it.remove();
             }
         }
@@ -38,17 +36,5 @@ public class NewsBoard {
 
     public int impactOf(PurchaseMeta purchaseMeta) {
         return impactMap.getOrDefault(purchaseMeta, 0);
-    }
-
-    private void apply(NewsMeta meta) {
-        meta.getEffects().forEach(effect ->
-                impactMap.merge(effect.meta(), effect.impact(), Integer::sum)
-        );
-    }
-
-    private void revert(NewsMeta meta) {
-        meta.getEffects().forEach(effect ->
-                impactMap.merge(effect.meta(), -effect.impact(), Integer::sum)
-        );
     }
 }

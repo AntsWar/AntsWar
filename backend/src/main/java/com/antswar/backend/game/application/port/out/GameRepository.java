@@ -1,6 +1,6 @@
 package com.antswar.backend.game.application.port.out;
 
-import com.antswar.backend.game.domain.game.Game;
+import com.antswar.backend.game.domain.Game;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

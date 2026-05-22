@@ -21,8 +21,8 @@ public class ChatController {
     public void chat(
             @DestinationVariable Long gameId,
             @Payload @Valid ChatRequest request,
-            SimpMessageHeaderAccessor accessor
-    ) {
+            SimpMessageHeaderAccessor accessor) {
+
         Long playerId = (Long) Objects.requireNonNull(accessor.getSessionAttributes()).get("playerId");
         String playerName = (String) accessor.getSessionAttributes().get("playerName");
 

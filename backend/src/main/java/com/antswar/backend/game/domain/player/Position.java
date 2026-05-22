@@ -1,5 +1,6 @@
 package com.antswar.backend.game.domain.player;
 
+import com.antswar.backend.game.domain.purchase.Purchase;
 import com.antswar.backend.game.domain.purchase.PurchaseMeta;
 import com.antswar.backend.game.domain.vo.Money;
 import com.antswar.backend.game.exception.GameException;
@@ -19,16 +20,20 @@ public class Position {
     private Long id;
     @ManyToOne(optional = false)
     private Player player;
-    @Enumerated(EnumType.STRING)
-    private PurchaseMeta purchaseMeta;
+
+    @ManyToOne(optional = false)
+    private Purchase purchase;
+
     @Enumerated(EnumType.STRING)
     private PositionType type;
+
     private int quantity;
+
     private Money averagePrice;
 
-    protected Position(Player player, PurchaseMeta purchaseMeta, PositionType type) {
+    protected Position(Player player, Purchase purchase, PositionType type) {
         this.player = player;
-        this.purchaseMeta = purchaseMeta;
+        this.purchase = purchase;
         this.type = type;
         this.quantity = 0;
         this.averagePrice = Money.of(0);
@@ -62,13 +67,5 @@ public class Position {
 
     private void validateQuantity(int quantity) {
         if (quantity <= 0) throw new IllegalArgumentException("수량은 1 이상");
-    }
-
-    boolean match(PurchaseMeta meta, PositionType type){
-        return this.purchaseMeta.equals(meta) && this.type.equals(type);
-    }
-
-    boolean match(PurchaseMeta meta){
-        return this.purchaseMeta.equals(meta);
     }
 }

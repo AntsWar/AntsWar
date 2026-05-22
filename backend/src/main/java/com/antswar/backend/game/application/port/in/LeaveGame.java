@@ -1,5 +1,5 @@
 package com.antswar.backend.game.application.port.in;
 
-public interface LeavePlayer {
+public interface LeaveGame {
     void leave(long playerId);
 }
