@@ -1,6 +1,7 @@
 package com.antswar.backend.game.infrastructure.websocket;
 
 
+import com.antswar.backend.game.application.GameIdPolicy;
 import com.antswar.backend.game.application.dto.ChatInfo;
 import com.antswar.backend.game.application.port.out.ChatPublisher;
 import com.antswar.backend.game.application.dto.GameEvent;
@@ -15,12 +16,20 @@ import org.springframework.transaction.event.TransactionalEventListener;
 @RequiredArgsConstructor
 public class StompPublisher implements GamePublisher, ChatPublisher {
     private final SimpMessagingTemplate messagingTemplate;
+    private final GameIdPolicy gameIdPolicy;
+
     private static final String GAME_TOPIC = "/topic/game/%d";
     private static final String CHAT_TOPIC = "/topic/game/%d/chat";
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void handle(GameEvent event) {
-        publish(event.gameId(), event.type(), event.payload());
+        publish(event.type(), event.payload());
+    }
+
+    @Override
+    public void publish(String type, Object payload) {
+        long gameId = gameIdPolicy.currentGameId();
+        publish(gameId, type, payload);
     }
 
     @Override

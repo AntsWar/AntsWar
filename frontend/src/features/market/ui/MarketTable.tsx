@@ -7,82 +7,51 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table"
-import { Money } from "@/shared/model/Money"
+import { MoneyText } from "@/shared/model/Money"
 import type { Purchase, TradeQuantity } from "@/entities/purchase"
-import { type OrderRequest } from "../api/order"
-import { useOrderMutation } from "../api/useOrderMutation"
 import { type Me } from "@/features/getMe"
 import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { qk } from "@/shared/quries/keys"
+import { useState } from "react"
+import { useBuyPurchaseMutation } from "../model/useBuyPurchaseMutation"
+import type { BuyPurchaseRequest } from "../api/buyPurchase"
+import { QuantitySelect } from "./QuantitySelect"
 
-export default function MarketTable(props: {
+export default function MarketTable({
+  purchases,
+}: {
   purchases: Array<Purchase>
-  quantity: TradeQuantity
 }) {
-  const { purchases, quantity } = props
-
   return (
     <Table>
       <TableHeader>
-        <TableRow>
-          <TableHead>이름</TableHead>
-          <TableHead className="text-center">현재가</TableHead>
-        </TableRow>
+        <TableHead>이름</TableHead>
+        <TableHead className="text-center">현재가</TableHead>
       </TableHeader>
       <TableBody>
-        {purchases && purchases.length > 0 ? (
+        {purchases &&
           purchases.map((purchase) => (
-            <PurchaseRow
-              key={purchase.meta.code}
-              purchase={purchase}
-              quantity={quantity}
-            />
-          ))
-        ) : (
-          <TableRow>
-            <TableCell
-              colSpan={2}
-              className="text-center text-muted-foreground"
-            >
-              남은 종목이 없습니다.
-            </TableCell>
-          </TableRow>
-        )}
+            <PurchaseRow key={purchase.meta.code} purchase={purchase} />
+          ))}
       </TableBody>
     </Table>
   )
 }
 
-function PurchaseRow(props: { purchase: Purchase; quantity: TradeQuantity }) {
-  const { purchase, quantity } = props
-  const { mutate, isPending } = useOrderMutation()
+function PurchaseRow({ purchase }: { purchase: Purchase }) {
+  const { mutate, isPending } = useBuyPurchaseMutation()
   const queryClient = useQueryClient()
 
-  const submitOrder = (
-    orderType: OrderRequest["orderType"],
-    positionType: OrderRequest["positionType"]
-  ) => {
+  const [quantity, setQuantity] = useState<TradeQuantity>(1)
+
+  const submitOrder = (positionType: BuyPurchaseRequest["positionType"]) => {
     const me = queryClient.getQueryData<Me>(qk.getMe())
 
-    let qty = 0
-    if (orderType === "BUY") {
-      qty =
-        quantity === "ALL"
-          ? Math.floor(
-              (me?.player.balance?.amount ?? 0) / purchase.price.amount
-            )
-          : quantity
-    } else {
-      qty =
-        quantity === "ALL"
-          ? (me?.positions.find(
-              (pos) =>
-                pos.meta.code === purchase.meta.code &&
-                pos.type === positionType
-            )?.quantity ?? 0)
-          : quantity
-    }
+    const qty =
+      quantity === "ALL"
+        ? Math.floor((me?.player.balance?.amount ?? 0) / purchase.price.amount)
+        : quantity
 
     if (!qty || qty <= 0) {
       toast("수량이 없습니다")
@@ -90,24 +59,26 @@ function PurchaseRow(props: { purchase: Purchase; quantity: TradeQuantity }) {
     }
 
     mutate({
-      orderType,
       purchaseId: purchase.id,
       positionType,
       quantity: qty,
-    } as OrderRequest)
+    } as BuyPurchaseRequest)
   }
 
   return (
     <TableRow>
       <TableCell>{purchase.meta.name}</TableCell>
       <TableCell className="text-center">
-        <Money money={purchase.price} />
+        <MoneyText money={purchase.price} />
+      </TableCell>
+      <TableCell className="flex justify-end">
+        <QuantitySelect value={quantity} onValueChange={setQuantity} />
       </TableCell>
       <TableCell className="text-center">
         <Button
           className="w-full"
           variant={"outline"}
-          onClick={() => submitOrder("BUY", "LONG")}
+          onClick={() => submitOrder("LONG")}
           disabled={isPending}
         >
           매수
@@ -117,30 +88,10 @@ function PurchaseRow(props: { purchase: Purchase; quantity: TradeQuantity }) {
         <Button
           className="w-full"
           variant={"outline"}
-          onClick={() => submitOrder("SELL", "LONG")}
-          disabled={isPending}
-        >
-          매도
-        </Button>
-      </TableCell>
-      <TableCell className="text-center">
-        <Button
-          className="w-full"
-          variant={"outline"}
-          onClick={() => submitOrder("BUY", "SHORT")}
+          onClick={() => submitOrder("SHORT")}
           disabled={isPending}
         >
           공매도
-        </Button>
-      </TableCell>
-      <TableCell className="text-center">
-        <Button
-          className="w-full"
-          variant={"outline"}
-          onClick={() => submitOrder("SELL", "SHORT")}
-          disabled={isPending}
-        >
-          상환
         </Button>
       </TableCell>
     </TableRow>

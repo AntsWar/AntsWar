@@ -2,6 +2,7 @@ package com.antswar.backend.game.application.tick;
 
 import com.antswar.backend.game.application.dto.PurchaseMetaInfo;
 import com.antswar.backend.game.application.dto.GameEvent;
+import com.antswar.backend.game.application.port.out.PurchaseRepository;
 import com.antswar.backend.game.domain.Game;
 import com.antswar.backend.game.domain.news.NewsBoard;
 import com.antswar.backend.game.domain.purchase.Purchase;
@@ -12,7 +13,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +21,7 @@ import java.util.Random;
 @RequiredArgsConstructor
 @Component
 public class PurchaseTickHandler implements TickHandler {
+    private final PurchaseRepository purchaseRepository;
     private final NewsBoard newsBoard;
     private final Random random;
     private final ApplicationEventPublisher eventPublisher;
@@ -27,7 +29,7 @@ public class PurchaseTickHandler implements TickHandler {
     private static final double STEP = 0.05;
 
     @Override
-    public void handle(Game game, Instant now) {
+    public void handle(Game game, LocalDateTime now) {
         List<Purchase> purchases = game.getPurchases();
 
         purchases.forEach(purchase -> {
@@ -44,7 +46,6 @@ public class PurchaseTickHandler implements TickHandler {
                 purchase.delist();
 
                 eventPublisher.publishEvent(new GameEvent(
-                        game.getId(),
                         "PURCHASE_DELIST",
                         PurchaseMetaInfo.from(purchase.getMeta()))
                 );

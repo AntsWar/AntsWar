@@ -1,5 +1,6 @@
 package com.antswar.backend.game.infrastructure.websocket;
 
+import com.antswar.backend.game.application.dto.StompPrincipal;
 import com.antswar.backend.game.application.port.in.LeaveGame;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -7,6 +8,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.security.Principal;
 import java.util.Map;
 
 @Component
@@ -17,12 +19,12 @@ public class WebsocketEventListener {
     @EventListener
     public void handleDisconnect(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
-        Map<String, Object> attrs = accessor.getSessionAttributes();
-        if (attrs == null) return;
+        Principal principal = accessor.getUser();
 
-        Object value = attrs.get("playerId");
-        if (value == null) return;
+        if (!(principal instanceof StompPrincipal stompPrincipal)) {
+            return;
+        }
 
-        leaveGame.leave(Long.parseLong(value.toString()));
+        leaveGame.leave(stompPrincipal.playerId());
     }
 }

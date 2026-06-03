@@ -1,8 +1,8 @@
 import { toast } from "sonner"
-import { Money } from "@/shared/model/Money"
+import { MoneyText } from "@/shared/model/Money"
 import { Separator } from "@/shared/ui/separator"
 import { Button } from "@/shared/ui/button"
-import { ShoppingCart, type LucideIcon } from "lucide-react"
+import { HatGlasses, ShoppingCart } from "lucide-react"
 import { useState } from "react"
 import {
   Select,
@@ -13,18 +13,11 @@ import {
 } from "@/shared/ui/select"
 import { NEWS_META } from "@/entities/news"
 import { useBuyItemMutation } from "../model/useBuyItemMutation"
-import type { Item } from "../model/types"
 
-export function FakeNewsItemCard({
-  item,
-  name,
-  Icon,
-}: {
-  item: Item
-  name: string
-  Icon: LucideIcon
-}) {
+export function FakeNewsItemCard() {
   const { mutate, isPending } = useBuyItemMutation()
+  const price = { amount: 3000 }
+
   const [code, setCode] = useState<string>("")
 
   const handleClick = () => {
@@ -33,28 +26,18 @@ export function FakeNewsItemCard({
       return
     }
 
-    mutate(
-      { item: item.code, price: item.price, code },
-      {
-        onError: (error) => {
-          toast.error(error.message)
-        },
-        onSuccess: () => {
-          toast.success(`${name} 사용 완료`)
-        },
-      }
-    )
+    mutate({ item: "FAKE_NEWS", code })
   }
 
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-input/30 p-4">
       <div className="flex justify-between">
         <div className="flex flex-row gap-3">
-          <Icon />
-          {name}
+          <HatGlasses />
+          가짜 뉴스
         </div>
 
-        <Money money={item.price} />
+        <MoneyText money={price} />
       </div>
 
       <Separator />

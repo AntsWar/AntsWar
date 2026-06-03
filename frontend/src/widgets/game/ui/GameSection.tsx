@@ -6,17 +6,73 @@ import {
   FieldGroup,
   FieldTitle,
 } from "@/shared/ui/field"
-import { Money } from "@/shared/model/Money"
-import { PlayerTable } from "@/entities/player"
-import { MarketInfo } from "@/features/market"
-import { PortfolioInfo, useMeQuery } from "@/features/getMe"
+import { MoneyText } from "@/shared/model/Money"
+import { PlayerTable, type Player } from "@/entities/player"
+import { MarketInfo, PortfolioInfo } from "@/features/market"
 import MarketIcon from "@/assets/icon/chart_icon.svg?react"
-import { useGame } from "@/entities/game"
+import { useGame, useGameSocketEvent } from "@/entities/game"
 import { ItemShop } from "@/features/itemShop"
+import type { Purchase } from "@/entities/purchase"
+import { toast } from "sonner"
+import { queryClient } from "@/shared/quries/queryClient"
+import { qk } from "@/shared/quries/keys"
+import { useNoticeStore, NEWS_META } from "@/entities/news"
+import { useMeQuery, type Me } from "@/features/getMe"
 
 export default function GameSection() {
-  const { game } = useGame()
+  const { game, setGame } = useGame()
   const { data: me } = useMeQuery()
+
+  useGameSocketEvent("GAME_UPDATED", (payload) => {
+    const msg = payload as {
+      purchases: Array<Purchase>
+      players: Array<Player>
+      serverTime: string
+    }
+
+    setGame((prev) => {
+      if (!prev) return prev
+
+      return {
+        ...prev,
+        purchases: msg.purchases,
+        players: msg.players,
+        serverTime: msg.serverTime,
+      }
+    })
+
+    const currentMe = queryClient.getQueryData<Me>(qk.getMe())
+    if (currentMe) {
+      const updatedPlayer = msg.players.find(
+        (p) => p.id === currentMe.player.id
+      )
+      if (updatedPlayer) {
+        queryClient.setQueryData(qk.getMe(), {
+          ...currentMe,
+          player: updatedPlayer,
+        })
+      }
+    }
+  })
+
+  useGameSocketEvent("NOTICE", (payload) => {
+    const expiredAt = useNoticeStore.getState().expiredAt
+
+    const noticeRate = expiredAt > Date.now() ? 1.0 : 0.3
+    if (Math.random() < noticeRate) {
+      const code = payload as string
+      const message = NEWS_META[code] ?? code
+      toast.info(message)
+    }
+  })
+
+  useGameSocketEvent("PURCHASE_DELIST", (payload) => {
+    const { name } = payload as { name: string }
+    toast.info(`${name}(이)가 상폐되었습니다.`)
+    queryClient.invalidateQueries({
+      queryKey: qk.getMe(),
+    })
+  })
 
   return (
     <FieldGroup>
@@ -31,7 +87,8 @@ export default function GameSection() {
           시장
         </FieldTitle>
         <FieldDescription>
-          가격이 <Money money={{ amount: 100 }} /> 아래로 떨어지면 상폐됩니다.
+          가격이 <MoneyText money={{ amount: 100 }} /> 아래로 떨어지면
+          상폐됩니다.
         </FieldDescription>
         <FieldContent>
           <MarketInfo purchases={game?.purchases ?? []} />
@@ -56,7 +113,7 @@ export default function GameSection() {
         </FieldTitle>
         <FieldDescription>아이템을 살 수 있습니다.</FieldDescription>
         <FieldContent>
-          <ItemShop items={game?.items ?? []} />
+          <ItemShop />
         </FieldContent>
       </Field>
     </FieldGroup>

@@ -6,12 +6,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table"
-import type { Position } from "@/entities/position/model/types"
-import { Money } from "@/shared/model/Money"
+import { MoneyText } from "@/shared/model/Money"
+import type { Position } from "@/entities/position"
+import type { TradeQuantity } from "@/entities/purchase"
+import { Button } from "@/shared/ui/button"
+import { useState } from "react"
+import { toast } from "sonner"
+import { QuantitySelect } from "./QuantitySelect"
+import { useSellPurchaseMutation } from "../model/useSellPurchaseMutation copy"
+import type { SellPurchaseRequest } from "../api/sellPurchase"
 
-export default function PortfolioTable(props: { positions: Array<Position> }) {
-  const { positions } = props
-
+export default function PortfolioTable({
+  positions,
+}: {
+  positions: Array<Position>
+}) {
   return (
     <Table>
       <TableHeader>
@@ -47,22 +56,49 @@ export default function PortfolioTable(props: { positions: Array<Position> }) {
 }
 
 function PositionRow({ position }: { position: Position }) {
+  const [quantity, setQuantity] = useState<TradeQuantity>(1)
   const instrumentType = position.meta.type === "STOCK" ? "주식" : "코인"
   const positionType = position.type === "LONG" ? "매수" : "공매도"
+  const sellType = position.type === "LONG" ? "매도" : "상환"
 
-  // const {game} = useGame()
-  // const purchases = game?.purchases
-  // const purchase = purchases?.filter()
+  const { mutate, isPending } = useSellPurchaseMutation()
+
+  const submitOrder = () => {
+    const qty = quantity === "ALL" ? (position.quantity ?? 0) : quantity
+
+    if (!qty || qty <= 0) {
+      toast("수량이 없습니다")
+      return
+    }
+
+    mutate({
+      positionId: position.id,
+      quantity: qty,
+    } as SellPurchaseRequest)
+  }
 
   return (
     <TableRow>
       <TableCell>{position.meta.name}</TableCell>
       <TableCell className="text-center">
-        <Money money={position.averagePrice} />
+        <MoneyText money={position.averagePrice} />
       </TableCell>
       <TableCell className="text-center">{position.quantity}</TableCell>
       <TableCell className="text-center">{instrumentType}</TableCell>
       <TableCell className="text-center">{positionType}</TableCell>
+      <TableCell className="flex justify-end">
+        <QuantitySelect value={quantity} onValueChange={setQuantity} />
+      </TableCell>
+      <TableCell className="text-center">
+        <Button
+          className="w-full"
+          variant={"outline"}
+          onClick={() => submitOrder()}
+          disabled={isPending}
+        >
+          {sellType}
+        </Button>
+      </TableCell>
     </TableRow>
   )
 }

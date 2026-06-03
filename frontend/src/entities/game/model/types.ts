@@ -1,4 +1,4 @@
-import type { Item } from "@/entities/item/@x/game"
+import type { Item } from "@/entities/item"
 import type { Player } from "@/entities/player/@x/game"
 import type { Purchase } from "@/entities/purchase/@x/game"
 

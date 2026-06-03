@@ -7,7 +7,7 @@ import com.antswar.backend.game.domain.vo.Money;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 
@@ -18,7 +18,7 @@ public class BotTickHandler implements TickHandler{
     private final Random random;
 
     @Override
-    public void handle(Game game, Instant now) {
+    public void handle(Game game, LocalDateTime now) {
         List<Player> bots = playerRepository.findAllByGameAndBotIsTrue(game);
 
         for (Player bot : bots) {

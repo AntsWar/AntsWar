@@ -3,12 +3,14 @@ package com.antswar.backend.game.application;
 import com.antswar.backend.game.application.port.out.GameRepository;
 import com.antswar.backend.game.application.tick.TickHandler;
 import com.antswar.backend.game.domain.Game;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.Clock;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -16,21 +18,30 @@ import java.util.List;
 public class TickProcessor {
     private final GameRepository gameRepository;
     private final List<TickHandler> handlers;
+    private final Clock clock;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Transactional
-    public void tick(Instant now) {
-        Game game = getOrStartCurrentGame(now);
+    public void tick(long gameId) {
+        LocalDateTime now = LocalDateTime.now(clock);
+        Game game = findOrCreate(gameId, now);
+
         for (TickHandler handler : handlers) {
             handler.handle(game, now);
         }
     }
 
-    private Game getOrStartCurrentGame(Instant now) {
-        Instant startedAt = now.truncatedTo(ChronoUnit.HOURS);
-        Instant endedAt = startedAt.plus(1, ChronoUnit.HOURS);
-
-        return gameRepository.findCurrentGame(now)
-                .orElseGet(() -> gameRepository.save(new Game(startedAt, endedAt)));
+    private Game findOrCreate(long gameId, LocalDateTime now) {
+        return gameRepository.findById(gameId)
+                .orElseGet(() -> {
+                    LocalDateTime startedAt = now.truncatedTo(java.time.temporal.ChronoUnit.HOURS);
+                    LocalDateTime endedAt = startedAt.plusHours(1);
+                    Game game = new Game(gameId, startedAt, endedAt);
+                    em.persist(game);
+                    return game;
+                });
     }
 
 }

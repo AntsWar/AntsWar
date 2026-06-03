@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.antswar.backend.game.exception.GameErrorCode.*;
@@ -24,20 +24,21 @@ import static com.antswar.backend.game.exception.GameErrorCode.*;
 public class GameService implements JoinGame, LeaveGame {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
+    private final GameIdPolicy gameIdPolicy;
     private final Clock clock;
 
     @Transactional
     @Override
     public JoinGameResult join(JoinGameCommand command) {
-        Instant now = clock.instant();
-        Game game = gameRepository.findCurrentGame(now).orElseThrow(()-> new GameException(GAME_NOT_FOUND));
+        long gameId = gameIdPolicy.currentGameId();
+        Game game = gameRepository.findById(gameId).orElseThrow(()-> new GameException(GAME_NOT_FOUND));
         Player player = playerRepository.save(Player.user(command.playerName(), game));
 
         return new JoinGameResult(
                 GameInfo.of(game,
                         PurchaseInfo.from(game.getPurchases(false)),
                         PlayerInfo.from(getPlayers(game)),
-                        now),
+                        LocalDateTime.now(clock)),
                 PlayerInfo.from(player));
     }
 
@@ -48,7 +49,7 @@ public class GameService implements JoinGame, LeaveGame {
     }
 
     private List<Player> getPlayers(Game game){
-        return playerRepository.findAllByGameAndDeActiveIsFalse(game);
+        return playerRepository.findTop5ByGameOrderByBalanceAmountDesc(game);
     }
 
 }

@@ -7,7 +7,7 @@ import {
   TableRow,
 } from "@/shared/ui/table"
 import type { Player } from "../model/types"
-import { Money } from "@/shared/model/Money"
+import { MoneyText } from "@/shared/model/Money"
 
 export default function PlayerTable({
   players,
@@ -58,7 +58,7 @@ function PlayerRow({
       <TableCell>{rank}</TableCell>
       <TableCell>{player.name}</TableCell>
       <TableCell className="text-right">
-        <Money money={player.balance} />
+        <MoneyText money={player.balance} />
       </TableCell>
     </TableRow>
   )

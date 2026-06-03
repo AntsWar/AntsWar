@@ -2,11 +2,13 @@ package com.antswar.backend.game.api;
 
 import com.antswar.backend.common.annotation.Auth;
 import com.antswar.backend.game.api.request.BuyItemRequest;
-import com.antswar.backend.game.api.request.PurchaseRequest;
+import com.antswar.backend.game.api.request.BuyPurchaseRequest;
+import com.antswar.backend.game.api.request.SellPurchaseRequest;
 import com.antswar.backend.game.application.port.in.BuyItem;
 import com.antswar.backend.game.application.port.in.GetMe;
-import com.antswar.backend.game.application.port.in.Trade;
-import com.antswar.backend.game.application.port.in.request.TradeCommand;
+import com.antswar.backend.game.application.port.in.PurchaseTrade;
+import com.antswar.backend.game.application.port.in.request.BuyPurchaseCommand;
+import com.antswar.backend.game.application.port.in.request.SellPurchaseCommand;
 import com.antswar.backend.game.application.port.in.response.GetMeResult;
 import com.antswar.backend.game.infrastructure.resolver.PlayerPrincipal;
 import jakarta.validation.Valid;
@@ -18,14 +20,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class PlayerController {
-    private final Trade trade;
+    private final PurchaseTrade purchaseTrade;
     private final GetMe getMe;
     private final BuyItem buyItem;
 
-    @PostMapping("/order")
-    public ResponseEntity<Void> trade(@RequestBody @Valid PurchaseRequest request,
+    @PostMapping("/purchase/buy")
+    public ResponseEntity<Void> buyPurchase(@RequestBody @Valid BuyPurchaseRequest request,
                                       @Auth PlayerPrincipal player){
-        trade.trade(new TradeCommand(player.id(), request.orderType(), request.positionType(), request.purchaseId(), request.quantity()));
+        purchaseTrade.buy(new BuyPurchaseCommand(player.id(), request.positionType(), request.purchaseId(), request.quantity()));
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/purchase/sell")
+    public ResponseEntity<Void> sellPurchase(@RequestBody @Valid SellPurchaseRequest request,
+                                            @Auth PlayerPrincipal player){
+        purchaseTrade.sell(new SellPurchaseCommand(player.id(), request.positionId(), request.quantity()));
         return ResponseEntity.noContent().build();
     }
 
@@ -36,8 +45,8 @@ public class PlayerController {
     }
 
     @PostMapping("/item")
-    public ResponseEntity<Void> buyItem(@Auth PlayerPrincipal player,
-                                        @RequestBody @Valid BuyItemRequest request){
+    public ResponseEntity<Void> buyItem(@RequestBody @Valid BuyItemRequest request,
+                                        @Auth PlayerPrincipal player){
         buyItem.buy(player.id(), request.item(), request.code());
         return ResponseEntity.noContent().build();
     }

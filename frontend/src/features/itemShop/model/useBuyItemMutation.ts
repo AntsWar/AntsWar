@@ -1,35 +1,28 @@
-import { useMeQuery } from "@/features/getMe"
 import { qk } from "@/shared/quries/keys"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { buyItem } from "../api/buyItem"
-import type { Money } from "@/shared/model/Money"
+import { toast } from "sonner"
+
+type BuyItemVariables = {
+  item: string
+  code?: string
+}
 
 export function useBuyItemMutation() {
   const queryClient = useQueryClient()
-  const { data: me } = useMeQuery()
 
   return useMutation({
     mutationKey: qk.buyItem(),
-    mutationFn: async ({
-      item,
-      price,
-      code,
-    }: {
-      item: string
-      price: Money
-      code?: string
-    }) => {
-      if (!me) throw new Error("내 정보가 없습니다.")
 
-      if (me.player.balance.amount < price.amount) {
-        throw new Error("잔액이 부족합니다.")
-      }
+    mutationFn: ({ item, code }: BuyItemVariables) => buyItem(item, code),
 
-      return buyItem(item, code)
+    onSuccess: (_data, variables) => {
+      toast.success(`${variables.item} 구매 완료`)
+      queryClient.invalidateQueries({ queryKey: qk.getMe() })
     },
-    onSuccess: () =>
-      queryClient.invalidateQueries({
-        queryKey: qk.getMe(),
-      }),
+
+    onError: (error) => {
+      toast.error(error.message)
+    },
   })
 }

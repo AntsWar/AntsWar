@@ -3,7 +3,7 @@ export type Money = {
   currency?: string
 }
 
-export function Money({ money }: { money?: Money }) {
+export function MoneyText({ money }: { money?: Money }) {
   const amount = Number(money?.amount ?? 0)
   const currency = money?.currency ?? "KRW"
 

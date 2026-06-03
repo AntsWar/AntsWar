@@ -1,14 +1,13 @@
 import { JoinDialog } from "@/features/game/joinGame"
 import { StompProvider } from "@/shared/lib/stomp/StompProvider"
-import { GameProvider, useGame } from "@/entities/game"
+import { GameProvider, GameSocketProvider, useGame } from "@/entities/game"
 import GameSection from "@/widgets/game/ui/GameSection"
-import { GameSocketListener } from "@/features/game/getGame"
 import { FinishedDialog } from "@/features/game/finishedGame"
 import { ChatBox } from "@/features/chat"
 import { useState } from "react"
 import RemainingTime from "@/features/game/remainingTime/RemainingTime"
 import { Banknote, Clock, MessageCircle } from "lucide-react"
-import { Money } from "@/shared/model/Money"
+import { MoneyText } from "@/shared/model/Money"
 import { useMeQuery } from "@/features/getMe"
 import { Button } from "@/shared/ui/button"
 import { cn } from "@/shared/ui/lib"
@@ -34,34 +33,37 @@ function GameView() {
 
   return (
     <StompProvider>
-      <GameSocketListener gameId={gameId} />
-
       <div className="flex h-screen justify-center">
-        <div className="flex w-full max-w-3xl flex-col px-3">
-          <div className="flex justify-between py-3">
-            <div className="flex items-center gap-2 rounded-xl">
-              <Clock className="size-5 text-secondary" />
-              <div className="text-base text-muted-foreground">
-                <RemainingTime />
+        <GameSocketProvider gameId={gameId}>
+          <div className="flex w-full max-w-2xl flex-col px-3">
+            <div className="flex justify-between py-3">
+              <div className="flex items-center gap-2 rounded-xl">
+                <Clock className="size-5 text-secondary" />
+                <div className="text-base text-muted-foreground">
+                  <RemainingTime
+                    endedAt={game.meta.endedAt}
+                    serverTime={game.serverTime}
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Banknote className="text-secondary" />
+                <MoneyText money={me?.player.balance} />
+              </div>
+              <div>
+                <Button onClick={() => setChatOpen(true)}>
+                  <MessageCircle />
+                  채팅
+                </Button>
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Banknote className="text-secondary" />
-              <Money money={me?.player.balance} />
-            </div>
-            <div>
-              <Button onClick={() => setChatOpen(true)}>
-                <MessageCircle />
-                채팅
-              </Button>
+            <div className="no-scrollbar overflow-y-auto pb-4">
+              <GameSection />
             </div>
           </div>
-
-          <div className="no-scrollbar overflow-y-auto pb-4">
-            <GameSection />
-          </div>
-        </div>
+        </GameSocketProvider>
         <div
           className={cn(
             chatOpen ? "block" : "hidden",

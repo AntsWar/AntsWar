@@ -8,22 +8,21 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Game {
+public class Game{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     private Long id;
 
     @Getter
-    private Instant startedAt;
+    private LocalDateTime startedAt;
     @Getter
-    private Instant endedAt;
+    private LocalDateTime endedAt;
 
     @Getter
     @OneToMany(mappedBy = "game", cascade = CascadeType.PERSIST)
@@ -32,9 +31,11 @@ public class Game {
     @OneToMany(mappedBy = "game", cascade = CascadeType.PERSIST)
     private final List<Player> players = new ArrayList<>();
 
-    public Game(Instant startedAt, Instant endedAt){
+    public Game(long id, LocalDateTime startedAt, LocalDateTime endedAt){
+        this.id = id;
         this.startedAt = startedAt;
         this.endedAt = endedAt;
+
         for (PurchaseMeta meta : PurchaseMeta.values()) {
             purchases.add(new Purchase(this, meta));
         }
@@ -48,6 +49,12 @@ public class Game {
     public List<Purchase> getPurchases(boolean isDelisted) {
         return purchases.stream()
                 .filter(purchase -> purchase.isDelisted() == isDelisted)
+                .toList();
+    }
+
+    public List<Player> getActivePlayers() {
+        return this.players.stream()
+                .filter(player -> !player.isDeActive())
                 .toList();
     }
 }

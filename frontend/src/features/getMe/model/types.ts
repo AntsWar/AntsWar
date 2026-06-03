@@ -4,5 +4,4 @@ import type { Position } from "@/entities/position"
 export type Me = {
   player: Player
   positions: Array<Position>
-  noticeRate: number
 }

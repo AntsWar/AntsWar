@@ -33,6 +33,7 @@ public class Player{
     @Embedded
     private Money balance;
 
+    @Getter
     private boolean deActive;
 
     @Getter
@@ -45,14 +46,17 @@ public class Player{
         this.name = validateName(name);
         this.game = Objects.requireNonNull(game);
         this.balance = balance;
-        for (Purchase purchase : game.getPurchases()) {
-            positions.add(new Position(this, purchase, PositionType.LONG));
-            positions.add(new Position(this, purchase, PositionType.SHORT));
-        }
     }
 
     public static Player user(String name, Game game) {
-        return new Player(name, game, Money.of(3_000));
+        Player player =  new Player(name, game, Money.of(3_000));
+
+        for (Purchase purchase : game.getPurchases()) {
+            player.positions.add(new Position(player, purchase, PositionType.LONG));
+            player.positions.add(new Position(player, purchase, PositionType.SHORT));
+        }
+
+        return player;
     }
 
     public static Player bot(String name, Game game) {
@@ -74,10 +78,12 @@ public class Player{
         position.add(quantity, purchase.getPrice());
     }
 
-    public void sell(Purchase purchase, PositionType type, int quantity) {
+    public void sell(Position position, int quantity) {
+        Purchase purchase = position.getPurchase();
         if(purchase.isDelisted()) throw new GameException(PURCHASE_DELISTED);
-        Position position = getPosition(purchase, type);
-        Money totalPrice = type == PositionType.LONG
+        if(!position.getPlayer().getId().equals(this.getId())) throw new IllegalArgumentException("본인 포지션이 아님");
+
+        Money totalPrice = position.getType() == PositionType.LONG
                 ? purchase.calculateTotalPrice(quantity)
                 : position.getAveragePrice().times(2).subtract(purchase.getPrice()).times(quantity);
         earn(totalPrice);

@@ -12,23 +12,30 @@ import lombok.NoArgsConstructor;
 import static com.antswar.backend.game.exception.GameErrorCode.POSITION_NOT_ENOUGH_QUANTITY;
 
 @Entity
-@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Position {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
+
+    @Getter
     @ManyToOne(optional = false)
     private Player player;
 
+    @Getter
     @ManyToOne(optional = false)
     private Purchase purchase;
 
+    @Getter
     @Enumerated(EnumType.STRING)
     private PositionType type;
 
+    @Getter
     private int quantity;
 
+    @Getter
+    @Embedded
     private Money averagePrice;
 
     protected Position(Player player, Purchase purchase, PositionType type) {
@@ -68,4 +75,5 @@ public class Position {
     private void validateQuantity(int quantity) {
         if (quantity <= 0) throw new IllegalArgumentException("수량은 1 이상");
     }
+
 }

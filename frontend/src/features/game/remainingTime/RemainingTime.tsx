@@ -1,13 +1,13 @@
-import { useGame } from "@/entities/game"
 import { formatTimeToHMS } from "@/shared/lib/formatTime"
 import { useEffect, useRef, useState } from "react"
 
-export default function RemainingTime() {
-  const { game } = useGame()
-
-  const endedAt = game?.meta.endedAt
-  const serverTime = game?.serverTime
-
+export default function RemainingTime({
+  endedAt,
+  serverTime,
+}: {
+  endedAt: string
+  serverTime: string
+}) {
   const [remainingSeconds, setRemainingSeconds] = useState<number>(0)
 
   const offsetRef = useRef(0)

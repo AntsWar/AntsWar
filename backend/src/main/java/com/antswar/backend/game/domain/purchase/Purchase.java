@@ -22,9 +22,11 @@ public class Purchase {
     @ManyToOne
     @JoinColumn(nullable = false)
     private Game game;
+
     @Getter
     private PurchaseMeta meta;
     @Getter
+    @Embedded
     private Money price;
 
     private int respawnTick;

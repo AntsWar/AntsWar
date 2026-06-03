@@ -37,4 +37,9 @@ public class NewsBoard {
     public int impactOf(PurchaseMeta purchaseMeta) {
         return impactMap.getOrDefault(purchaseMeta, 0);
     }
+
+    public void reset() {
+        newsList.clear();
+        impactMap.clear();
+    }
 }

@@ -62,7 +62,7 @@ export default function ChatBox(props: {
     if (!client?.connected) return
 
     client.publish({
-      destination: `/app/game/${gameId}/chat`,
+      destination: `/app/chat/${gameId}`,
       body: JSON.stringify({ content }),
     })
 

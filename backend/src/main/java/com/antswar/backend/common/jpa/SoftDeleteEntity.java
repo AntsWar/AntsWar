@@ -5,14 +5,15 @@ import jakarta.persistence.MappedSuperclass;
 import lombok.AccessLevel;
 import lombok.Getter;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Getter(AccessLevel.PROTECTED)
 @MappedSuperclass
 public abstract class SoftDeleteEntity extends BaseEntity {
 
     @Column(name = "deleted_at")
-    protected Instant deletedAt;
+    protected LocalDateTime deletedAt;
 
     public boolean isDeleted() {
         return deletedAt != null;
@@ -22,7 +23,7 @@ public abstract class SoftDeleteEntity extends BaseEntity {
         if (isDeleted()) {
             return;
         }
-        this.deletedAt = Instant.now();
+        this.deletedAt = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
     }
 
     protected void restore() {
