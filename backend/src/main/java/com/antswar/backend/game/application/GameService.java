@@ -37,7 +37,7 @@ public class GameService implements JoinGame, LeaveGame {
         return new JoinGameResult(
                 GameInfo.of(game,
                         PurchaseInfo.from(game.getPurchases(false)),
-                        PlayerInfo.from(getPlayers(game)),
+                        PlayerInfo.from(game.getActivePlayers()),
                         LocalDateTime.now(clock)),
                 PlayerInfo.from(player));
     }

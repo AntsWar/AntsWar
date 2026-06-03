@@ -23,7 +23,7 @@ public class TickResultHandler implements TickHandler {
 
     @Override
     public void handle(Game game, LocalDateTime now) {
-        List<Player> players = playerRepository.findTop5ByGameOrderByBalanceAmountDesc(game);
+        List<Player> players = game.getActivePlayers();
         TickResult result = new TickResult(
                 PurchaseInfo.from(game.getPurchases(false)),
                 PlayerInfo.from(players),

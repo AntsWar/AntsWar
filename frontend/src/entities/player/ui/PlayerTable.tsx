@@ -19,6 +19,9 @@ export default function PlayerTable({
   const sorted = [...players].sort(
     (a, b) => b.balance.amount - a.balance.amount
   )
+  const top5 = sorted.slice(0, 5)
+  const myRank = sorted.findIndex((player) => player.id === me?.id) + 1
+  const isInTop5 = myRank > 0 && myRank <= 5
 
   return (
     <Table>
@@ -30,8 +33,8 @@ export default function PlayerTable({
         </TableRow>
       </TableHeader>
       <TableBody>
-        {sorted &&
-          sorted.map((player, index) => (
+        {top5 &&
+          top5.map((player, index) => (
             <PlayerRow
               key={player.id}
               player={player}
@@ -39,6 +42,7 @@ export default function PlayerTable({
               isMe={me?.id === player.id}
             />
           ))}
+        {!isInTop5 && me && <PlayerRow player={me} rank={myRank} isMe />}
       </TableBody>
     </Table>
   )
