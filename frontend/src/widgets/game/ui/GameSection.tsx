@@ -103,7 +103,10 @@ export default function GameSection() {
           상장폐지된 종목은 자동으로 청산됩니다.
         </FieldDescription>
         <FieldContent>
-          <PortfolioInfo positions={me?.positions ?? []} />
+          <PortfolioInfo
+            positions={me?.positions ?? []}
+            purchases={game?.purchases ?? []}
+          />
         </FieldContent>
       </Field>
       <Field className="rounded-xl border bg-popover p-4">

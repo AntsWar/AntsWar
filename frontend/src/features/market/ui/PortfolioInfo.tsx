@@ -1,19 +1,46 @@
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useState } from "react"
-import type { PurchaseType } from "@/entities/purchase"
+import type { Purchase, PurchaseType } from "@/entities/purchase"
 import PortfolioTable from "./PortfolioTable"
 import type { Position } from "@/entities/position"
 
 type FilterType = "all" | PurchaseType
 
-export default function PortfolioInfo(props: { positions: Array<Position> }) {
-  const { positions } = props
+export default function PortfolioInfo({
+  positions,
+  purchases,
+}: {
+  positions: Array<Position>
+  purchases: Array<Purchase>
+}) {
+  const positionsWithProfit: Array<Position> = positions.map((position) => {
+    const purchase = purchases.find(
+      (purchase) => purchase.meta.code === position.meta.code
+    )
+
+    const currentPrice = purchase?.price.amount ?? 0
+
+    const profitAmount =
+      position.type === "LONG"
+        ? (currentPrice - position.averagePrice.amount) * position.quantity
+        : (position.averagePrice.amount - currentPrice) * position.quantity
+
+    return {
+      ...position,
+      profit: {
+        amount: profitAmount,
+        currency: position.averagePrice.currency,
+      },
+    }
+  })
 
   const [selectedType, setSelectedType] = useState<FilterType>("all")
   const filteredPositions =
     selectedType === "all"
-      ? positions
-      : positions.filter((position) => position.meta.type === selectedType)
+      ? positionsWithProfit
+      : positionsWithProfit.filter(
+          (position) => position.meta.type === selectedType
+        )
 
   return (
     <>

@@ -13,8 +13,9 @@ import { Button } from "@/shared/ui/button"
 import { useState } from "react"
 import { toast } from "sonner"
 import { QuantitySelect } from "./QuantitySelect"
-import { useSellPurchaseMutation } from "../model/useSellPurchaseMutation copy"
+import { useSellPurchaseMutation } from "../model/useSellPurchaseMutation"
 import type { SellPurchaseRequest } from "../api/sellPurchase"
+import { cn } from "@/shared/ui/lib"
 
 export default function PortfolioTable({
   positions,
@@ -80,8 +81,17 @@ function PositionRow({ position }: { position: Position }) {
   return (
     <TableRow>
       <TableCell>{position.meta.name}</TableCell>
-      <TableCell className="text-center">
+      <TableCell className="flex justify-center gap-1">
         <MoneyText money={position.averagePrice} />
+
+        <span
+          className={cn(
+            position.profit!.amount >= 0 ? "text-red-400" : "text-blue-400"
+          )}
+        >
+          (
+          <MoneyText money={position.profit} />)
+        </span>
       </TableCell>
       <TableCell className="text-center">{position.quantity}</TableCell>
       <TableCell className="text-center">{instrumentType}</TableCell>

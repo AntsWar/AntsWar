@@ -7,6 +7,7 @@ export type Position = {
   quantity: number
   type: PositionType
   averagePrice: Money
+  profit?: Money
 }
 
 export type PositionType = "LONG" | "SHORT"
