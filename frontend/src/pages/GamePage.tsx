@@ -30,7 +30,6 @@ function GameView() {
   if (!game) return null
 
   const gameId = game.id
-
   return (
     <StompProvider>
       <div className="flex h-screen justify-center">

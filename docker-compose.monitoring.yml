@@ -14,7 +14,7 @@ services:
       - "--storage.tsdb.retention.time=3d"
     mem_limit: 128m
     networks:
-      - app
+      - antswar_app
       - monitoring
 
   mysqld-exporter:
@@ -28,7 +28,7 @@ services:
       - "9104"
     mem_limit: 32m
     networks:
-      - app
+      - antswar_app
       - monitoring
 
   cadvisor:
@@ -50,7 +50,7 @@ services:
       - "--disable_metrics=percpu,hugetlb,referenced_memory,cpu_topology,resctrl"
       - "--housekeeping_interval=30s"
     networks:
-      - app
+      - antswar_app
       - monitoring
 
   alertmanager:
@@ -84,3 +84,5 @@ volumes:
 
 networks:
   monitoring:
+  antswar_app:
+    external: true

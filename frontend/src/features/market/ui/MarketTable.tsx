@@ -26,8 +26,10 @@ export default function MarketTable({
   return (
     <Table>
       <TableHeader>
-        <TableHead>이름</TableHead>
-        <TableHead className="text-center">현재가</TableHead>
+        <TableRow>
+          <TableHead>이름</TableHead>
+          <TableHead className="text-center">현재가</TableHead>
+        </TableRow>
       </TableHeader>
       <TableBody>
         {purchases &&
