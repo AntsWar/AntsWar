@@ -24,6 +24,7 @@ public class Money{
     private String currencyCode;
 
     private static final Currency DEFAULT_CURRENCY = Currency.getInstance("KRW");
+    public static final Money ZERO = Money.of(0);
 
     protected Money(BigDecimal amount, Currency currency) {
         this.amount = Objects.requireNonNull(amount, "금액은 필수");

@@ -4,4 +4,5 @@ export type Player = {
   id: number
   name: string
   balance: Money
+  asset: Money
 }

@@ -66,7 +66,7 @@ public class Player{
     }
 
     private String validateName(String name){
-        if (!hasText(name)) throw new IllegalArgumentException("이름 필수");
+        if (!hasText(name)) throw new GameException(PLAYER_MUST_HAVE_NAME);
         return name;
     }
 
@@ -81,11 +81,9 @@ public class Player{
     public void sell(Position position, int quantity) {
         Purchase purchase = position.getPurchase();
         if(purchase.isDelisted()) throw new GameException(PURCHASE_DELISTED);
-        if(!position.getPlayer().getId().equals(this.getId())) throw new IllegalArgumentException("본인 포지션이 아님");
+        if(!position.getPlayer().getId().equals(this.getId())) throw new GameException(POSITION_NOT_PLAYERS);
 
-        Money totalPrice = position.getType() == PositionType.LONG
-                ? purchase.calculateTotalPrice(quantity)
-                : position.getAveragePrice().times(2).subtract(purchase.getPrice()).times(quantity);
+        Money totalPrice = position.getTotalPrice(quantity);
         earn(totalPrice);
         position.subtract(quantity);
     }
@@ -120,5 +118,13 @@ public class Player{
 
     public void changeBalance(Money balance){
         this.balance = balance;
+    }
+
+    public Money getAsset() {
+        return balance.add(
+                positions.stream()
+                .map(Position::getTotalPrice)
+                .reduce(Money.ZERO, Money::add)
+        );
     }
 }

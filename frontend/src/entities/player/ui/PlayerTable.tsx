@@ -29,7 +29,7 @@ export default function PlayerTable({
         <TableRow>
           <TableHead>순위</TableHead>
           <TableHead>이름</TableHead>
-          <TableHead className="text-right">자산</TableHead>
+          <TableHead className="text-right">총 자산</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -62,7 +62,7 @@ function PlayerRow({
       <TableCell>{rank}</TableCell>
       <TableCell>{player.name}</TableCell>
       <TableCell className="text-right">
-        <MoneyText money={player.balance} />
+        <MoneyText money={player.asset} />
       </TableCell>
     </TableRow>
   )

@@ -7,6 +7,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Arrays;
+
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -29,7 +31,7 @@ public class GlobalExceptionHandler {
             IllegalArgumentException.class
     })
     protected ResponseEntity<ErrorResponse> handleBadRequestException(Exception e) {
-        log.warn("badRequestException msg={}", e.getMessage());
+        log.warn("badRequestException", e);
 
         ErrorResponse response = createBadRequestResponse(e);
         return ResponseEntity

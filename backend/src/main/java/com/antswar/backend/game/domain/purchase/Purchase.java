@@ -3,6 +3,8 @@ package com.antswar.backend.game.domain.purchase;
 import com.antswar.backend.game.domain.Game;
 import com.antswar.backend.game.domain.player.Position;
 import com.antswar.backend.game.domain.vo.Money;
+import com.antswar.backend.game.exception.GameErrorCode;
+import com.antswar.backend.game.exception.GameException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,6 +21,7 @@ public class Purchase {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     @JoinColumn(nullable = false)
     private Game game;
@@ -50,7 +53,8 @@ public class Purchase {
     }
 
     public Money calculateTotalPrice(int quantity) {
-        if (quantity <= 0) throw new IllegalArgumentException("수량은 1 이상");
+        if (quantity <= 0) return ZERO_PRICE;
+
         return price.times(quantity);
     }
 

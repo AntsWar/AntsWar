@@ -9,6 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static com.antswar.backend.game.exception.GameErrorCode.POSITION_MUST_AT_LEAST_1_QUANTITY;
 import static com.antswar.backend.game.exception.GameErrorCode.POSITION_NOT_ENOUGH_QUANTITY;
 
 @Entity
@@ -43,11 +44,23 @@ public class Position {
         this.purchase = purchase;
         this.type = type;
         this.quantity = 0;
-        this.averagePrice = Money.of(0);
+        this.averagePrice = Money.ZERO;
     }
 
     public boolean isEmpty(){
         return quantity <= 0;
+    }
+
+    public Money getTotalPrice() {
+        return getTotalPrice(this.quantity);
+    }
+
+    public Money getTotalPrice(int quantity) {
+        if(quantity <= 0) return Money.ZERO;
+        return switch (type) {
+            case LONG -> purchase.calculateTotalPrice(quantity);
+            case SHORT -> averagePrice.times(2).subtract(purchase.getPrice()).times(quantity);
+        };
     }
 
     protected void add(int quantity, Money price) {
@@ -73,7 +86,7 @@ public class Position {
     }
 
     private void validateQuantity(int quantity) {
-        if (quantity <= 0) throw new IllegalArgumentException("수량은 1 이상");
+        if (quantity <= 0) throw new GameException(POSITION_MUST_AT_LEAST_1_QUANTITY);
     }
 
 }

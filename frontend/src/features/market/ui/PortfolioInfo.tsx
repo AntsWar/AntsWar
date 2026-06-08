@@ -22,8 +22,8 @@ export default function PortfolioInfo({
 
     const profitAmount =
       position.type === "LONG"
-        ? (currentPrice - position.averagePrice.amount) * position.quantity
-        : (position.averagePrice.amount - currentPrice) * position.quantity
+        ? currentPrice - position.averagePrice.amount
+        : position.averagePrice.amount - currentPrice
 
     return {
       ...position,

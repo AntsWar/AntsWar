@@ -5,9 +5,9 @@ import com.antswar.backend.game.domain.player.Player;
 
 import java.util.List;
 
-public record PlayerInfo(long id, String name, Money balance) {
+public record PlayerInfo(long id, String name, Money balance, Money asset) {
     public static PlayerInfo from(Player player){
-        return new PlayerInfo(player.getId(), player.getName(), player.getBalance());
+        return new PlayerInfo(player.getId(), player.getName(), player.getBalance(), player.getAsset());
     }
 
     public static List<PlayerInfo> from(List<Player> players){
