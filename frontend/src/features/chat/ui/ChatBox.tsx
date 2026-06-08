@@ -10,11 +10,13 @@ type ChatSocketMessage = {
   content: string
 }
 
-export default function ChatBox(props: {
+export default function ChatBox({
+  gameId,
+  onClose,
+}: {
   gameId: number
   onClose: () => void
 }) {
-  const { gameId, onClose } = props
   const { connected, getClient } = useStompClient()
 
   const [messages, setMessages] = useState<Array<ChatSocketMessage>>([])

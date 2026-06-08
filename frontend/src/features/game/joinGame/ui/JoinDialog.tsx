@@ -2,7 +2,7 @@ import { Button } from "@/shared/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/shared/ui/dialog"
 import { useState } from "react"
 import { useJoinGameMutation } from "../api/useJoinGameMutation"
-import { useGame } from "@/entities/game"
+import { type Game } from "@/entities/game"
 import { MessageCircle, Shield, Swords, TrendingUp } from "lucide-react"
 import {
   InputGroup,
@@ -17,8 +17,13 @@ import { Logo } from "@/shared/ui/Logo"
 import { useQueryClient } from "@tanstack/react-query"
 import { qk } from "@/shared/quries/keys"
 
-export default function JoinDialog() {
-  const { game, setGame, setFinished } = useGame()
+export default function JoinDialog({
+  open,
+  setGame,
+}: {
+  open: boolean
+  setGame: (game: Game) => void
+}) {
   const queryClient = useQueryClient()
 
   const [name, setName] = useState(() => {
@@ -34,7 +39,6 @@ export default function JoinDialog() {
     mutate(finalName, {
       onSuccess: async ({ game }) => {
         setGame(game)
-        setFinished(false)
 
         queryClient.invalidateQueries({
           queryKey: qk.getMe(),
@@ -44,7 +48,7 @@ export default function JoinDialog() {
   }
 
   return (
-    <Dialog open={game === null}>
+    <Dialog open={open}>
       <DialogContent
         className="animate-[border-sun_3s_ease-in-out_infinite]! rounded-3xl border p-8 before:pointer-events-none before:absolute before:top-1/2 before:left-1/2 before:z-[-1] before:h-[105%] before:w-[106%] before:-translate-x-1/2 before:-translate-y-1/2 before:bg-[url('/card_light.png')] before:bg-size-[100%_100%] before:bg-center before:bg-no-repeat before:content-[''] dark:before:bg-[url('/card_dark.png')]"
         showCloseButton={false}

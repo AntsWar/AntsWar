@@ -7,72 +7,15 @@ import {
   FieldTitle,
 } from "@/shared/ui/field"
 import { MoneyText } from "@/shared/model/Money"
-import { PlayerTable, type Player } from "@/entities/player"
+import { PlayerTable } from "@/entities/player"
 import { MarketInfo, PortfolioInfo } from "@/features/market"
 import MarketIcon from "@/assets/icon/chart_icon.svg?react"
-import { useGame, useGameSocketEvent } from "@/entities/game"
+import { type Game } from "@/entities/game"
 import { ItemShop } from "@/features/itemShop"
-import type { Purchase } from "@/entities/purchase"
-import { toast } from "sonner"
-import { queryClient } from "@/shared/quries/queryClient"
-import { qk } from "@/shared/quries/keys"
-import { useNoticeStore, NEWS_META } from "@/entities/news"
-import { useMeQuery, type Me } from "@/features/getMe"
+import { useMeQuery } from "@/features/getMe"
 
-export default function GameSection() {
-  const { game, setGame } = useGame()
+export default function GameSection({ game }: { game: Game }) {
   const { data: me } = useMeQuery()
-
-  useGameSocketEvent("GAME_UPDATED", (payload) => {
-    const msg = payload as {
-      purchases: Array<Purchase>
-      players: Array<Player>
-      serverTime: string
-    }
-
-    setGame((prev) => {
-      if (!prev) return prev
-
-      return {
-        ...prev,
-        purchases: msg.purchases,
-        players: msg.players,
-        serverTime: msg.serverTime,
-      }
-    })
-
-    const currentMe = queryClient.getQueryData<Me>(qk.getMe())
-    if (currentMe) {
-      const updatedPlayer = msg.players.find(
-        (p) => p.id === currentMe.player.id
-      )
-      if (updatedPlayer) {
-        queryClient.setQueryData(qk.getMe(), {
-          ...currentMe,
-          player: updatedPlayer,
-        })
-      }
-    }
-  })
-
-  useGameSocketEvent("NOTICE", (payload) => {
-    const expiredAt = useNoticeStore.getState().expiredAt
-
-    const noticeRate = expiredAt > Date.now() ? 1.0 : 0.3
-    if (Math.random() < noticeRate) {
-      const code = payload as string
-      const message = NEWS_META[code] ?? code
-      toast.info(message)
-    }
-  })
-
-  useGameSocketEvent("PURCHASE_DELIST", (payload) => {
-    const { name } = payload as { name: string }
-    toast.info(`${name}(이)가 상폐되었습니다.`)
-    queryClient.invalidateQueries({
-      queryKey: qk.getMe(),
-    })
-  })
 
   return (
     <FieldGroup>

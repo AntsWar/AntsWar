@@ -1,77 +1,145 @@
 import { JoinDialog } from "@/features/game/joinGame"
 import { StompProvider } from "@/shared/lib/stomp/StompProvider"
-import { GameProvider, GameSocketProvider, useGame } from "@/entities/game"
+import {
+  GameSocketProvider,
+  useGameSocketEvent,
+  type Game,
+} from "@/entities/game"
 import GameSection from "@/widgets/game/ui/GameSection"
 import { FinishedDialog } from "@/features/game/finishedGame"
 import { ChatBox } from "@/features/chat"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import RemainingTime from "@/features/game/remainingTime/RemainingTime"
 import { Banknote, Clock, MessageCircle } from "lucide-react"
 import { MoneyText } from "@/shared/model/Money"
-import { useMeQuery } from "@/features/getMe"
+import { useMeQuery, useScoreStore, type Me } from "@/features/getMe"
 import { Button } from "@/shared/ui/button"
 import { cn } from "@/shared/ui/lib"
+import type { Purchase } from "@/entities/purchase"
+import type { Player } from "@/entities/player"
+import { NEWS_META, useNoticeStore } from "@/entities/news"
+import { toast } from "sonner"
+import { queryClient } from "@/shared/quries/queryClient"
+import { qk } from "@/shared/quries/keys"
 
 export default function GamePage() {
+  const [init, setInit] = useState<Game | null>(null)
+
   return (
-    <GameProvider>
-      <JoinDialog />
-      <FinishedDialog />
-      <GameView />
-    </GameProvider>
+    <>
+      <JoinDialog open={init === null} setGame={setInit} />
+      {init && (
+        <StompProvider>
+          <GameSocketProvider gameId={init.id}>
+            <GameView init={init} />
+          </GameSocketProvider>
+        </StompProvider>
+      )}
+    </>
   )
 }
 
-function GameView() {
-  const { game } = useGame()
-  const [chatOpen, setChatOpen] = useState(false)
+function GameView({ init }: { init: Game }) {
+  const [game, setGame] = useState<Game>(init)
+  const [finished, setFinished] = useState<boolean>(false)
+  const [chatOpen, setChatOpen] = useState(() => {
+    return window.matchMedia("(min-width: 1024px)").matches
+  })
   const { data: me } = useMeQuery()
 
-  if (!game) return null
+  useGameSocketEvent("GAME_UPDATED", (payload) => {
+    const msg = payload as {
+      purchases: Array<Purchase>
+      players: Array<Player>
+      serverTime: string
+    }
 
-  const gameId = game.id
+    setGame((prev) => {
+      if (!prev) return prev
+
+      return {
+        ...prev,
+        purchases: msg.purchases,
+        players: msg.players,
+        serverTime: msg.serverTime,
+      }
+    })
+  })
+
+  useGameSocketEvent("FINISHED", () => {
+    setFinished(true)
+  })
+
+  useGameSocketEvent("NOTICE", (payload) => {
+    const expiredAt = useNoticeStore.getState().expiredAt
+
+    const noticeRate = expiredAt > Date.now() ? 1.0 : 0.3
+    if (Math.random() < noticeRate) {
+      const code = payload as string
+      const message = NEWS_META[code] ?? code
+      toast.info(message)
+    }
+  })
+
+  useGameSocketEvent("PURCHASE_DELIST", (payload) => {
+    const { name } = payload as { name: string }
+    toast.info(`${name}(이)가 상폐되었습니다.`)
+    queryClient.invalidateQueries({
+      queryKey: qk.getMe(),
+    })
+  })
+
+  useEffect(() => {
+    if (finished) return
+
+    const timer = setInterval(() => {
+      const currentMe = queryClient.getQueryData<Me>(qk.getMe())
+      if (!currentMe) return
+      useScoreStore.getState().addScore(currentMe.player.asset)
+    }, 1000)
+
+    return () => clearInterval(timer)
+  }, [finished])
+
   return (
-    <StompProvider>
-      <div className="flex h-screen justify-center">
-        <GameSocketProvider gameId={gameId}>
-          <div className="flex w-full max-w-2xl flex-col px-3">
-            <div className="flex justify-between py-3">
-              <div className="flex items-center gap-2 rounded-xl">
-                <Clock className="size-5 text-secondary" />
-                <div className="text-base text-muted-foreground">
-                  <RemainingTime
-                    endedAt={game.meta.endedAt}
-                    serverTime={game.serverTime}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Banknote className="text-secondary" />
-                <MoneyText money={me?.player.balance} />
-              </div>
-              <div>
-                <Button onClick={() => setChatOpen(true)}>
-                  <MessageCircle />
-                  채팅
-                </Button>
-              </div>
-            </div>
-
-            <div className="no-scrollbar overflow-y-auto pb-4">
-              <GameSection />
+    <div className="flex h-screen justify-center">
+      <FinishedDialog open={finished} players={game.players} />
+      <div className="flex w-full max-w-2xl flex-col px-3">
+        <div className="flex justify-between py-3">
+          <div className="flex items-center gap-2 rounded-xl">
+            <Clock className="size-5 text-secondary" />
+            <div className="text-base text-muted-foreground">
+              <RemainingTime
+                endedAt={game.meta.endedAt}
+                serverTime={game.serverTime}
+              />
             </div>
           </div>
-        </GameSocketProvider>
-        <div
-          className={cn(
-            chatOpen ? "block" : "hidden",
-            "fixed z-40 mt-12 h-[calc(100vh-4rem)] w-full max-w-2xl px-3 lg:static lg:w-sm"
-          )}
-        >
-          <ChatBox gameId={gameId} onClose={() => setChatOpen(false)} />
+
+          <div className="flex items-center gap-2">
+            <Banknote className="text-secondary" />
+            <MoneyText money={me?.player.balance} />
+          </div>
+          <div>
+            <Button onClick={() => setChatOpen(true)}>
+              <MessageCircle />
+              채팅
+            </Button>
+          </div>
+        </div>
+
+        <div className="no-scrollbar overflow-y-auto pb-4">
+          <GameSection game={game} />
         </div>
       </div>
-    </StompProvider>
+      <div
+        className={cn(
+          chatOpen ? "block" : "hidden",
+          "fixed z-40 mt-12 h-[calc(100vh-4rem)] w-full max-w-2xl px-3 lg:static lg:w-sm"
+        )}
+      >
+        <ChatBox gameId={game.id} onClose={() => setChatOpen(false)} />
+      </div>
+    </div>
   )
 }
