@@ -37,6 +37,12 @@ public class StompPublisher implements GamePublisher, ChatPublisher {
         messagingTemplate.convertAndSend(GAME_TOPIC.formatted(gameId), new GameMessage(type, payload));
     }
 
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    public void handle(ChatInfo event) {
+        long gameId = gameIdPolicy.currentGameId();
+        publish(gameId, event);
+    }
+
     @Override
     public void publish(long gameId, ChatInfo chat) {
         messagingTemplate.convertAndSend(CHAT_TOPIC.formatted(gameId), chat);

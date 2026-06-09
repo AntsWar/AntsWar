@@ -4,12 +4,14 @@ import com.antswar.backend.game.application.dto.*;
 import com.antswar.backend.game.application.port.in.*;
 import com.antswar.backend.game.application.port.in.request.JoinGameCommand;
 import com.antswar.backend.game.application.port.in.response.JoinGameResult;
+import com.antswar.backend.game.application.port.out.ChatPublisher;
 import com.antswar.backend.game.application.port.out.GameRepository;
 import com.antswar.backend.game.application.port.out.PlayerRepository;
 import com.antswar.backend.game.domain.Game;
 import com.antswar.backend.game.domain.player.Player;
 import com.antswar.backend.game.exception.GameException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +27,7 @@ public class GameService implements JoinGame, LeaveGame {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
     private final GameIdPolicy gameIdPolicy;
+    private final ApplicationEventPublisher eventPublisher;
     private final Clock clock;
 
     @Transactional
@@ -33,6 +36,8 @@ public class GameService implements JoinGame, LeaveGame {
         long gameId = gameIdPolicy.currentGameId();
         Game game = gameRepository.findById(gameId).orElseThrow(()-> new GameException(GAME_NOT_FOUND));
         Player player = playerRepository.save(Player.user(command.playerName(), game));
+
+        eventPublisher.publishEvent(new ChatInfo("SYSTEM", player.getName() + "님이 입장하셨습니다."));
 
         return new JoinGameResult(
                 GameInfo.of(game,
