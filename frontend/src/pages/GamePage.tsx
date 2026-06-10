@@ -121,10 +121,10 @@ function GameView({ init }: { init: Game }) {
   }, [finished])
 
   return (
-    <div className="flex h-screen justify-center">
+    <div className="flex h-full justify-center">
       <FinishedDialog open={finished} players={game.players} />
-      <div className="flex w-full max-w-2xl flex-col px-3">
-        <div className="flex justify-between py-3">
+      <div className="flex min-h-0 w-full max-w-2xl flex-col px-3">
+        <div className="flex shrink-0 justify-between py-3">
           <div className="flex items-center gap-2 rounded-xl">
             <Clock className="size-5 text-secondary" />
             <div className="text-base text-muted-foreground">
@@ -147,14 +147,14 @@ function GameView({ init }: { init: Game }) {
           </div>
         </div>
 
-        <div className="no-scrollbar overflow-y-auto pb-4">
+        <div className="no-scrollbar flex-1 overflow-y-auto pb-4">
           <GameSection game={game} />
         </div>
       </div>
       <div
         className={cn(
           chatOpen ? "block" : "hidden",
-          "fixed z-40 mt-12 h-[calc(100vh-4rem)] w-full max-w-2xl px-3 lg:static lg:w-sm"
+          "fixed inset-x-0 top-12 bottom-0 z-40 w-full max-w-2xl px-3 lg:static lg:block lg:h-full lg:w-sm"
         )}
       >
         <ChatBox gameId={game.id} onClose={() => setChatOpen(false)} />

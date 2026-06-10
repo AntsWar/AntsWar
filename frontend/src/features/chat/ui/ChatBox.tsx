@@ -72,8 +72,8 @@ export default function ChatBox({
   }
 
   return (
-    <Field className="flex h-full flex-col gap-5 rounded-xl border bg-popover p-4">
-      <FieldLabel className="justify-between">
+    <Field className="flex h-full min-h-0 flex-col gap-5 rounded-xl border bg-popover p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
+      <FieldLabel className="shrink-0 justify-between">
         <div className="flex gap-2 text-xl">
           <MessageCircle className="text-secondary" /> 채팅
         </div>
@@ -99,7 +99,7 @@ export default function ChatBox({
           e.preventDefault()
           send()
         }}
-        className="flex gap-2"
+        className="flex shrink-0 gap-2 pb-[env(safe-area-inset-bottom)]"
       >
         <Input
           value={text}
