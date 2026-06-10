@@ -11,7 +11,7 @@ export function LuckyBoxItemCard() {
 
   const handleClick = () => {
     mutate({
-      item: "LUCKY_BOX",
+      item: { code: "LUCKY_BOX", price: price },
     })
   }
 

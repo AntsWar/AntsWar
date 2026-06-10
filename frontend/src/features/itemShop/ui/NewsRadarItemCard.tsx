@@ -33,7 +33,7 @@ export function NewsRadarItemCard() {
   const handleClick = () => {
     mutate(
       {
-        item: "NEWS_RADAR",
+        item: { code: "NEWS_RADAR", price: price },
       },
       {
         onSuccess: () => {

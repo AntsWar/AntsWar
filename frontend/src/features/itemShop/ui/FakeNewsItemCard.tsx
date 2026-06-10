@@ -27,7 +27,7 @@ export function FakeNewsItemCard() {
     }
 
     mutate(
-      { item: "FAKE_NEWS", code },
+      { item: { code: "FAKE_NEWS", price: price }, code },
       {
         onSuccess: () => {
           toast.error("가짜뉴스 구매완료")

@@ -11,7 +11,7 @@ export function GoldenFingerItemCard() {
 
   const handleClick = () => {
     mutate({
-      item: "GOLDEN_FINGER",
+      item: { code: "GOLDEN_FINGER", price: price },
     })
   }
 

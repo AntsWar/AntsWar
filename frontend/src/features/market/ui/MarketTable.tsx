@@ -10,11 +10,13 @@ import {
 import { MoneyText } from "@/shared/model/Money"
 import type { Purchase, TradeQuantity } from "@/entities/purchase"
 import { type Me } from "@/features/getMe"
-import { toast } from "sonner"
 import { useQueryClient } from "@tanstack/react-query"
 import { qk } from "@/shared/quries/keys"
 import { useState } from "react"
-import { useBuyPurchaseMutation } from "../model/useBuyPurchaseMutation"
+import {
+  useBuyPurchaseMutation,
+  type BuyPurchaseVariable,
+} from "../model/useBuyPurchaseMutation"
 import type { BuyPurchaseRequest } from "../api/buyPurchase"
 import { QuantitySelect } from "./QuantitySelect"
 
@@ -55,16 +57,11 @@ function PurchaseRow({ purchase }: { purchase: Purchase }) {
         ? Math.floor((me?.player.balance?.amount ?? 0) / purchase.price.amount)
         : quantity
 
-    if (!qty || qty <= 0) {
-      toast("수량이 없습니다")
-      return
-    }
-
     mutate({
-      purchaseId: purchase.id,
-      positionType,
+      purchase: purchase,
+      positionType: positionType,
       quantity: qty,
-    } as BuyPurchaseRequest)
+    } as BuyPurchaseVariable)
   }
 
   return (

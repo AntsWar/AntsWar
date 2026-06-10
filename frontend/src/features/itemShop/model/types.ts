@@ -1,11 +1,7 @@
 import type { Money } from "@/shared/model/Money"
-import type { LucideIcon } from "lucide-react"
 
-export type ItemMeta = {
+export type Item = {
   code: string
   name: string
-  icon: LucideIcon
-  description: string
   price: Money
-  onSuccess?: () => void
 }
