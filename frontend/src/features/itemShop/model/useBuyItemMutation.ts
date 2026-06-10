@@ -16,8 +16,7 @@ export function useBuyItemMutation() {
 
     mutationFn: ({ item, code }: BuyItemVariables) => buyItem(item, code),
 
-    onSuccess: (_data, variables) => {
-      toast.success(`${variables.item} 구매 완료`)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: qk.getMe() })
     },
 

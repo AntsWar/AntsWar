@@ -6,6 +6,7 @@ import { RadioTower, ShoppingCart } from "lucide-react"
 import { useNoticeStore } from "@/entities/news"
 import { useEffect, useState } from "react"
 import { formatTimeToMS } from "@/shared/lib/formatTime"
+import { toast } from "sonner"
 
 export function NewsRadarItemCard() {
   const { mutate, isPending } = useBuyItemMutation()
@@ -36,6 +37,7 @@ export function NewsRadarItemCard() {
       },
       {
         onSuccess: () => {
+          toast.info("뉴스레이더 구매 완료")
           useNoticeStore.getState().activate(1000 * 60 * 5)
         },
       }
