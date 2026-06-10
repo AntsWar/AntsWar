@@ -5,7 +5,6 @@ import {
   CartesianGrid,
   AreaChart,
   Area,
-  type TooltipProps,
 } from "recharts"
 import { formatTimeToMS } from "@/shared/lib/formatTime"
 import { MoneyText } from "@/shared/model/Money"
@@ -41,11 +40,8 @@ export function ScoreChart({
   )
 }
 
-function ScoreTooltip({
-  active,
-  payload,
-  label,
-}: TooltipProps<number, string>) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ScoreTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) {
     return null
   }

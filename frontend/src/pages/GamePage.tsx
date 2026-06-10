@@ -154,8 +154,9 @@ function GameView({ init }: { init: Game }) {
       <div
         className={cn(
           chatOpen ? "block" : "hidden",
-          "fixed inset-x-0 top-12 bottom-0 z-40 w-full max-w-2xl px-3 lg:static lg:block lg:h-full lg:w-sm"
+          "fixed top-12 bottom-2 z-40 w-full max-w-2xl px-3 lg:static lg:mt-12 lg:mb-2 lg:w-sm"
         )}
+        // "fixed z-40 mt-12 h-[calc(100vh-4rem)] w-full max-w-2xl px-3 lg:static lg:w-sm"
       >
         <ChatBox gameId={game.id} onClose={() => setChatOpen(false)} />
       </div>
