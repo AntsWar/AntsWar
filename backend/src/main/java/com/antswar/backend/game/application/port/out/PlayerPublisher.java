@@ -1,5 +1,7 @@
 package com.antswar.backend.game.application.port.out;
 
+import com.antswar.backend.game.application.dto.PlayerEvent;
+
 public interface PlayerPublisher {
-    void publish(long playerId,String destination, Object payload);
+    void publish(PlayerEvent event);
 }

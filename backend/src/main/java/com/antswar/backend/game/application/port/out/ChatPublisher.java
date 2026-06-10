@@ -4,4 +4,5 @@ import com.antswar.backend.game.application.dto.ChatInfo;
 
 public interface ChatPublisher {
     void publish(long gameId, ChatInfo chat);
+    void publish(ChatInfo chat);
 }

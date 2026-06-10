@@ -1,5 +1,5 @@
 import { JoinDialog } from "@/features/game/joinGame"
-import { StompProvider } from "@/shared/lib/stomp/StompProvider"
+import { StompProvider, useStompClient } from "@/shared/lib/stomp/StompProvider"
 import {
   GameSocketProvider,
   useGameSocketEvent,
@@ -41,6 +41,7 @@ export default function GamePage() {
 
 function GameView({ init }: { init: Game }) {
   const [game, setGame] = useState<Game>(init)
+  const { connected, getClient } = useStompClient()
   const [finished, setFinished] = useState<boolean>(false)
   const [chatOpen, setChatOpen] = useState(() => {
     return window.matchMedia("(min-width: 1024px)").matches
@@ -88,6 +89,24 @@ function GameView({ init }: { init: Game }) {
       queryKey: qk.getMe(),
     })
   })
+
+  useEffect(() => {
+    if (!connected) return
+
+    const client = getClient()
+    if (!client) return
+
+    const sub = client.subscribe("/user/queue", ({ body }) => {
+      try {
+        const message = JSON.parse(body)
+        if (message.type === "BANKRUPT") setFinished(true)
+      } catch {
+        /* empty */
+      }
+    })
+
+    return () => sub.unsubscribe()
+  }, [connected, getClient])
 
   useEffect(() => {
     if (finished) return

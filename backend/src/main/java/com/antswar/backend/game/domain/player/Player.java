@@ -127,4 +127,8 @@ public class Player{
                 .reduce(Money.ZERO, Money::add)
         );
     }
+
+    public boolean isBankrupt() {
+        return getAsset().isNegative();
+    }
 }

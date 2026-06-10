@@ -29,7 +29,11 @@ public class Money{
     protected Money(BigDecimal amount, Currency currency) {
         this.amount = Objects.requireNonNull(amount, "금액은 필수");
         this.currencyCode = Objects.requireNonNull(currency.getCurrencyCode(), "통화는 필수");
-        validate();
+//        validate();
+    }
+
+    public boolean isNegative() {
+        return amount.signum() < 0;
     }
 
     public static Money of(long amount) {
