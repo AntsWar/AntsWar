@@ -17,6 +17,7 @@ export default function PortfolioInfo({
     const purchase = purchases.find(
       (purchase) => purchase.meta.code === position.meta.code
     )
+    position.purchase = purchase
 
     const currentPrice = purchase?.price.amount ?? 0
 
@@ -35,12 +36,6 @@ export default function PortfolioInfo({
   })
 
   const [selectedType, setSelectedType] = useState<FilterType>("all")
-  const filteredPositions =
-    selectedType === "all"
-      ? positionsWithProfit
-      : positionsWithProfit.filter(
-          (position) => position.meta.type === selectedType
-        )
 
   return (
     <>
@@ -54,7 +49,10 @@ export default function PortfolioInfo({
           <TabsTrigger value={"CRYPTO"}>코인</TabsTrigger>
         </TabsList>
       </Tabs>
-      <PortfolioTable positions={filteredPositions} />
+      <PortfolioTable
+        positions={positionsWithProfit}
+        purchaseType={selectedType}
+      />
     </>
   )
 }

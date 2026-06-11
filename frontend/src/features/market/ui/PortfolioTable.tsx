@@ -8,7 +8,7 @@ import {
 } from "@/shared/ui/table"
 import { MoneyText } from "@/shared/model/Money"
 import type { Position } from "@/entities/position"
-import type { TradeQuantity } from "@/entities/purchase"
+import type { PurchaseType, TradeQuantity } from "@/entities/purchase"
 import { Button } from "@/shared/ui/button"
 import { useState } from "react"
 import { toast } from "sonner"
@@ -19,8 +19,10 @@ import { cn } from "@/shared/ui/lib"
 
 export default function PortfolioTable({
   positions,
+  purchaseType,
 }: {
   positions: Array<Position>
+  purchaseType: PurchaseType | "all"
 }) {
   return (
     <Table>
@@ -39,6 +41,7 @@ export default function PortfolioTable({
             <PositionRow
               key={position.meta.code + position.type}
               position={position}
+              hidden={purchaseType === position.purchase?.meta.type}
             />
           ))
         ) : (
@@ -56,7 +59,13 @@ export default function PortfolioTable({
   )
 }
 
-function PositionRow({ position }: { position: Position }) {
+function PositionRow({
+  position,
+  hidden,
+}: {
+  position: Position
+  hidden: boolean
+}) {
   const [quantity, setQuantity] = useState<TradeQuantity>(1)
   const instrumentType = position.meta.type === "STOCK" ? "주식" : "코인"
   const positionType = position.type === "LONG" ? "매수" : "공매도"
@@ -79,7 +88,7 @@ function PositionRow({ position }: { position: Position }) {
   }
 
   return (
-    <TableRow>
+    <TableRow className={hidden ? "hidden" : ""}>
       <TableCell>{position.meta.name}</TableCell>
       <TableCell className="flex justify-center gap-1">
         <MoneyText money={position.averagePrice} />

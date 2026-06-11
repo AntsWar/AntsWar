@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/shared/ui/table"
 import { MoneyText } from "@/shared/model/Money"
-import type { Purchase, TradeQuantity } from "@/entities/purchase"
+import type { Purchase, PurchaseType, TradeQuantity } from "@/entities/purchase"
 import { type Me } from "@/features/getMe"
 import { useQueryClient } from "@tanstack/react-query"
 import { qk } from "@/shared/quries/keys"
@@ -22,8 +22,10 @@ import { QuantitySelect } from "./QuantitySelect"
 
 export default function MarketTable({
   purchases,
+  purchaseType,
 }: {
   purchases: Array<Purchase>
+  purchaseType: PurchaseType
 }) {
   return (
     <Table>
@@ -36,14 +38,24 @@ export default function MarketTable({
       <TableBody>
         {purchases &&
           purchases.map((purchase) => (
-            <PurchaseRow key={purchase.meta.code} purchase={purchase} />
+            <PurchaseRow
+              key={purchase.meta.code}
+              purchase={purchase}
+              hidden={purchase.meta.type === purchaseType}
+            />
           ))}
       </TableBody>
     </Table>
   )
 }
 
-function PurchaseRow({ purchase }: { purchase: Purchase }) {
+function PurchaseRow({
+  purchase,
+  hidden,
+}: {
+  purchase: Purchase
+  hidden: boolean
+}) {
   const { mutate, isPending } = useBuyPurchaseMutation()
   const queryClient = useQueryClient()
 
@@ -65,7 +77,7 @@ function PurchaseRow({ purchase }: { purchase: Purchase }) {
   }
 
   return (
-    <TableRow>
+    <TableRow className={hidden ? "hidden" : ""}>
       <TableCell>{purchase.meta.name}</TableCell>
       <TableCell className="text-center">
         <MoneyText money={purchase.price} />

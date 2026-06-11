@@ -1,20 +1,11 @@
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { type Purchase, type PurchaseType } from "@/entities/purchase"
 import MarketTable from "./MarketTable"
 
 export default function MarketInfo(props: { purchases: Array<Purchase> }) {
   const { purchases } = props
-
   const [selectedType, setSelectedType] = useState<PurchaseType>("STOCK")
-
-  const filteredInstruments = useMemo(
-    () =>
-      (purchases ?? []).filter(
-        (purchase) => purchase.meta.type === selectedType
-      ),
-    [purchases, selectedType]
-  )
 
   return (
     <>
@@ -24,7 +15,7 @@ export default function MarketInfo(props: { purchases: Array<Purchase> }) {
           onValueChange={setSelectedType}
         />
       </div>
-      <MarketTable purchases={filteredInstruments} />
+      <MarketTable purchases={purchases} purchaseType={selectedType} />
     </>
   )
 }
