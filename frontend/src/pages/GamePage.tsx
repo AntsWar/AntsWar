@@ -25,17 +25,16 @@ import { qk } from "@/shared/quries/keys"
 export default function GamePage() {
   const [init, setInit] = useState<Game | null>(null)
 
+  if (!init) {
+    return <JoinDialog setGame={setInit} />
+  }
+
   return (
-    <>
-      <JoinDialog open={init === null} setGame={setInit} />
-      {init && (
-        <StompProvider>
-          <GameSocketProvider gameId={init.id}>
-            <GameView init={init} />
-          </GameSocketProvider>
-        </StompProvider>
-      )}
-    </>
+    <StompProvider>
+      <GameSocketProvider gameId={init.id}>
+        <GameView init={init} />
+      </GameSocketProvider>
+    </StompProvider>
   )
 }
 
