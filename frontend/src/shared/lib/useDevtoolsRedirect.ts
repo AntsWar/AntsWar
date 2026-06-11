@@ -1,8 +1,13 @@
 import { useEffect } from "react"
 
+function isMobile() {
+  return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)
+}
+
 export function useDevtoolsRedirect() {
   useEffect(() => {
     if (import.meta.env.DEV) return
+    if (isMobile()) return
     const isBlockedPage = window.location.pathname === "/blocked"
 
     const blockKeys = (e: KeyboardEvent) => {
