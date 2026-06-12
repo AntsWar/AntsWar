@@ -119,6 +119,18 @@ function GameView({ init }: { init: Game }) {
     return () => clearInterval(timer)
   }, [finished])
 
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      e.preventDefault()
+    }
+
+    window.addEventListener("beforeunload", handleBeforeUnload)
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload)
+    }
+  }, [])
+
   return (
     <div className="flex h-full justify-center">
       <FinishedDialog open={finished} players={game.players} />
