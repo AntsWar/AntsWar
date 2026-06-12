@@ -40,10 +40,15 @@ public class Game{
             purchases.add(new Purchase(this, meta));
         }
         players.add(Player.bot("거미",this));
-        players.add(Player.bot("여왕개미",this));
-        players.add(Player.bot("큰개미",this));
+        players.add(Player.bot("ㅇㅇ",this));
+        players.add(Player.bot("한겨",this));
         players.add(Player.bot("황금사과",this));
         players.add(Player.bot("금개미",this));
+        players.add(Player.bot("디갤장",this));
+        players.add(Player.bot("도미닉호",this));
+        players.add(Player.bot(".",this));
+        players.add(Player.bot("prodo",this));
+        players.add(Player.bot("noto",this));
     }
 
     public List<Purchase> getPurchases(boolean isDelisted) {
