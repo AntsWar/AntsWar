@@ -22,7 +22,7 @@ export default function PortfolioTable({
   purchaseType,
 }: {
   positions: Array<Position>
-  purchaseType: PurchaseType | "all"
+  purchaseType: PurchaseType
 }) {
   return (
     <Table>
@@ -41,7 +41,10 @@ export default function PortfolioTable({
             <PositionRow
               key={position.meta.code + position.type}
               position={position}
-              hidden={purchaseType === position.purchase?.meta.type}
+              hidden={
+                purchaseType !== "ALL" &&
+                purchaseType !== position.purchase?.meta.type
+              }
             />
           ))
         ) : (

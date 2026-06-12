@@ -41,7 +41,7 @@ export default function MarketTable({
             <PurchaseRow
               key={purchase.meta.code}
               purchase={purchase}
-              hidden={purchase.meta.type === purchaseType}
+              hidden={purchase.meta.type !== purchaseType}
             />
           ))}
       </TableBody>
