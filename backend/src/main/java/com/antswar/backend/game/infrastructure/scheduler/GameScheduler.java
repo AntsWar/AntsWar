@@ -16,7 +16,7 @@ public class GameScheduler {
     private final GameIdPolicy gameIdPolicy;
     private final NewsBoard newsBoard;
 
-    @Scheduled(cron = "0/5 * * * * *")
+    @Scheduled(cron = "0/3 * * * * *")
     protected void tickGame() {
         tickProcessor.tick(gameIdPolicy.currentGameId());
     }
