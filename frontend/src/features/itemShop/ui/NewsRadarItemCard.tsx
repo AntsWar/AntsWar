@@ -63,11 +63,7 @@ export function NewsRadarItemCard() {
           <p className="text-muted-foreground">5분 동안 모든 뉴스를 받습니다</p>
         </div>
 
-        <Button
-          variant="outline"
-          onClick={handleClick}
-          disabled={isPending || active}
-        >
+        <Button onClick={handleClick} disabled={isPending || active}>
           <ShoppingCart />
           {active ? "사용 중" : "구매"}
         </Button>

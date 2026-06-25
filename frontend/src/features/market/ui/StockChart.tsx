@@ -1,0 +1,59 @@
+import { useScoreStore } from "@/features/getMe"
+import { formatTimeToMS } from "@/shared/lib/formatTime"
+import { MoneyText } from "@/shared/model/Money"
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  YAxis,
+} from "recharts"
+
+export function StockChart() {
+  // const { data: me } = useMeQuery()
+
+  const scores = useScoreStore((state) => state.scores)
+  const data = scores.map((score, index) => ({
+    time: index + 1,
+    score: score.amount,
+  }))
+
+  return (
+    <div className="h-48 w-full">
+      <ResponsiveContainer>
+        <AreaChart data={data}>
+          <defs>
+            <linearGradient id="assetGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="var(--primary)" stopOpacity={0.5} />
+              <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid vertical={false} opacity={0.3} />
+          <YAxis tickLine={false} axisLine={false} width={"auto"} />
+          <Tooltip content={<ScoreTooltip />} />
+          <Area
+            type="monotone"
+            dataKey="score"
+            stroke="var(--primary)"
+            strokeWidth={3}
+            // fill="url(#assetGradient)"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  )
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ScoreTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) {
+    return null
+  }
+  return (
+    <div className="rounded-md border bg-popover px-3 py-2">
+      <p>{formatTimeToMS(label)}</p>
+      <MoneyText money={{ amount: payload[0].value }} />
+    </div>
+  )
+}

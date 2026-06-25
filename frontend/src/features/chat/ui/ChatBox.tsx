@@ -1,22 +1,17 @@
 import { useStompClient } from "@/shared/lib/stomp/StompProvider"
 import { Button } from "@/shared/ui/button"
-import { Field, FieldLabel } from "@/shared/ui/field"
 import { Input } from "@/shared/ui/input"
-import { MessageCircle, Send, X } from "lucide-react"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import Chat from "@/assets/icon/chat.svg?react"
+import { HorizonCard } from "@/shared/ui/card"
+import Send from "@/assets/icon/send.svg?react"
 
 type ChatSocketMessage = {
   name: string
   content: string
 }
 
-export default function ChatBox({
-  gameId,
-  onClose,
-}: {
-  gameId: number
-  onClose: () => void
-}) {
+export default function ChatBox({ gameId }: { gameId: number }) {
   const { connected, getClient } = useStompClient()
 
   const [messages, setMessages] = useState<Array<ChatSocketMessage>>([])
@@ -24,20 +19,25 @@ export default function ChatBox({
 
   const containerRef = useRef<HTMLDivElement | null>(null)
   const bottomRef = useRef<HTMLDivElement | null>(null)
+  const shouldScrollRef = useRef(true)
 
-  // 자동 스크롤
-  useEffect(() => {
+  const handleScroll = () => {
     const el = containerRef.current
     if (!el) return
 
-    const isNearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 80
+    shouldScrollRef.current =
+      el.scrollHeight - el.scrollTop - el.clientHeight < 80
+  }
 
-    if (isNearBottom) {
-      bottomRef.current?.scrollIntoView({ behavior: "smooth" })
-    }
+  useLayoutEffect(() => {
+    if (!shouldScrollRef.current) return
+
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
+    })
   }, [messages])
 
-  // 소켓 구독
   useEffect(() => {
     if (!gameId || !connected) return
 
@@ -72,45 +72,58 @@ export default function ChatBox({
   }
 
   return (
-    <Field className="flex h-full min-h-0 flex-col gap-5 rounded-xl border bg-popover p-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-      <FieldLabel className="shrink-0 justify-between">
-        <div className="flex gap-2 text-xl">
-          <MessageCircle className="text-secondary" /> 채팅
-        </div>
-        <Button variant={"ghost"} onClick={onClose}>
-          <X />
-        </Button>
-      </FieldLabel>
-
-      <div
-        ref={containerRef}
-        className="no-scrollbar min-h-0 flex-1 space-y-1 overflow-y-auto"
-      >
-        {messages.map((m, i) => (
-          <div key={i}>
-            <b>{m.name}</b>: {m.content}
+    <HorizonCard
+      className="h-full rounded-xl"
+      contentClassName="flex h-full min-h-0 min-w-0 flex-col"
+    >
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2">
+        <div className="flex w-full items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-2 text-xl font-bold">
+            <Chat className="shrink-0" />
+            <span>전략실</span>
           </div>
-        ))}
-        <div ref={bottomRef} />
-      </div>
 
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          send()
-        }}
-        className="flex shrink-0 gap-2 pb-[env(safe-area-inset-bottom)]"
-      >
-        <Input
-          value={text}
-          maxLength={50}
-          placeholder="메시지 보내기"
-          onChange={(e) => setText(e.target.value)}
-        />
-        <Button>
-          <Send />
-        </Button>
-      </form>
-    </Field>
+          <Button className="px-2 py-1" size="xs">
+            닫기
+          </Button>
+        </div>
+
+        <div
+          ref={containerRef}
+          onScroll={handleScroll}
+          className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto"
+        >
+          <div className="min-w-0 space-y-1">
+            {messages.map((m, i) => (
+              <p key={i} className="wrap-break-word whitespace-normal">
+                <b>{m.name}</b>: {m.content}
+              </p>
+            ))}
+
+            <div ref={bottomRef} />
+          </div>
+        </div>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault()
+            send()
+          }}
+          className="flex min-w-0 gap-2"
+        >
+          <Input
+            className="min-w-0 flex-1"
+            value={text}
+            maxLength={50}
+            placeholder="메시지 보내기"
+            onChange={(e) => setText(e.target.value)}
+          />
+
+          <Button size="xs">
+            <Send className="size-6" />
+          </Button>
+        </form>
+      </div>
+    </HorizonCard>
   )
 }

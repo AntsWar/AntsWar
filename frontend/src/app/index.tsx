@@ -22,7 +22,7 @@ export function App() {
   useDevtoolsRedirect()
   return (
     <QueryProvider>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider defaultTheme="light">
         <RouterProvider router={router} />
         <Toaster position="top-center" />
       </ThemeProvider>

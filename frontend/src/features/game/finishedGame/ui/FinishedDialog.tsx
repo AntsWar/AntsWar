@@ -45,9 +45,7 @@ export default function FinishedDialog({
         </div>
         <PlayerTable players={sortedPlayers ?? []} me={me?.player} />
         <DialogFooter>
-          <Button variant={"outline"} onClick={() => window.location.reload()}>
-            나가기
-          </Button>
+          <Button onClick={() => window.location.reload()}>나가기</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

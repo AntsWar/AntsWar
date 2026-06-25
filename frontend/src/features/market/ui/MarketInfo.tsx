@@ -8,7 +8,7 @@ export default function MarketInfo(props: { purchases: Array<Purchase> }) {
   const [selectedType, setSelectedType] = useState<PurchaseType>("STOCK")
 
   return (
-    <>
+    <div>
       <div className="flex flex-row justify-between">
         <PurchaseTypeTabs
           value={selectedType}
@@ -16,7 +16,7 @@ export default function MarketInfo(props: { purchases: Array<Purchase> }) {
         />
       </div>
       <MarketTable purchases={purchases} purchaseType={selectedType} />
-    </>
+    </div>
   )
 }
 

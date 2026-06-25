@@ -1,18 +1,9 @@
 import { toast } from "sonner"
 import { MoneyText } from "@/shared/model/Money"
-import { Separator } from "@/shared/ui/separator"
 import { Button } from "@/shared/ui/button"
-import { HatGlasses, ShoppingCart } from "lucide-react"
 import { useState } from "react"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select"
-import { NEWS_META } from "@/entities/news"
 import { useBuyItemMutation } from "../model/useBuyItemMutation"
+import { Input } from "@/shared/ui/input"
 
 export function FakeNewsItemCard() {
   const { mutate, isPending } = useBuyItemMutation()
@@ -37,48 +28,32 @@ export function FakeNewsItemCard() {
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-input/30 p-4">
-      <div className="flex justify-between">
-        <div className="flex flex-row gap-3">
-          <HatGlasses />
-          가짜 뉴스
+    <div className="flex flex-col items-center space-y-2">
+      <div className="flex gap-4">
+        <img src="/thief.png" className="size-12" />
+        <div>
+          <p className="text-lg font-bold">가짜 뉴스</p>
+          <p className="text-sm text-muted-foreground">가짜 뉴스를 뿌립니다.</p>
         </div>
-
+      </div>
+      <p className="text-lg font-bold">
         <MoneyText money={price} />
-      </div>
-
-      <Separator />
-
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-col gap-3">
-          <Select value={code} onValueChange={setCode}>
-            <SelectTrigger>
-              <SelectValue placeholder="뉴스 선택" />
-            </SelectTrigger>
-
-            <SelectContent>
-              {NEWS_OPTIONS.map((opt) => (
-                <SelectItem key={opt.code} value={opt.code}>
-                  {opt.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <Button
-          variant="outline"
-          onClick={handleClick}
-          disabled={isPending || !code}
-        >
-          <ShoppingCart />
-          구매
-        </Button>
-      </div>
+      </p>
+      <Input
+        inputSize="md"
+        value={code}
+        maxLength={40}
+        placeholder="뉴스 내용"
+        onChange={(e) => setCode(e.target.value)}
+      />
+      <Button
+        size="md"
+        className="w-36"
+        onClick={handleClick || !code}
+        disabled={isPending}
+      >
+        구매
+      </Button>
     </div>
   )
 }
-
-const NEWS_OPTIONS = Object.entries(NEWS_META).map(([code, label]) => ({
-  code,
-  label,
-}))

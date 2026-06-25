@@ -88,7 +88,6 @@ function PurchaseRow({
       <TableCell className="text-center">
         <Button
           className="w-full"
-          variant={"outline"}
           onClick={() => submitOrder("LONG")}
           disabled={isPending}
         >
@@ -98,7 +97,6 @@ function PurchaseRow({
       <TableCell className="text-center">
         <Button
           className="w-full"
-          variant={"outline"}
           onClick={() => submitOrder("SHORT")}
           disabled={isPending}
         >

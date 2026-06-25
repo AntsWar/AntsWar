@@ -9,18 +9,15 @@ import GameSection from "@/widgets/game/ui/GameSection"
 import { FinishedDialog } from "@/features/game/finishedGame"
 import { ChatBox } from "@/features/chat"
 import { useEffect, useState } from "react"
-import RemainingTime from "@/features/game/remainingTime/RemainingTime"
-import { Banknote, Clock, MessageCircle } from "lucide-react"
-import { MoneyText } from "@/shared/model/Money"
 import { useMeQuery, useScoreStore, type Me } from "@/features/getMe"
-import { Button } from "@/shared/ui/button"
-import { cn } from "@/shared/ui/lib"
 import type { Purchase } from "@/entities/purchase"
-import type { Player } from "@/entities/player"
+import { PlayerTable, type Player } from "@/entities/player"
 import { NEWS_META, useNoticeStore } from "@/entities/news"
 import { toast } from "sonner"
 import { queryClient } from "@/shared/quries/queryClient"
 import { qk } from "@/shared/quries/keys"
+import { Card } from "@/shared/ui/card"
+import Carrier from "@/assets/icon/Carrier.svg?react"
 
 export default function GamePage() {
   const [init, setInit] = useState<Game | null>(null)
@@ -42,9 +39,6 @@ function GameView({ init }: { init: Game }) {
   const [game, setGame] = useState<Game>(init)
   const { connected, getClient } = useStompClient()
   const [finished, setFinished] = useState<boolean>(false)
-  const [chatOpen, setChatOpen] = useState(() => {
-    return window.matchMedia("(min-width: 1024px)").matches
-  })
   const { data: me } = useMeQuery()
 
   useGameSocketEvent("GAME_UPDATED", (payload) => {
@@ -132,44 +126,22 @@ function GameView({ init }: { init: Game }) {
   }, [])
 
   return (
-    <div className="flex h-full justify-center">
+    <div className="flex h-full w-full justify-center gap-4">
       <FinishedDialog open={finished} players={game.players} />
-      <div className="flex min-h-0 w-full max-w-2xl flex-col px-3">
-        <div className="flex shrink-0 justify-between py-3">
-          <div className="flex items-center gap-2 rounded-xl">
-            <Clock className="size-5 text-secondary" />
-            <div className="text-base text-muted-foreground">
-              <RemainingTime
-                endedAt={game.meta.endedAt}
-                serverTime={game.serverTime}
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Banknote className="text-secondary" />
-            <MoneyText money={me?.player.balance} />
-          </div>
-          <div>
-            <Button onClick={() => setChatOpen(true)}>
-              <MessageCircle />
-              채팅
-            </Button>
-          </div>
-        </div>
-
-        <div className="no-scrollbar flex-1 overflow-y-auto pb-4">
-          <GameSection game={game} />
-        </div>
+      <div className="min-h-0 max-w-4xl min-w-0 flex-1">
+        <GameSection game={game} />
       </div>
-      <div
-        className={cn(
-          chatOpen ? "block" : "hidden",
-          "fixed top-12 bottom-2 z-40 w-full max-w-2xl px-3 lg:static lg:mt-12 lg:mb-2 lg:w-sm"
-        )}
-        // "fixed z-40 mt-12 h-[calc(100vh-4rem)] w-full max-w-2xl px-3 lg:static lg:w-sm"
-      >
-        <ChatBox gameId={game.id} onClose={() => setChatOpen(false)} />
+      <div className="hidden w-80 min-w-0 gap-4 md:flex md:flex-col">
+        <Card size="sm" className="gap-2 rounded-xl">
+          <div className="flex items-center gap-2">
+            <Carrier className="size-6" />
+            <span className="text-xl font-bold">개미 랭킹</span>
+          </div>
+          <PlayerTable players={game?.players ?? []} me={me?.player} />
+        </Card>
+        <div className="min-h-0 flex-1">
+          <ChatBox gameId={game.id} />
+        </div>
       </div>
     </div>
   )

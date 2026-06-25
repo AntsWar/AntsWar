@@ -1,4 +1,4 @@
-import { formatTimeToHMS } from "@/shared/lib/formatTime"
+import { formatTimeToMS } from "@/shared/lib/formatTime"
 import { useEffect, useRef, useState } from "react"
 
 export default function RemainingTime({
@@ -38,5 +38,5 @@ export default function RemainingTime({
     return () => window.clearInterval(timer)
   }, [endedAt])
 
-  return <>{formatTimeToHMS(remainingSeconds)}</>
+  return <>{formatTimeToMS(remainingSeconds)}</>
 }

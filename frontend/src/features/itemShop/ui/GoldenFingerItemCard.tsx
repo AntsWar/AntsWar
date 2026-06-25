@@ -1,8 +1,7 @@
 import { Button } from "@/shared/ui/button"
 import { useBuyItemMutation } from "../model/useBuyItemMutation"
 import { MoneyText } from "@/shared/model/Money"
-import { Separator } from "@/shared/ui/separator"
-import { Hand, ShoppingCart } from "lucide-react"
+import Hand from "@/assets/icon/hand.svg?react"
 
 export function GoldenFingerItemCard() {
   const { mutate, isPending } = useBuyItemMutation()
@@ -16,24 +15,25 @@ export function GoldenFingerItemCard() {
   }
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-input/30 p-4">
-      <div className="flex justify-between">
-        <div className="flex flex-row gap-3">
-          <Hand />
-          황금 손
+    <div className="flex flex-col items-center space-y-2">
+      <div className="flex gap-4">
+        <Hand className="size-12" />
+        <div>
+          <p className="text-lg font-bold">코인</p>
+          <p className="text-sm text-muted-foreground">10원을 얻습니다.</p>
         </div>
-
+      </div>
+      <p className="text-lg font-bold">
         <MoneyText money={price} />
-      </div>
-      <Separator />
-
-      <div className="flex items-center justify-between">
-        <p className="text-muted-foreground">10원을 얻습니다.</p>
-        <Button variant="outline" onClick={handleClick} disabled={isPending}>
-          <ShoppingCart />
-          구매
-        </Button>
-      </div>
+      </p>
+      <Button
+        size="md"
+        className="w-36"
+        onClick={handleClick}
+        disabled={isPending}
+      >
+        구매
+      </Button>
     </div>
   )
 }
