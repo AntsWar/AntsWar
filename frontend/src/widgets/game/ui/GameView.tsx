@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { type Game } from "@/entities/game"
-import { PlayerTable, useMeQuery, type Player } from "@/entities/player"
+import { PlayerTable, useMeQuery } from "@/entities/player"
 import { FinishedDialog } from "@/features/game/finishedGame"
 import { ChatBox } from "@/features/chat"
 import { Card } from "@/shared/ui/card"

@@ -5,7 +5,6 @@ import { useGameSocketEvent } from "@/features/game/socket"
 import { useStockStore, type Purchase } from "@/entities/purchase"
 import { type Player } from "@/entities/player"
 import { NEWS_META, useNoticeStore } from "@/entities/news"
-import { toast } from "sonner"
 import { queryClient } from "@/shared/queries/queryClient"
 import { qk } from "@/shared/queries/keys"
 
@@ -40,18 +39,14 @@ export function useGameEvents({ setGame, setFinished }: Params) {
   })
 
   useGameSocketEvent("NOTICE", (payload) => {
-    const expiredAt = useNoticeStore.getState().expiredAt
-    const noticeRate = expiredAt > Date.now() ? 1.0 : 0.3
-    if (Math.random() < noticeRate) {
-      const code = payload as string
-      const message = NEWS_META[code] ?? code
-      toast.info(message)
-    }
+    const code = payload as string
+    const message = NEWS_META[code] ?? code
+    useNoticeStore.getState().setMessage(message, "news")
   })
 
   useGameSocketEvent("PURCHASE_DELIST", (payload) => {
     const { name } = payload as { name: string }
-    toast.info(`${name}(이)가 상폐되었습니다.`)
+    useNoticeStore.getState().setMessage(`${name}(이)가 상폐되었습니다.`, "breaking")
     queryClient.invalidateQueries({ queryKey: qk.getMe() })
   })
 

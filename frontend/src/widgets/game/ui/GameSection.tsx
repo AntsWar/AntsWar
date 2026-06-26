@@ -1,6 +1,7 @@
 import { MoneyText } from "@/shared/model/Money"
 import { MarketInfo, PortfolioInfo, StockChart } from "@/features/market"
 import { type Game } from "@/entities/game"
+import { NewsBanner, NewsHistoryCard } from "@/entities/news"
 import { ItemShop } from "@/features/itemShop"
 import { useMeQuery } from "@/entities/player"
 import { Card, WideCard } from "@/shared/ui/card"
@@ -61,6 +62,7 @@ export default function GameSection({ game }: { game: Game }) {
       </WideCard>
 
       <div className="flex-1 space-y-4 overflow-y-auto">
+        <NewsBanner />
         <Card size="lg" className="w-full rounded-xl">
           <div className="space-y-4">
             <div className="w-full space-y-4">
@@ -100,6 +102,7 @@ export default function GameSection({ game }: { game: Game }) {
           </div>
         </Card>
 
+        <NewsHistoryCard />
         <Card size="md" className="w-full rounded-xl">
           <div className="space-y-4">
             <SectionHeader
