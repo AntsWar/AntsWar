@@ -1,7 +1,7 @@
-import { qk } from "@/shared/quries/keys"
+import { qk } from "@/shared/queries/keys"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { sellPurchase, type SellPurchaseRequest } from "../api/sellPurchase"
-import type { Me } from "@/features/getMe"
+import type { Me } from "@/entities/player"
 
 export function useSellPurchaseMutation() {
   const queryClient = useQueryClient()

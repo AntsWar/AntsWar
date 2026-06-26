@@ -1,4 +1,4 @@
-import { queryClient } from "@/shared/quries/queryClient"
+import { queryClient } from "@/shared/queries/queryClient"
 import { QueryClientProvider } from "@tanstack/react-query"
 
 export function QueryProvider(props: { children: React.ReactNode }) {

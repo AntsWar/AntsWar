@@ -2,7 +2,7 @@ import { API_PATH } from "@/shared/api/path"
 import { api } from "@/shared/api"
 import type { Me } from "../model/types"
 import { useQuery } from "@tanstack/react-query"
-import { qk } from "@/shared/quries/keys"
+import { qk } from "@/shared/queries/keys"
 
 export function useMeQuery() {
   return useQuery({

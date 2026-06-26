@@ -1,5 +1,4 @@
-import { PlayerTable, type Player } from "@/entities/player"
-import { ScoreChart, useMeQuery, useScoreStore } from "@/features/getMe"
+import { PlayerTable, type Player, useMeQuery, useScoreStore } from "@/entities/player"
 import { Button } from "@/shared/ui/button"
 import {
   Dialog,
@@ -9,6 +8,7 @@ import {
   DialogTitle,
 } from "@/shared/ui/dialog"
 import { ChartArea } from "lucide-react"
+import { ScoreChart } from "./ScoreChart"
 
 export default function FinishedDialog({
   open,
@@ -20,7 +20,7 @@ export default function FinishedDialog({
   const { data: me } = useMeQuery()
 
   const sortedPlayers = [...players].sort(
-    (a, b) => b.balance.amount - a.balance.amount
+    (a, b) => b.asset.amount - a.asset.amount
   )
   const scores = useScoreStore((state) => state.scores)
   const data = scores.map((score, index) => ({

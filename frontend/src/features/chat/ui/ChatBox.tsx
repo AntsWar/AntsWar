@@ -1,20 +1,13 @@
-import { useStompClient } from "@/shared/lib/stomp/StompProvider"
 import { Button } from "@/shared/ui/button"
 import { Input } from "@/shared/ui/input"
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useLayoutEffect, useRef, useState } from "react"
 import Chat from "@/assets/icon/chat.svg?react"
 import { HorizonCard } from "@/shared/ui/card"
 import Send from "@/assets/icon/send.svg?react"
-
-type ChatSocketMessage = {
-  name: string
-  content: string
-}
+import { useChatSocket } from "../model/useChatSocket"
 
 export default function ChatBox({ gameId }: { gameId: number }) {
-  const { connected, getClient } = useStompClient()
-
-  const [messages, setMessages] = useState<Array<ChatSocketMessage>>([])
+  const { messages, send } = useChatSocket(gameId)
   const [text, setText] = useState("")
 
   const containerRef = useRef<HTMLDivElement | null>(null)
@@ -24,50 +17,19 @@ export default function ChatBox({ gameId }: { gameId: number }) {
   const handleScroll = () => {
     const el = containerRef.current
     if (!el) return
-
     shouldScrollRef.current =
       el.scrollHeight - el.scrollTop - el.clientHeight < 80
   }
 
   useLayoutEffect(() => {
     if (!shouldScrollRef.current) return
-
-    bottomRef.current?.scrollIntoView({
-      behavior: "smooth",
-      block: "end",
-    })
+    bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "end" })
   }, [messages])
 
-  useEffect(() => {
-    if (!gameId || !connected) return
-
-    const client = getClient()
-    if (!client) return
-
-    const sub = client.subscribe(`/topic/game/${gameId}/chat`, ({ body }) => {
-      try {
-        const message = JSON.parse(body) as ChatSocketMessage
-        setMessages((prev) => [...prev, message])
-      } catch {
-        /* empty */
-      }
-    })
-
-    return () => sub.unsubscribe()
-  }, [connected, gameId, getClient])
-
-  const send = () => {
+  const handleSend = () => {
     const content = text.trim()
     if (!content) return
-
-    const client = getClient()
-    if (!client?.connected) return
-
-    client.publish({
-      destination: `/app/chat/${gameId}`,
-      body: JSON.stringify({ content }),
-    })
-
+    send(content)
     setText("")
   }
 
@@ -82,7 +44,6 @@ export default function ChatBox({ gameId }: { gameId: number }) {
             <Chat className="shrink-0" />
             <span>전략실</span>
           </div>
-
           <Button className="px-2 py-1" size="xs">
             닫기
           </Button>
@@ -99,7 +60,6 @@ export default function ChatBox({ gameId }: { gameId: number }) {
                 <b>{m.name}</b>: {m.content}
               </p>
             ))}
-
             <div ref={bottomRef} />
           </div>
         </div>
@@ -107,7 +67,7 @@ export default function ChatBox({ gameId }: { gameId: number }) {
         <form
           onSubmit={(e) => {
             e.preventDefault()
-            send()
+            handleSend()
           }}
           className="flex min-w-0 gap-2"
         >
@@ -118,7 +78,6 @@ export default function ChatBox({ gameId }: { gameId: number }) {
             placeholder="메시지 보내기"
             onChange={(e) => setText(e.target.value)}
           />
-
           <Button size="xs">
             <Send className="size-6" />
           </Button>

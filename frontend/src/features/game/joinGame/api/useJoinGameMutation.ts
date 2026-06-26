@@ -1,4 +1,4 @@
-import { qk } from "@/shared/quries/keys"
+import { qk } from "@/shared/queries/keys"
 import { useMutation } from "@tanstack/react-query"
 import { joinGame } from "./joinGame"
 

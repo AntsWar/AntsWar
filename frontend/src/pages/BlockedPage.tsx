@@ -1,4 +1,5 @@
 import { useEffect } from "react"
+import { Button } from "@/shared/ui/button"
 
 export default function BlockedPage() {
   useEffect(() => {
@@ -21,13 +22,9 @@ export default function BlockedPage() {
           비정상적인 접근이 감지되어 페이지 이용이 제한되었습니다.
         </p>
 
-        <button
-          type="button"
-          onClick={goHome}
-          className="mt-6 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
-        >
+        <Button className="mt-6" onClick={goHome}>
           홈으로 돌아가기
-        </button>
+        </Button>
       </div>
     </div>
   )

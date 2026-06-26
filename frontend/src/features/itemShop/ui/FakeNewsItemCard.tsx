@@ -50,8 +50,8 @@ export function FakeNewsItemCard() {
       <Button
         size="md"
         className="w-36"
-        onClick={handleClick || !code}
-        disabled={isPending}
+        onClick={handleClick}
+        disabled={isPending || !code}
       >
         구매
       </Button>

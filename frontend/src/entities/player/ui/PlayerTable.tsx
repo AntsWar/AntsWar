@@ -18,7 +18,7 @@ export default function PlayerTable({
   me?: Player
 }) {
   const sorted = [...players].sort(
-    (a, b) => b.balance.amount - a.balance.amount
+    (a, b) => b.asset.amount - a.asset.amount
   )
 
   return (

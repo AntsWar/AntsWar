@@ -1,1 +1,1 @@
-export type { PurchaseMeta } from "../../model/types"
+export type { Purchase, PurchaseMeta } from "../../model/types"

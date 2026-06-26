@@ -1,17 +1,17 @@
 import { MoneyText } from "@/shared/model/Money"
-import { MarketInfo, PortfolioInfo } from "@/features/market"
+import { MarketInfo, PortfolioInfo, StockChart } from "@/features/market"
 import { type Game } from "@/entities/game"
 import { ItemShop } from "@/features/itemShop"
-import { useMeQuery } from "@/features/getMe"
+import { useMeQuery } from "@/entities/player"
 import { Card, WideCard } from "@/shared/ui/card"
 import RemainingTime from "@/features/game/remainingTime"
+import SectionHeader from "./SectionHeader"
 import Clock from "@/assets/icon/clock.svg?react"
 import MoneyBag from "@/assets/icon/moneyBag.svg?react"
 import Coin from "@/assets/icon/coin.svg?react"
 import Chart from "@/assets/icon/chart.svg?react"
 import PieChart from "@/assets/icon/pieChart.svg?react"
 import Store from "@/assets/icon/store.svg?react"
-import { StockChart } from "@/entities/purchase/ui/StockChart"
 
 export default function GameSection({ game }: { game: Game }) {
   const { data: me } = useMeQuery()
@@ -41,7 +41,6 @@ export default function GameSection({ game }: { game: Game }) {
               </p>
             </div>
           </div>
-
           <div className="flex min-w-max flex-1 items-center gap-2">
             <MoneyBag className="size-10" />
             <div>
@@ -51,7 +50,6 @@ export default function GameSection({ game }: { game: Game }) {
               </p>
             </div>
           </div>
-
           <div className="flex min-w-max flex-1 items-center gap-2">
             <img src="/player.png" className="size-10" />
             <div>
@@ -66,46 +64,36 @@ export default function GameSection({ game }: { game: Game }) {
         <Card size="lg" className="w-full rounded-xl">
           <div className="space-y-4">
             <div className="w-full space-y-4">
-              <div>
-                <div className="flex items-center gap-2 text-xl font-bold">
-                  <Chart className="size-8" />
-                  장터 시세판
-                </div>
-                <span className="text-sm text-muted-foreground">
-                  가격의 변동성을 알 수 있어요
-                </span>
-              </div>
-              <div>
-                <StockChart />
-              </div>
+              <SectionHeader
+                icon={<Chart className="size-8" />}
+                title="장터 시세판"
+                description="가격의 변동성을 알 수 있어요"
+              />
+              <StockChart />
             </div>
             <div className="flex flex-col gap-4 lg:flex-row">
               <div className="w-full space-y-4">
-                <div>
-                  <div className="flex items-center gap-2 text-xl font-bold">
-                    <Chart className="size-8" />
-                    장터
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    가격이 <MoneyText money={{ amount: 100 }} /> 아래로 떨어지면
-                    상폐됩니다.
-                  </span>
-                </div>
-                <MarketInfo purchases={game?.purchases ?? []} />
+                <SectionHeader
+                  icon={<Chart className="size-8" />}
+                  title="장터"
+                  description={
+                    <>
+                      가격이 <MoneyText money={{ amount: 100 }} /> 아래로
+                      떨어지면 상폐됩니다.
+                    </>
+                  }
+                />
+                <MarketInfo purchases={game.purchases ?? []} />
               </div>
               <div className="w-full space-y-4">
-                <div>
-                  <div className="flex items-center gap-2 text-xl font-bold">
-                    <PieChart className="size-7" />
-                    포트폴리오
-                  </div>
-                  <span className="text-sm text-muted-foreground">
-                    상장폐지된 종목은 자동으로 청산됩니다.
-                  </span>
-                </div>
+                <SectionHeader
+                  icon={<PieChart className="size-7" />}
+                  title="포트폴리오"
+                  description="상장폐지된 종목은 자동으로 청산됩니다."
+                />
                 <PortfolioInfo
                   positions={me?.positions ?? []}
-                  purchases={game?.purchases ?? []}
+                  purchases={game.purchases ?? []}
                 />
               </div>
             </div>
@@ -114,16 +102,11 @@ export default function GameSection({ game }: { game: Game }) {
 
         <Card size="md" className="w-full rounded-xl">
           <div className="space-y-4">
-            <div>
-              <div className="flex items-center gap-2 text-xl font-bold">
-                <Store className="size-7" />
-                상점
-              </div>
-              <span className="text-muted-foreground">
-                아이템을 살 수 있습니다.
-              </span>
-            </div>
-
+            <SectionHeader
+              icon={<Store className="size-7" />}
+              title="상점"
+              description="아이템을 살 수 있습니다."
+            />
             <ItemShop />
           </div>
         </Card>

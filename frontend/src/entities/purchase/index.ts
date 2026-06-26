@@ -6,4 +6,3 @@ export type {
 } from "./model/types"
 
 export { useStockStore } from "./model/stockStore"
-export { StockChart } from "./ui/StockChart"

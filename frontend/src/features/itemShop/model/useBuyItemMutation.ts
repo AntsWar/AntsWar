@@ -1,8 +1,8 @@
-import { qk } from "@/shared/quries/keys"
+import { qk } from "@/shared/queries/keys"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { buyItem } from "../api/buyItem"
 import { toast } from "sonner"
-import type { Me } from "@/features/getMe"
+import type { Me } from "@/entities/player"
 import type { Item } from "@/entities/item"
 
 type BuyItemVariables = {

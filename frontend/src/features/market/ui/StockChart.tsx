@@ -9,13 +9,13 @@ import {
   XAxis,
   YAxis,
 } from "recharts"
-import { useStockStore } from "../model/stockStore"
+import { useStockStore } from "@/entities/purchase"
 import { TradeButton } from "@/shared/ui/tradeButton"
 import {
   useBuyPurchaseMutation,
   type BuyPurchaseVariable,
-} from "@/features/market/model/useBuyPurchaseMutation"
-import type { BuyPurchaseRequest } from "@/features/market/api/buyPurchase"
+} from "../model/useBuyPurchaseMutation"
+import type { BuyPurchaseRequest } from "../api/buyPurchase"
 
 export function StockChart() {
   const stocks = useStockStore((state) => state.stocks)
@@ -62,7 +62,6 @@ export function StockChart() {
             </p>
           </div>
         </div>
-        {/* <p className="text-sm text-muted-foreground">삼손은 뭐하는 기업일까?</p> */}
       </div>
       <div className="h-56 w-full">
         <ResponsiveContainer>
@@ -77,8 +76,8 @@ export function StockChart() {
             <YAxis
               orientation="right"
               tickLine={false}
-              tickCount={5} // 최대 5개 정도의 눈금
-              fontSize={12} // 글자 크기
+              tickCount={5}
+              fontSize={12}
               dataKey="price"
               tickFormatter={(value) =>
                 `${MoneyText({ money: { amount: value } })}`
