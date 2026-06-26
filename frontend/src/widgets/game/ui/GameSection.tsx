@@ -11,7 +11,7 @@ import Coin from "@/assets/icon/coin.svg?react"
 import Chart from "@/assets/icon/chart.svg?react"
 import PieChart from "@/assets/icon/pieChart.svg?react"
 import Store from "@/assets/icon/store.svg?react"
-import { StockChart } from "@/features/market/ui/StockChart"
+import { StockChart } from "@/entities/purchase/ui/StockChart"
 
 export default function GameSection({ game }: { game: Game }) {
   const { data: me } = useMeQuery()
@@ -80,7 +80,7 @@ export default function GameSection({ game }: { game: Game }) {
               </div>
             </div>
             <div className="flex flex-col gap-4 lg:flex-row">
-              <div className="w-full space-y-4 lg:max-w-80">
+              <div className="w-full space-y-4">
                 <div>
                   <div className="flex items-center gap-2 text-xl font-bold">
                     <Chart className="size-8" />

@@ -5,8 +5,10 @@ import { Slot } from "radix-ui"
 import { cn } from "./lib"
 import { Separator } from "./separator"
 
+import ButtonSmSvg from "@/assets/RoundedCard-sm.svg?react"
+
 const buttonGroupVariants = cva(
-  "flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
+  "relative flex w-fit items-stretch *:focus-visible:relative *:focus-visible:z-10 has-[>[data-slot=button-group]]:gap-2 has-[select[aria-hidden=true]:last-child]:[&>[data-slot=select-trigger]:last-of-type]:rounded-r-lg [&>[data-slot=select-trigger]:not([class*='w-'])]:w-fit [&>input]:flex-1",
   {
     variants: {
       orientation: {
@@ -25,6 +27,7 @@ const buttonGroupVariants = cva(
 function ButtonGroup({
   className,
   orientation,
+  children,
   ...props
 }: React.ComponentProps<"div"> & VariantProps<typeof buttonGroupVariants>) {
   return (
@@ -34,7 +37,10 @@ function ButtonGroup({
       data-orientation={orientation}
       className={cn(buttonGroupVariants({ orientation }), className)}
       {...props}
-    />
+    >
+      <ButtonSmSvg className="pointer-events-none absolute inset-0 size-full stroke-2" />
+      {children}
+    </div>
   )
 }
 

@@ -36,7 +36,7 @@ export default function PortfolioInfo({
   const [selectedType, setSelectedType] = useState<PurchaseType>("ALL")
 
   return (
-    <>
+    <div>
       <Tabs
         value={selectedType}
         onValueChange={(value) => setSelectedType(value as PurchaseType)}
@@ -51,6 +51,6 @@ export default function PortfolioInfo({
         positions={positionsWithProfit}
         purchaseType={selectedType}
       />
-    </>
+    </div>
   )
 }

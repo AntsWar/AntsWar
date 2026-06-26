@@ -10,7 +10,7 @@ import { FinishedDialog } from "@/features/game/finishedGame"
 import { ChatBox } from "@/features/chat"
 import { useEffect, useState } from "react"
 import { useMeQuery, useScoreStore, type Me } from "@/features/getMe"
-import type { Purchase } from "@/entities/purchase"
+import { useStockStore, type Purchase } from "@/entities/purchase"
 import { PlayerTable, type Player } from "@/entities/player"
 import { NEWS_META, useNoticeStore } from "@/entities/news"
 import { toast } from "sonner"
@@ -40,6 +40,7 @@ function GameView({ init }: { init: Game }) {
   const { connected, getClient } = useStompClient()
   const [finished, setFinished] = useState<boolean>(false)
   const { data: me } = useMeQuery()
+  const { setStocks } = useStockStore.getState()
 
   useGameSocketEvent("GAME_UPDATED", (payload) => {
     const msg = payload as {
@@ -47,6 +48,8 @@ function GameView({ init }: { init: Game }) {
       players: Array<Player>
       serverTime: string
     }
+
+    setStocks(msg.purchases)
 
     setGame((prev) => {
       if (!prev) return prev

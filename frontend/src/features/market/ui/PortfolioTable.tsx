@@ -8,14 +8,12 @@ import {
 } from "@/shared/ui/table"
 import { MoneyText } from "@/shared/model/Money"
 import type { Position } from "@/entities/position"
-import type { PurchaseType, TradeQuantity } from "@/entities/purchase"
-import { Button } from "@/shared/ui/button"
-import { useState } from "react"
+import type { PurchaseType } from "@/entities/purchase"
 import { toast } from "sonner"
-import { QuantitySelect } from "./QuantitySelect"
 import { useSellPurchaseMutation } from "../model/useSellPurchaseMutation"
 import type { SellPurchaseRequest } from "../api/sellPurchase"
 import { cn } from "@/shared/ui/lib"
+import { TradeButton } from "@/shared/ui/tradeButton"
 
 export default function PortfolioTable({
   positions,
@@ -28,11 +26,9 @@ export default function PortfolioTable({
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>이름</TableHead>
-          <TableHead className="text-center">평단가</TableHead>
-          <TableHead className="text-center">수량</TableHead>
-          <TableHead className="text-center">자산 종류</TableHead>
-          <TableHead className="text-center">거래 유형</TableHead>
+          <TableHead className="w-24">이름</TableHead>
+          <TableHead>평단가</TableHead>
+          <TableHead>수량</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -69,57 +65,50 @@ function PositionRow({
   position: Position
   hidden: boolean
 }) {
-  const [quantity, setQuantity] = useState<TradeQuantity>(1)
-  const instrumentType = position.meta.type === "STOCK" ? "주식" : "코인"
-  const positionType = position.type === "LONG" ? "매수" : "공매도"
   const sellType = position.type === "LONG" ? "매도" : "상환"
 
   const { mutate, isPending } = useSellPurchaseMutation()
 
-  const submitOrder = () => {
-    const qty = quantity === "ALL" ? (position.quantity ?? 0) : quantity
-
-    if (!qty || qty <= 0) {
-      toast("수량이 없습니다")
+  const submitOrder = (quantity: number) => {
+    if (position.quantity < quantity) {
+      toast("가진 수량보다 많습니다.")
       return
     }
 
     mutate({
       positionId: position.id,
-      quantity: qty,
+      quantity: quantity,
     } as SellPurchaseRequest)
   }
 
   return (
     <TableRow className={hidden ? "hidden" : ""}>
       <TableCell>{position.meta.name}</TableCell>
-      <TableCell className="flex justify-center gap-1">
-        <MoneyText money={position.averagePrice} />
-
-        <span
-          className={cn(
-            position.profit!.amount >= 0 ? "text-red-400" : "text-blue-400"
+      <TableCell>
+        <div className="flex gap-1">
+          <MoneyText money={position.averagePrice} />
+          <span
+            className={cn(
+              position.profit!.amount >= 0 ? "text-stock-up" : "text-stock-down"
+            )}
+          >
+            (
+            <MoneyText money={position.profit} />)
+          </span>
+        </div>
+      </TableCell>
+      <TableCell>{position.quantity}</TableCell>
+      <TableCell className="flex justify-end text-end">
+        <TradeButton
+          containerClassName={cn(
+            sellType === "매도" ? "bg-stock-up" : "bg-stock-down"
           )}
-        >
-          (
-          <MoneyText money={position.profit} />)
-        </span>
-      </TableCell>
-      <TableCell className="text-center">{position.quantity}</TableCell>
-      <TableCell className="text-center">{instrumentType}</TableCell>
-      <TableCell className="text-center">{positionType}</TableCell>
-      <TableCell className="flex justify-end">
-        <QuantitySelect value={quantity} onValueChange={setQuantity} />
-      </TableCell>
-      <TableCell className="text-center">
-        <Button
-          className="w-full"
-          variant={"outline"}
-          onClick={() => submitOrder()}
+          label={sellType}
+          onClick={(quantity) => {
+            submitOrder(quantity)
+          }}
           disabled={isPending}
-        >
-          {sellType}
-        </Button>
+        />
       </TableCell>
     </TableRow>
   )

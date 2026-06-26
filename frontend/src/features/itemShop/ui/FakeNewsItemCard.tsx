@@ -40,6 +40,7 @@ export function FakeNewsItemCard() {
         <MoneyText money={price} />
       </p>
       <Input
+        className="w-full"
         inputSize="md"
         value={code}
         maxLength={40}

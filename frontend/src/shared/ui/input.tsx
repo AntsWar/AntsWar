@@ -29,14 +29,14 @@ export function Input({
   return (
     <div
       className={cn(
-        "relative w-full rounded-full bg-card px-4 py-2",
+        "relative rounded-full bg-card px-4 py-2",
         containerClassName
       )}
     >
       <InputSvg className="pointer-events-none absolute inset-0 size-full stroke-2" />
 
       <input
-        className={cn("relative w-full focus:outline-none", className)}
+        className={cn("relative focus:outline-none", className)}
         {...props}
       />
     </div>

@@ -34,7 +34,7 @@ export function Button({
   return (
     <button
       className={cn(
-        "relative w-fit justify-center rounded-full bg-primary px-4 py-2 transition active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50",
+        "relative justify-center rounded-full bg-primary px-4 py-2 transition active:scale-[0.9] disabled:pointer-events-none disabled:opacity-50",
         className
       )}
       {...props}
