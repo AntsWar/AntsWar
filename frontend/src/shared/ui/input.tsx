@@ -1,44 +1,18 @@
-import type { InputHTMLAttributes } from "react"
-
-import InputSmSvg from "@/assets/RoundedCard-sm.svg?react"
-import InputMdSvg from "@/assets/RoundedCard-md.svg?react"
-import InputLgSvg from "@/assets/RoundedCard-lg.svg?react"
+import * as React from "react"
 import { cn } from "./lib"
 
-type InputSize = "sm" | "md" | "lg"
-
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  inputSize?: InputSize
-  containerClassName?: string
-}
-
-const inputSvgMap = {
-  sm: InputSmSvg,
-  md: InputMdSvg,
-  lg: InputLgSvg,
-}
-
-export function Input({
-  inputSize = "md",
-  className,
-  containerClassName,
-  ...props
-}: InputProps) {
-  const InputSvg = inputSvgMap[inputSize]
-
+function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   return (
-    <div
+    <input
+      type={type}
+      data-slot="input"
       className={cn(
-        "relative rounded-full bg-card px-4 py-2",
-        containerClassName
+        "h-8 w-full min-w-0 rounded-lg border border-input bg-transparent px-2.5 py-1 text-base transition-colors outline-none file:inline-flex file:h-6 file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:cursor-not-allowed disabled:bg-input/50 disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 md:text-sm dark:bg-input/30 dark:disabled:bg-input/80 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
+        className
       )}
-    >
-      <InputSvg className="pointer-events-none absolute inset-0 size-full stroke-2" />
-
-      <input
-        className={cn("relative focus:outline-none", className)}
-        {...props}
-      />
-    </div>
+      {...props}
+    />
   )
 }
+
+export { Input }

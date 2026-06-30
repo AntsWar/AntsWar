@@ -1,9 +1,9 @@
 import { toast } from "sonner"
 import { MoneyText } from "@/shared/model/Money"
-import { Button } from "@/shared/ui/button"
+import { Button } from "@/shared/ui/button2"
 import { useState } from "react"
 import { useBuyItemMutation } from "../model/useBuyItemMutation"
-import { Input } from "@/shared/ui/input"
+import { Input } from "@/shared/ui/input2"
 
 export function FakeNewsItemCard() {
   const { mutate, isPending } = useBuyItemMutation()

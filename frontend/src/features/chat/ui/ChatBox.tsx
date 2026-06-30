@@ -1,5 +1,5 @@
-import { Button } from "@/shared/ui/button"
-import { Input } from "@/shared/ui/input"
+import { Button } from "@/shared/ui/button2"
+import { Input } from "@/shared/ui/input2"
 import { useLayoutEffect, useRef, useState } from "react"
 import Chat from "@/assets/icon/chat.svg?react"
 import { HorizonCard } from "@/shared/ui/card"
@@ -44,9 +44,6 @@ export default function ChatBox({ gameId }: { gameId: number }) {
             <Chat className="shrink-0" />
             <span>전략실</span>
           </div>
-          <Button className="px-2 py-1" size="xs">
-            닫기
-          </Button>
         </div>
 
         <div
@@ -72,6 +69,7 @@ export default function ChatBox({ gameId }: { gameId: number }) {
           className="flex min-w-0 gap-2"
         >
           <Input
+            containerClassName="w-full"
             className="min-w-0 flex-1"
             value={text}
             maxLength={50}

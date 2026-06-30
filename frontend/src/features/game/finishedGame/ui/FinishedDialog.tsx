@@ -1,5 +1,12 @@
-import { PlayerTable, type Player, useMeQuery, useScoreStore } from "@/entities/player"
-import { Button } from "@/shared/ui/button"
+import {
+  RankingCard,
+  type Player,
+  useMeQuery,
+  useScoreStore,
+} from "@/entities/player"
+import { Button } from "@/shared/ui/button2"
+import { ChartArea } from "lucide-react"
+import { ScoreChart } from "./ScoreChart"
 import {
   Dialog,
   DialogContent,
@@ -7,8 +14,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/shared/ui/dialog"
-import { ChartArea } from "lucide-react"
-import { ScoreChart } from "./ScoreChart"
 
 export default function FinishedDialog({
   open,
@@ -18,10 +23,6 @@ export default function FinishedDialog({
   players: Array<Player>
 }) {
   const { data: me } = useMeQuery()
-
-  const sortedPlayers = [...players].sort(
-    (a, b) => b.asset.amount - a.asset.amount
-  )
   const scores = useScoreStore((state) => state.scores)
   const data = scores.map((score, index) => ({
     time: index + 1,
@@ -33,7 +34,7 @@ export default function FinishedDialog({
       <DialogContent showCloseButton={false}>
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
-            랭킹
+            결과
           </DialogTitle>
         </DialogHeader>
         <div className="flex flex-col gap-2">
@@ -43,7 +44,7 @@ export default function FinishedDialog({
           </div>
           <ScoreChart data={data} />
         </div>
-        <PlayerTable players={sortedPlayers ?? []} me={me?.player} />
+        <RankingCard players={players} me={me?.player} />
         <DialogFooter>
           <Button onClick={() => window.location.reload()}>나가기</Button>
         </DialogFooter>

@@ -1,4 +1,4 @@
-import { Button } from "@/shared/ui/button"
+import { Button } from "@/shared/ui/button2"
 import { useBuyItemMutation } from "../model/useBuyItemMutation"
 import { MoneyText } from "@/shared/model/Money"
 import Gift from "@/assets/icon/gift.svg?react"

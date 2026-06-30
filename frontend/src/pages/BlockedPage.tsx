@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Button } from "@/shared/ui/button"
+import { Button } from "@/shared/ui/button2"
 
 export default function BlockedPage() {
   useEffect(() => {
