@@ -1,9 +1,15 @@
 import type { Money } from "@/shared/model/Money"
 
+export type PricePoint = {
+  price: number
+  gameTime: number
+}
+
 export type Purchase = {
   id: number
   meta: PurchaseMeta
   price: Money
+  priceHistory: PricePoint[]
 }
 
 export type PurchaseMeta = {

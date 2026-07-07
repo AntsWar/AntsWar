@@ -5,6 +5,7 @@ import com.antswar.backend.game.application.dto.PositionInfo;
 import com.antswar.backend.game.application.port.in.*;
 import com.antswar.backend.game.application.port.in.request.BuyPurchaseCommand;
 import com.antswar.backend.game.application.port.in.request.SellPurchaseCommand;
+import com.antswar.backend.game.application.port.in.response.BuyRumorResult;
 import com.antswar.backend.game.application.port.in.response.GetMeResult;
 import com.antswar.backend.game.application.port.out.PlayerRepository;
 import com.antswar.backend.game.application.port.out.PositionRepository;
@@ -24,8 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Random;
 
-import static com.antswar.backend.game.exception.GameErrorCode.PLAYER_NOT_FOUND;
-import static com.antswar.backend.game.exception.GameErrorCode.PURCHASE_NOT_FOUND;
+import static com.antswar.backend.game.exception.GameErrorCode.*;
 
 @RequiredArgsConstructor
 @Service
@@ -34,21 +34,34 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
     private final PositionRepository positionRepository;
     private final PurchaseRepository purchaseRepository;
     private final ApplicationEventPublisher eventPublisher;
+    private final RumorBoard rumorBoard;
     private final Random random;
 
     private static final Money GOLDEN_FINGER_REWARD = Money.of(10);
 
     @Override
     @Transactional
-    public void buy(long playerId, Item item, String code) {
+    public void buyItem(long playerId, Item item) {
         Player player = getPlayer(playerId);
         player.pay(item.getPrice());
 
         switch (item) {
-            case FAKE_NEWS -> eventPublisher.publishEvent(new GameEvent("NOTICE", code));
+//            case FAKE_NEWS -> { eventPublisher.publishEvent(new GameEvent("NOTICE", code)); yield null; }
             case GOLDEN_FINGER -> player.earn(GOLDEN_FINGER_REWARD);
             case LUCKY_BOX -> player.earn(Money.of(random.nextLong(10, 2001)));
         }
+    }
+
+    @Transactional
+    @Override
+    public BuyRumorResult buyRumor(long playerId, Item item, String category) {
+        Player player = getPlayer(playerId);
+        player.pay(item.getPrice());
+        return switch (item) {
+            case RUMOR_BASIC -> new BuyRumorResult(rumorBoard.getBasicRumor(category), "RUMOR_BASIC");
+            case RUMOR_PREMIUM -> new BuyRumorResult(rumorBoard.getPremiumRumor(category), "RUMOR_PREMIUM");
+            default -> throw new GameException(UNSUPPORTED_ITEM);
+        };
     }
 
     @Override
@@ -80,4 +93,5 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
     private Player getPlayer(long id){
         return playerRepository.findById(id).orElseThrow(() -> new GameException(PLAYER_NOT_FOUND));
     }
+
 }

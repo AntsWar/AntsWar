@@ -2,9 +2,11 @@ package com.antswar.backend.game.application.tick;
 
 import com.antswar.backend.game.application.dto.PurchaseMetaInfo;
 import com.antswar.backend.game.application.dto.GameEvent;
+import com.antswar.backend.game.application.port.out.PriceHistoryRepository;
 import com.antswar.backend.game.application.port.out.PurchaseRepository;
 import com.antswar.backend.game.domain.Game;
-import com.antswar.backend.game.domain.news.NewsBoard;
+import com.antswar.backend.game.application.PriceBoard;
+import com.antswar.backend.game.domain.purchase.PriceHistory;
 import com.antswar.backend.game.domain.purchase.Purchase;
 import com.antswar.backend.game.domain.purchase.PurchaseMeta;
 import com.antswar.backend.game.domain.purchase.PurchaseType;
@@ -22,7 +24,8 @@ import java.util.Random;
 @Component
 public class PurchaseTickHandler implements TickHandler {
     private final PurchaseRepository purchaseRepository;
-    private final NewsBoard newsBoard;
+    private final PriceHistoryRepository priceHistoryRepository;
+    private final PriceBoard priceBoard;
     private final Random random;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -38,7 +41,7 @@ public class PurchaseTickHandler implements TickHandler {
                 return;
             }
             PurchaseMeta meta = purchase.getMeta();
-            int impact = newsBoard.impactOf(meta);
+            int impact = priceBoard.impactOf(meta);
             double rate = nextRate(meta, impact);
             purchase.updatePrice(rate);
 
@@ -51,6 +54,11 @@ public class PurchaseTickHandler implements TickHandler {
                 );
             }
         });
+
+        List<PriceHistory> histories = purchases.stream()
+                .map(p -> new PriceHistory(p, p.getPrice(), now))
+                .toList();
+        priceHistoryRepository.saveAll(histories);
     }
 
     double nextRate(PurchaseMeta meta, int impact) {

@@ -26,9 +26,9 @@ export function StockChart() {
   )
 
   const data =
-    stock?.history.map((price, index) => ({
-      time: (index + 1) * 3,
-      price: price.amount,
+    stock?.history.map((point) => ({
+      time: point.gameTime,
+      price: point.price,
     })) ?? []
   const current = data.at(-1)?.price ?? 200
   const previous = data.at(-2)?.price ?? current

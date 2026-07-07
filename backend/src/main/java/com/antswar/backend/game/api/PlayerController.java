@@ -9,12 +9,14 @@ import com.antswar.backend.game.application.port.in.GetMe;
 import com.antswar.backend.game.application.port.in.PurchaseTrade;
 import com.antswar.backend.game.application.port.in.request.BuyPurchaseCommand;
 import com.antswar.backend.game.application.port.in.request.SellPurchaseCommand;
+import com.antswar.backend.game.application.port.in.response.BuyRumorResult;
 import com.antswar.backend.game.application.port.in.response.GetMeResult;
 import com.antswar.backend.game.infrastructure.resolver.PlayerPrincipal;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 
 @RequestMapping("/player")
 @RestController
@@ -46,8 +48,16 @@ public class PlayerController {
 
     @PostMapping("/item")
     public ResponseEntity<Void> buyItem(@RequestBody @Valid BuyItemRequest request,
-                                        @Auth PlayerPrincipal player){
-        buyItem.buy(player.id(), request.item(), request.code());
+                                          @Auth PlayerPrincipal player){
+        buyItem.buyItem(player.id(), request.item());
         return ResponseEntity.noContent().build();
+    }
+
+
+    @PostMapping("/item/rumor")
+    public ResponseEntity<BuyRumorResult> buyRumor(@RequestBody @Valid BuyItemRequest request,
+                                                   @Auth PlayerPrincipal player){
+        BuyRumorResult result = buyItem.buyRumor(player.id(), request.item(), request.category());
+        return ResponseEntity.ok(result);
     }
 }

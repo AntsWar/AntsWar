@@ -1,0 +1,24 @@
+{
+  "companies": [
+    {
+      "id": "SKY_HIGH",
+      "description": "SK하이닉스와 같은 메모리 반도체 기업",
+      "keywords": ["HBM", "DRAM", "NAND", "메모리"]
+    },
+    {
+      "id": "NVIDEO",
+      "description": "엔비디아와 같은 GPU 기업",
+      "keywords": ["GPU", "CUDA", "AI 서버", "그래픽 연산"]
+    },
+    {
+      "id": "ARMD",
+      "description": "AMD와 같은 CPU 기업",
+      "keywords": ["CPU", "Ryzen", "EPYC", "프로세서"]
+    },
+    {
+      "id": "PSMC",
+      "description": "TSMC와 같은 파운드리 기업",
+      "keywords": ["파운드리", "웨이퍼", "EUV", "3nm공정"]
+    }
+  ]
+}

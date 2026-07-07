@@ -8,4 +8,5 @@ export const qk = {
   order: () => ["order"] as const,
   earn: () => ["earn"] as const,
   buyItem: () => ["item"] as const,
+  buyRumor: () => ["rumor"] as const,
 }

@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useStompClient } from "@/shared/lib/stomp/StompProvider"
-import { type Game } from "@/entities/game"
+import { type Game, useGameTimeStore } from "@/entities/game"
 import { useGameSocketEvent } from "@/features/game/socket"
 import { useStockStore, type Purchase } from "@/entities/purchase"
 import { type Player } from "@/entities/player"
@@ -24,7 +24,9 @@ export function useGameEvents({ setGame, setFinished }: Params) {
       serverTime: string
     }
 
-    setStocks(msg.purchases)
+    useGameTimeStore.getState().setSync(msg.serverTime)
+    const elapsedSeconds = useGameTimeStore.getState().getElapsedSeconds()
+    setStocks(msg.purchases, elapsedSeconds)
 
     setGame((prev) => ({
       ...prev,

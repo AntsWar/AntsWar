@@ -36,7 +36,7 @@ export function Input({
       <InputSvg className="pointer-events-none absolute inset-0 size-full stroke-2" />
 
       <input
-        className={cn("relative focus:outline-none", className)}
+        className={cn("relative w-full focus:outline-none", className)}
         {...props}
       />
     </div>

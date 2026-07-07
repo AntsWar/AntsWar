@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { type Game } from "@/entities/game"
+import { type Game, useGameTimeStore } from "@/entities/game"
 import { RankingCard, useMeQuery } from "@/entities/player"
 import { FinishedDialog } from "@/features/game/finishedGame"
 import { ChatBox } from "@/features/chat"
@@ -7,6 +7,7 @@ import { ChatBox } from "@/features/chat"
 import Carrier from "@/assets/icon/Carrier.svg?react"
 import GameSection from "./GameSection"
 import { useGameEvents } from "../model/useGameEvents"
+import { useStockStore } from "@/entities/purchase"
 import { useScoreTracking } from "../model/useScoreTracking"
 import { Button } from "@/shared/ui/button2"
 import {
@@ -21,6 +22,13 @@ export default function GameView({ init }: { init: Game }) {
   const [finished, setFinished] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
   const { data: me } = useMeQuery()
+
+  useEffect(() => {
+    const { setMeta, setSync } = useGameTimeStore.getState()
+    setMeta(init.meta.startedAt, init.meta.endedAt)
+    setSync(init.serverTime)
+    useStockStore.getState().setStocks(init.purchases)
+  }, [init])
 
   useGameEvents({ setGame, setFinished })
   useScoreTracking(finished)

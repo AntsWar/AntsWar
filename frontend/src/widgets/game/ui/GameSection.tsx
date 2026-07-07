@@ -2,6 +2,7 @@ import { MoneyText } from "@/shared/model/Money"
 import { MarketInfo, PortfolioInfo, StockChart } from "@/features/market"
 import { type Game } from "@/entities/game"
 import { NewsBanner, NewsHistoryCard } from "@/entities/news"
+import { RumorHistoryCard } from "@/entities/rumors/ui/RumorHistoryCard"
 import { ItemShop } from "@/features/itemShop"
 import { useMeQuery } from "@/entities/player"
 import { Card, WideCard } from "@/shared/ui/card"
@@ -24,13 +25,8 @@ export default function GameSection({ game }: { game: Game }) {
           <div className="flex min-w-max flex-1 items-center gap-2">
             <Clock className="size-10" />
             <div>
-              <span className="">남은시간</span>
-              <p className="text-xl font-bold">
-                <RemainingTime
-                  endedAt={game.meta.endedAt}
-                  serverTime={game.serverTime}
-                />
-              </p>
+              <span className="">진행 시간</span>
+              <RemainingTime />
             </div>
           </div>
           <div className="flex min-w-max flex-1 items-center gap-2">
@@ -102,7 +98,14 @@ export default function GameSection({ game }: { game: Game }) {
           </div>
         </Card>
 
-        <NewsHistoryCard />
+        <div className="flex flex-col gap-4 lg:flex-row">
+          <div className="flex-1">
+            <NewsHistoryCard />
+          </div>
+          <div className="flex-1">
+            <RumorHistoryCard />
+          </div>
+        </div>
         <Card size="md" className="w-full rounded-xl">
           <div className="space-y-4">
             <SectionHeader

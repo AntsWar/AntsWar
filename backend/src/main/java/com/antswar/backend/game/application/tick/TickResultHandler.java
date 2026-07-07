@@ -25,7 +25,7 @@ public class TickResultHandler implements TickHandler {
     public void handle(Game game, LocalDateTime now) {
         List<Player> players = game.getActivePlayers();
         TickResult result = new TickResult(
-                PurchaseInfo.from(game.getPurchases(false)),
+                PurchaseInfo.from(game.getPurchases()),
                 PlayerInfo.from(players),
                 now
         );

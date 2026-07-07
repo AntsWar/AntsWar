@@ -40,7 +40,7 @@ public class Purchase {
     private final List<Position> positions = new ArrayList<>();
 
     private static final int RESPAWN_TICKS = 4;
-    private static final Money BASE_PRICE = Money.of(200);
+    private static final Money BASE_PRICE = Money.of(1000);
     private static final Money MIN_ACTIVE_PRICE = Money.of(100);
     private static final Money ZERO_PRICE = Money.of(0);
 

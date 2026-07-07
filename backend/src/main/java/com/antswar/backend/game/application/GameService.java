@@ -4,11 +4,14 @@ import com.antswar.backend.game.application.dto.*;
 import com.antswar.backend.game.application.port.in.*;
 import com.antswar.backend.game.application.port.in.request.JoinGameCommand;
 import com.antswar.backend.game.application.port.in.response.JoinGameResult;
-import com.antswar.backend.game.application.port.out.ChatPublisher;
 import com.antswar.backend.game.application.port.out.GameRepository;
 import com.antswar.backend.game.application.port.out.PlayerRepository;
+import com.antswar.backend.game.application.port.out.PriceHistoryRepository;
 import com.antswar.backend.game.domain.Game;
 import com.antswar.backend.game.domain.player.Player;
+import com.antswar.backend.game.domain.purchase.PriceHistory;
+import com.antswar.backend.game.domain.purchase.Purchase;
+
 import com.antswar.backend.game.exception.GameException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,6 +29,7 @@ import static com.antswar.backend.game.exception.GameErrorCode.*;
 public class GameService implements JoinGame, LeaveGame {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
+    private final PriceHistoryRepository priceHistoryRepository;
     private final GameIdPolicy gameIdPolicy;
     private final ApplicationEventPublisher eventPublisher;
     private final Clock clock;
@@ -39,9 +43,14 @@ public class GameService implements JoinGame, LeaveGame {
 
         eventPublisher.publishEvent(new ChatInfo("SYSTEM", player.getName() + "님이 입장하셨습니다."));
 
+        List<Purchase> purchases = game.getPurchases();
+        List<Long> purchaseIds = purchases.stream().map(Purchase::getId).toList();
+        LocalDateTime since = LocalDateTime.now(clock).minusMinutes(5);
+        List<PriceHistory> histories = priceHistoryRepository.findSince(purchaseIds, since);
+
         return new JoinGameResult(
                 GameInfo.of(game,
-                        PurchaseInfo.from(game.getPurchases(false)),
+                        PurchaseInfo.from(purchases, histories, game.getStartedAt()),
                         PlayerInfo.from(game.getActivePlayers()),
                         LocalDateTime.now(clock)),
                 PlayerInfo.from(player));

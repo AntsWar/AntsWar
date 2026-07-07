@@ -42,6 +42,7 @@ public class Player{
     @OneToMany(mappedBy = "player", cascade = CascadeType.PERSIST)
     private final List<Position> positions = new ArrayList<>();
 
+
     public Player(String name, Game game, Money balance) {
         this.name = validateName(name);
         this.game = Objects.requireNonNull(game);
@@ -49,7 +50,7 @@ public class Player{
     }
 
     public static Player user(String name, Game game) {
-        Player player =  new Player(name, game, Money.of(3_000));
+        Player player =  new Player(name, game, Money.of(10_000));
 
         for (Purchase purchase : game.getPurchases()) {
             player.positions.add(new Position(player, purchase, PositionType.LONG));
@@ -60,7 +61,7 @@ public class Player{
     }
 
     public static Player bot(String name, Game game) {
-        Player player = new Player(name, game, Money.of(3_000));
+        Player player = new Player(name, game, Money.of(10_000));
         player.bot = true;
         return player;
     }

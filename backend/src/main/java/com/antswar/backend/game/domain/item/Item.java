@@ -4,10 +4,11 @@ import com.antswar.backend.game.domain.vo.Money;
 import lombok.Getter;
 
 public enum Item {
-    NEWS_RADAR(Money.of(3_000)),
     FAKE_NEWS(Money.of(3_000)),
     GOLDEN_FINGER(Money.of(0)),
     LUCKY_BOX(Money.of(1000)),
+    RUMOR_BASIC(Money.of(500)),
+    RUMOR_PREMIUM(Money.of(1_500)),
     ;
 
     @Getter

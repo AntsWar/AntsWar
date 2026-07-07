@@ -5,10 +5,9 @@ import { type Game } from "@/entities/game"
 import { Logo } from "@/shared/ui/Logo"
 import { useQueryClient } from "@tanstack/react-query"
 import { qk } from "@/shared/queries/keys"
-import { Card, WideCard } from "@/shared/ui/card"
+import { Card } from "@/shared/ui/card"
 import { Input } from "@/shared/ui/input2"
 import Sword from "@/assets/icon/sword.svg?react"
-import Clock from "@/assets/icon/clock.svg?react"
 import Manual from "./Manual"
 
 export default function JoinDialog({
@@ -38,7 +37,7 @@ export default function JoinDialog({
   return (
     <div className="flex h-full items-center justify-center gap-8">
       <div className="w-sm items-center space-y-4">
-        <WideCard size="md" className="rounded-xl">
+        {/* <WideCard size="md" className="rounded-xl">
           <div className="flex items-center gap-4">
             <Clock className="size-10" />
             남은 전쟁 시간
@@ -47,26 +46,27 @@ export default function JoinDialog({
           <span className="text-sm text-muted-foreground">
             1시간마다 새로운 전쟁이 시작됩니다.
           </span>
-        </WideCard>
+        </WideCard> */}
         <Logo />
-        <div className="space-y-2">
+        <div className="flex flex-col items-center space-y-2">
           <Input
-            inputSize="lg"
+            className="text-center"
+            inputSize="md"
             value={name}
             placeholder="호걸의 이름을 입력하시오"
             maxLength={10}
             onChange={(e) => setName(e.target.value)}
           />
           <Button
-            size="lg"
-            className="w-full bg-primary"
+            size="md"
+            className="self-center bg-primary"
             onClick={() => handleJoin()}
             disabled={isPending}
           >
-            <span className="flex gap-2 text-lg font-semibold">
+            <div className="flex w-full items-center gap-2 text-lg font-semibold">
               <Sword className="size-6" />
               전장에 참여하기
-            </span>
+            </div>
           </Button>
         </div>
       </div>

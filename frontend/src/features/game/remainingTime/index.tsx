@@ -1,42 +1,34 @@
 import { formatTimeToMS } from "@/shared/lib/formatTime"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
+import { useGameTimeStore } from "@/entities/game"
 
-export default function RemainingTime({
-  endedAt,
-  serverTime,
-}: {
-  endedAt: string
-  serverTime: string
-}) {
+export default function RemainingTime() {
   const [remainingSeconds, setRemainingSeconds] = useState<number>(0)
-
-  const offsetRef = useRef(0)
-
-  useEffect(() => {
-    if (!serverTime) return
-    offsetRef.current = new Date(serverTime).getTime() - Date.now()
-  }, [serverTime])
+  const [elapsedSeconds, setElapsedSeconds] = useState<number>(0)
+  const endedAtMs = useGameTimeStore((s) => s.endedAtMs)
 
   useEffect(() => {
-    if (!endedAt) return
-
-    const endedAtMs = new Date(endedAt).getTime()
+    if (!endedAtMs) return
 
     const update = () => {
-      const expectedServerTime = Date.now() + offsetRef.current
-      const next = Math.max(
-        0,
-        Math.floor((endedAtMs - expectedServerTime) / 1000)
-      )
-
+      const { getGameTime, getElapsedSeconds } = useGameTimeStore.getState()
+      const gameNow = getGameTime()
+      const next = Math.max(0, Math.floor((endedAtMs - gameNow) / 1000))
       setRemainingSeconds((prev) => (prev === next ? prev : next))
+      setElapsedSeconds(getElapsedSeconds())
     }
     update()
 
     const timer = window.setInterval(update, 500)
-
     return () => window.clearInterval(timer)
-  }, [endedAt])
+  }, [endedAtMs])
 
-  return <>{formatTimeToMS(remainingSeconds)}</>
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-xl font-bold">
+        {formatTimeToMS(elapsedSeconds)}
+      </span>
+      <span className="text-md">({formatTimeToMS(remainingSeconds)})</span>
+    </div>
+  )
 }

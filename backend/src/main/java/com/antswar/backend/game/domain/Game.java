@@ -51,9 +51,9 @@ public class Game{
         players.add(Player.bot("noto",this));
     }
 
-    public List<Purchase> getPurchases(boolean isDelisted) {
+    public List<Purchase> getPurchases(boolean includeDelisted) {
         return purchases.stream()
-                .filter(purchase -> purchase.isDelisted() == isDelisted)
+                .filter(purchase -> includeDelisted || !purchase.isDelisted())
                 .toList();
     }
 

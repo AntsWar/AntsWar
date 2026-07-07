@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { useGameTimeStore } from "@/entities/game"
 
 export type NewsType = "news" | "breaking"
 
@@ -24,7 +25,7 @@ export const useNoticeStore = create<NoticeStore>((set) => ({
     set((prev) => ({
       message,
       type,
-      history: [{ message, type, receivedAt: Date.now() }, ...prev.history],
+      history: [{ message, type, receivedAt: useGameTimeStore.getState().getElapsedSeconds() }, ...prev.history],
     })),
   clear: () => set({ message: null, type: "news", history: [] }),
 }))
