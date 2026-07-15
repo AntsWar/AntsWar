@@ -8,18 +8,14 @@ import {
   TableRow,
 } from "@/shared/ui/table"
 import { MoneyText } from "@/shared/model/Money"
-import {
-  useStockStore,
-  type Purchase,
-  type PurchaseType,
-} from "@/entities/purchase"
+import { useStockStore, type Purchase } from "@/entities/purchase"
 
 export default function MarketTable({
   purchases,
   purchaseType,
 }: {
   purchases: Array<Purchase>
-  purchaseType: PurchaseType
+  purchaseType: string
 }) {
   return (
     <Table>

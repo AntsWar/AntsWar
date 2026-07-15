@@ -27,6 +27,7 @@ public class Purchase {
     private Game game;
 
     @Getter
+    @Enumerated(value = EnumType.STRING)
     private PurchaseMeta meta;
     @Getter
     @Embedded

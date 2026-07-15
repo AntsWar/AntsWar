@@ -14,18 +14,23 @@ import Coin from "@/assets/icon/coin.svg?react"
 import Chart from "@/assets/icon/chart.svg?react"
 import PieChart from "@/assets/icon/pieChart.svg?react"
 import Store from "@/assets/icon/store.svg?react"
+import Mail from "@/assets/icon/mail.svg?react"
+import NewsPaper from "@/assets/icon/newsPaper.svg?react"
 
 export default function GameSection({ game }: { game: Game }) {
   const { data: me } = useMeQuery()
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-2 overflow-x-hidden">
-      <WideCard size="lg" className="w-full rounded-xl">
+      <WideCard
+        size="lg"
+        className="w-full rounded-md md:rounded-lg lg:rounded-xl"
+      >
         <div className="flex w-full gap-4 overflow-x-auto overflow-y-hidden">
           <div className="flex min-w-max flex-1 items-center gap-2">
             <Clock className="size-10" />
             <div>
-              <span className="">진행 시간</span>
+              <span>진행 시간</span>
               <RemainingTime />
             </div>
           </div>
@@ -60,7 +65,7 @@ export default function GameSection({ game }: { game: Game }) {
       <div className="flex-1 space-y-4 overflow-y-auto">
         <NewsBanner />
         <Card size="lg" className="w-full rounded-xl">
-          <div className="space-y-4">
+          <div className="space-y-8">
             <div className="w-full space-y-4">
               <SectionHeader
                 icon={<Chart className="size-8" />}
@@ -100,12 +105,31 @@ export default function GameSection({ game }: { game: Game }) {
 
         <div className="flex flex-col gap-4 lg:flex-row">
           <div className="flex-1">
-            <NewsHistoryCard />
+            <Card size="md" className="w-full rounded-xl">
+              <div className="space-y-4">
+                <SectionHeader
+                  icon={<NewsPaper className="size-7" />}
+                  title="뉴스"
+                  description="뉴스는 특정 종목의 가격에 영향을 끼칩니다."
+                />
+                <NewsHistoryCard />
+              </div>
+            </Card>
           </div>
           <div className="flex-1">
-            <RumorHistoryCard />
+            <Card size="md" className="w-full rounded-xl">
+              <div className="space-y-4">
+                <SectionHeader
+                  icon={<Mail className="size-7" />}
+                  title="찌라시"
+                  description="다음 뉴스에 대한 힌트를 얻을 수 있습니다. "
+                />
+                <RumorHistoryCard />
+              </div>
+            </Card>
           </div>
         </div>
+
         <Card size="md" className="w-full rounded-xl">
           <div className="space-y-4">
             <SectionHeader

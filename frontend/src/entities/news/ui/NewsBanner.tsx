@@ -11,14 +11,9 @@ export function NewsBanner() {
       <div className="flex gap-2">
         <Speaker className="size-7" />
         {message ? (
-          <>
-            <span className={type === "breaking" ? "font-bold text-stock-up" : ""}>
-              {type === "breaking" ? "[속보]" : "[뉴스]"}
-            </span>
-            <span className={type === "breaking" ? "text-stock-up" : ""}>
-              {message}
-            </span>
-          </>
+          <p className={type === "breaking" ? "font-bold text-stock-up" : ""}>
+            {type === "breaking" ? "[속보]" : "[뉴스]"} {message}
+          </p>
         ) : (
           "뉴스를 기다리는 중..."
         )}

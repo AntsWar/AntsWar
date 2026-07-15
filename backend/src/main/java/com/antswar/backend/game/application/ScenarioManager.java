@@ -8,8 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Slf4j
@@ -28,6 +26,7 @@ public class ScenarioManager {
     private final int NEWS_TICK = 10;
     private final int TOTAL_TICK = NEWS_TICK * 4;
     private int nowTick = 0;
+    private final List<String> CATEGORIES = List.of("IT","CAR","AIRPORT");
 
     public void tick() {
         if(nowTick % TOTAL_TICK==0){
@@ -54,8 +53,9 @@ public class ScenarioManager {
 
     private void loadScenario() {
         try {
+            String category = CATEGORIES.get(random.nextInt(CATEGORIES.size()));
             int num = random.nextInt(1, 11);
-            schedule.addAll(scenarioLoader.load("IT", num));
+            schedule.addAll(scenarioLoader.load(category, num));
         } catch (Exception e) {
             log.error("시나리오 로드 실패", e);
         }

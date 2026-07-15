@@ -72,9 +72,9 @@ public class PurchaseTickHandler implements TickHandler {
     }
 
     static RateRange baseRangeOf(PurchaseType type) {
-        return type == PurchaseType.STOCK
-                ? new RateRange(-1, 1)
-                : new RateRange(-4, 4);
+        return type == PurchaseType.CRYPTO
+                ? new RateRange(-4, 4)
+                : new RateRange(-1, 1);
     }
 
     record RateRange(int min, int max) { }

@@ -1,11 +1,11 @@
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs"
 import { useState } from "react"
-import { type Purchase, type PurchaseType } from "@/entities/purchase"
+import { type Purchase } from "@/entities/purchase"
 import MarketTable from "./MarketTable"
 
 export default function MarketInfo(props: { purchases: Array<Purchase> }) {
   const { purchases } = props
-  const [selectedType, setSelectedType] = useState<PurchaseType>("STOCK")
+  const [selectedType, setSelectedType] = useState<string>("IT")
 
   return (
     <div>
@@ -21,18 +21,20 @@ export default function MarketInfo(props: { purchases: Array<Purchase> }) {
 }
 
 function PurchaseTypeTabs(props: {
-  value: PurchaseType
-  onValueChange: (value: PurchaseType) => void
+  value: string
+  onValueChange: (value: string) => void
 }) {
   const { value, onValueChange } = props
   return (
     <Tabs
       value={value}
-      onValueChange={(value) => onValueChange(value as PurchaseType)}
+      onValueChange={(value) => onValueChange(value as string)}
     >
       <TabsList>
-        <TabsTrigger value={"STOCK"}>주식</TabsTrigger>
+        <TabsTrigger value={"IT"}>IT</TabsTrigger>
         <TabsTrigger value={"CRYPTO"}>코인</TabsTrigger>
+        <TabsTrigger value={"CAR"}>차</TabsTrigger>
+        <TabsTrigger value={"AIRPORT"}>항공</TabsTrigger>
       </TabsList>
     </Tabs>
   )

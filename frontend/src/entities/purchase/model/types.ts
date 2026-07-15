@@ -15,7 +15,9 @@ export type Purchase = {
 export type PurchaseMeta = {
   code: string
   name: string
-  type: PurchaseType
+  type: string
+  description: string
+  keywords: Array<string>
 }
 
 export type PurchaseType = "STOCK" | "CRYPTO" | "ALL"

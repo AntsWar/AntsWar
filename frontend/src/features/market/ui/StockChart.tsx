@@ -62,65 +62,82 @@ export function StockChart() {
             </p>
           </div>
         </div>
+
+        <p className="text-sm text-muted-foreground">
+          {stock?.stock.meta.description}
+        </p>
       </div>
-      <div className="h-56 w-full">
-        <ResponsiveContainer>
-          <AreaChart data={data}>
-            <defs>
-              <linearGradient id="stockGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="var(--primary)" />
-                <stop offset="95%" stopColor="var(--primary)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <CartesianGrid vertical={false} opacity={0.3} />
-            <YAxis
-              orientation="right"
-              tickLine={false}
-              tickCount={5}
-              fontSize={12}
-              dataKey="price"
-              tickFormatter={(value) =>
-                `${MoneyText({ money: { amount: value } })}`
-              }
-            />
-            <XAxis
-              type="number"
-              domain={["dataMin", "dataMax"]}
-              tickLine={false}
-              dataKey="time"
-              tickCount={5}
-              fontSize={12}
-              tickFormatter={(value) => `${formatTimeToMS(value)}`}
-            />
-            <Tooltip content={<StockTooltip />} />
-            <Area
-              type="monotone"
-              dataKey="price"
-              stroke="var(--primary-foreground)"
-              strokeWidth={3}
-              fill="url(#stockGradient)"
-              isAnimationActive={false}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="flex justify-end gap-4">
-        <TradeButton
-          label="매수"
-          containerClassName="bg-stock-up"
-          onClick={(quantity) => {
-            submitOrder("LONG", quantity)
-          }}
-          disabled={isPending}
-        />
-        <TradeButton
-          label="공매도"
-          containerClassName="bg-stock-down"
-          onClick={(quantity) => {
-            submitOrder("SHORT", quantity)
-          }}
-          disabled={isPending}
-        />
+      <div>
+        <div className="h-56 w-full">
+          <ResponsiveContainer>
+            <AreaChart data={data}>
+              <defs>
+                <linearGradient id="stockGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="var(--primary)" />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--primary)"
+                    stopOpacity={0}
+                  />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} opacity={0.3} />
+              <YAxis
+                orientation="right"
+                tickLine={false}
+                tickCount={5}
+                fontSize={12}
+                dataKey="price"
+                tickFormatter={(value) =>
+                  `${MoneyText({ money: { amount: value } })}`
+                }
+              />
+              <XAxis
+                type="number"
+                domain={["dataMin", "dataMax"]}
+                tickLine={false}
+                dataKey="time"
+                tickCount={5}
+                fontSize={12}
+                tickFormatter={(value) => `${formatTimeToMS(value)}`}
+              />
+              <Tooltip content={<StockTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="price"
+                stroke="var(--primary-foreground)"
+                strokeWidth={3}
+                fill="url(#stockGradient)"
+                isAnimationActive={false}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-1">
+            <p className="text-sm text-muted-foreground">
+              오를 땐 매수, 내릴 땐 공매도! 수익을 내보세요.
+            </p>
+            <div className="flex gap-4">
+              <TradeButton
+                label="매수"
+                containerClassName="bg-stock-up"
+                onClick={(quantity) => {
+                  submitOrder("LONG", quantity)
+                }}
+                disabled={isPending}
+              />
+              <TradeButton
+                label="공매도"
+                containerClassName="bg-stock-down"
+                onClick={(quantity) => {
+                  submitOrder("SHORT", quantity)
+                }}
+                disabled={isPending}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

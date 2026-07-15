@@ -23,7 +23,7 @@ public class GameScheduler {
         tickProcessor.tick(gameIdPolicy.currentGameId());
     }
 
-    @Scheduled(cron = "0 0 * * * *")
+    @Scheduled(cron = "0 */30 * * * *")
     protected void finishedGame() {
         priceBoard.reset();
         rumorBoard.reset();

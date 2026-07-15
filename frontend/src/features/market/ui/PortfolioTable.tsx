@@ -8,7 +8,6 @@ import {
 } from "@/shared/ui/table"
 import { MoneyText } from "@/shared/model/Money"
 import type { Position } from "@/entities/position"
-import type { PurchaseType } from "@/entities/purchase"
 import { toast } from "sonner"
 import { useSellPurchaseMutation } from "../model/useSellPurchaseMutation"
 import type { SellPurchaseRequest } from "../api/sellPurchase"
@@ -20,7 +19,7 @@ export default function PortfolioTable({
   purchaseType,
 }: {
   positions: Array<Position>
-  purchaseType: PurchaseType
+  purchaseType: string
 }) {
   return (
     <Table>
