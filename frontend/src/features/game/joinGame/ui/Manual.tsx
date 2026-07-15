@@ -12,7 +12,7 @@ export default function Manual() {
           <Target className="size-5" /> 목표
         </div>
         <p className="text-muted-foreground">
-          한 시간 동안 가장 많은 자산을 모아 1위를 차지하세요.
+          정해진 시간 동안 가장 많은 자산을 모아 1위를 차지하세요.
         </p>
       </div>
 

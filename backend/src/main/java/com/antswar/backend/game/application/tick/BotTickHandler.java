@@ -25,7 +25,7 @@ public class BotTickHandler implements TickHandler{
         List<Player> bots = playerRepository.findAllByGameAndBotIsTrue(game);
 
         for (Player bot : bots) {
-            if(random.nextDouble() < 0.05){
+            if(random.nextDouble() < 0.005){
                 eventPublisher.publishEvent(new ChatInfo(bot.getName(),BOT_CHATS.get(random.nextInt(BOT_CHATS.size()))));
             }
             if (random.nextDouble() > 0.35) {

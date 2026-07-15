@@ -35,47 +35,47 @@ export default function JoinDialog({
   }
 
   return (
-    <div className="flex h-full items-center justify-center gap-8">
-      <div className="w-sm items-center space-y-4">
-        {/* <WideCard size="md" className="rounded-xl">
-          <div className="flex items-center gap-4">
-            <Clock className="size-10" />
-            남은 전쟁 시간
-            <span className="text-2xl font-extrabold">60:00</span>
-          </div>
-          <span className="text-sm text-muted-foreground">
-            1시간마다 새로운 전쟁이 시작됩니다.
-          </span>
-        </WideCard> */}
-        <Logo />
-        <div className="flex flex-col items-center space-y-2">
-          <Input
-            className="text-center"
-            inputSize="md"
-            value={name}
-            placeholder="호걸의 이름을 입력하시오"
-            maxLength={10}
-            onChange={(e) => setName(e.target.value)}
-          />
-          <Button
-            size="md"
-            className="self-center bg-primary"
-            onClick={() => handleJoin()}
-            disabled={isPending}
-          >
-            <div className="flex w-full items-center gap-2 text-lg font-semibold">
-              <Sword className="size-6" />
-              전장에 참여하기
+    <div className="relative flex h-full">
+      <div
+        className="absolute inset-0 bg-cover bg-center blur-sm"
+        style={{ backgroundImage: "url('/background.png')" }}
+      />
+      <div className="relative flex h-full w-full items-center justify-center gap-8">
+        <Card
+          size="md"
+          className="relative z-10 w-full max-w-sm rounded-xl p-8 sm:max-w-2xl"
+          contentClassName="flex flex-col items-center gap-12 sm:flex-row "
+        >
+          <div className="flex flex-1 flex-col items-center space-y-4">
+            <Logo />
+            <div className="flex w-full flex-col items-center space-y-2">
+              <Input
+                className="text-center"
+                inputSize="md"
+                value={name}
+                placeholder="호걸의 이름을 입력하시오"
+                maxLength={10}
+                onChange={(e) => setName(e.target.value)}
+              />
+              <Button
+                size="md"
+                className="self-center bg-primary"
+                onClick={() => handleJoin()}
+                disabled={isPending}
+              >
+                <div className="flex w-full items-center gap-2 text-lg font-semibold">
+                  <Sword className="size-6" />
+                  전장에 참여하기
+                </div>
+              </Button>
             </div>
-          </Button>
-        </div>
+          </div>
+          <div className="hidden max-w-sm flex-1 space-y-4 rounded-xl sm:block">
+            <div className="text-2xl font-bold">전장 안내서</div>
+            <Manual />
+          </div>
+        </Card>
       </div>
-      <Card size="md" className="hidden max-w-sm rounded-xl md:block">
-        <div className="space-y-4">
-          <div className="text-2xl font-bold">전장 안내서</div>
-          <Manual />
-        </div>
-      </Card>
     </div>
   )
 }

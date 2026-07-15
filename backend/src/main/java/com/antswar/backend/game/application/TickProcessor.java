@@ -36,8 +36,13 @@ public class TickProcessor {
     private Game findOrCreate(long gameId, LocalDateTime now) {
         return gameRepository.findById(gameId)
                 .orElseGet(() -> {
-                    LocalDateTime startedAt = now.truncatedTo(java.time.temporal.ChronoUnit.HOURS);
-                    LocalDateTime endedAt = startedAt.plusHours(1);
+                    LocalDateTime startedAt = now
+                            .withMinute(now.getMinute() < 30 ? 0 : 30)
+                            .withSecond(0)
+                            .withNano(0);
+
+                    LocalDateTime endedAt = startedAt.plusMinutes(30);
+
                     Game game = new Game(gameId, startedAt, endedAt);
                     em.persist(game);
                     return game;
