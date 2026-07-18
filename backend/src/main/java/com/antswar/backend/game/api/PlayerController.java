@@ -29,14 +29,14 @@ public class PlayerController {
     @PostMapping("/purchase/buy")
     public ResponseEntity<Void> buyPurchase(@RequestBody @Valid BuyPurchaseRequest request,
                                       @Auth PlayerPrincipal player){
-        purchaseTrade.buy(new BuyPurchaseCommand(player.id(), request.positionType(), request.purchaseId(), request.quantity()));
+        purchaseTrade.buy(player.id(), new BuyPurchaseCommand(request.positionType(), request.purchaseId(), request.quantity()));
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/purchase/sell")
     public ResponseEntity<Void> sellPurchase(@RequestBody @Valid SellPurchaseRequest request,
                                             @Auth PlayerPrincipal player){
-        purchaseTrade.sell(new SellPurchaseCommand(player.id(), request.positionId(), request.quantity()));
+        purchaseTrade.sell(player.id(), new SellPurchaseCommand(request.positionId(), request.quantity()));
         return ResponseEntity.noContent().build();
     }
 

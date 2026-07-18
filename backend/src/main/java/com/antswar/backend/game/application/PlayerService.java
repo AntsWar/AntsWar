@@ -1,5 +1,7 @@
 package com.antswar.backend.game.application;
 
+import com.antswar.backend.common.annotation.LocalLock;
+import com.antswar.backend.common.annotation.LockKey;
 import com.antswar.backend.game.application.dto.PlayerInfo;
 import com.antswar.backend.game.application.dto.PositionInfo;
 import com.antswar.backend.game.application.port.in.*;
@@ -41,7 +43,8 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
 
     @Override
     @Transactional
-    public void buyItem(long playerId, Item item) {
+    @LocalLock
+    public void buyItem(@LockKey long playerId, Item item) {
         Player player = getPlayer(playerId);
         player.pay(item.getPrice());
 
@@ -54,7 +57,8 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
 
     @Transactional
     @Override
-    public BuyRumorResult buyRumor(long playerId, Item item, String category) {
+    @LocalLock
+    public BuyRumorResult buyRumor(@LockKey long playerId, Item item, String category) {
         Player player = getPlayer(playerId);
         player.pay(item.getPrice());
         return switch (item) {
@@ -66,8 +70,9 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
 
     @Override
     @Transactional
-    public void buy(BuyPurchaseCommand command) {
-        Player player = getPlayer(command.playerId());
+    @LocalLock
+    public void buy(@LockKey long playerId, BuyPurchaseCommand command) {
+        Player player = getPlayer(playerId);
         Purchase purchase = purchaseRepository.findById(command.purchaseId()).orElseThrow(() ->
                 new GameException(PURCHASE_NOT_FOUND));
         player.buy(purchase, command.positionType(), command.quantity());
@@ -75,8 +80,9 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
 
     @Override
     @Transactional
-    public void sell(SellPurchaseCommand command) {
-        Player player = getPlayer(command.playerId());
+    @LocalLock
+    public void sell(@LockKey long playerId, SellPurchaseCommand command) {
+        Player player = getPlayer(playerId);
         Position position = positionRepository.findById(command.positionId()).orElseThrow();
         player.sell(position, command.quantity());
     }
