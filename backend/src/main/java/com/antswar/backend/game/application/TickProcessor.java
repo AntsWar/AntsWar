@@ -1,6 +1,7 @@
 package com.antswar.backend.game.application;
 
 import com.antswar.backend.game.application.port.out.GameRepository;
+import com.antswar.backend.game.application.tick.ExclusiveLock;
 import com.antswar.backend.game.application.tick.TickHandler;
 import com.antswar.backend.game.domain.Game;
 import jakarta.persistence.EntityManager;
@@ -24,6 +25,7 @@ public class TickProcessor {
     private EntityManager em;
 
     @Transactional
+    @ExclusiveLock
     public void tick(long gameId) {
         LocalDateTime now = LocalDateTime.now(clock);
         Game game = findOrCreate(gameId, now);

@@ -13,6 +13,7 @@ import com.antswar.backend.game.application.port.out.PlayerRepository;
 import com.antswar.backend.game.application.port.out.PositionRepository;
 import com.antswar.backend.game.application.port.out.PurchaseRepository;
 import com.antswar.backend.game.application.dto.GameEvent;
+import com.antswar.backend.game.application.tick.SharedLock;
 import com.antswar.backend.game.domain.item.Item;
 import com.antswar.backend.game.domain.player.Player;
 import com.antswar.backend.game.domain.player.Position;
@@ -35,7 +36,6 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
     private final PlayerRepository playerRepository;
     private final PositionRepository positionRepository;
     private final PurchaseRepository purchaseRepository;
-    private final ApplicationEventPublisher eventPublisher;
     private final RumorBoard rumorBoard;
     private final Random random;
 
@@ -44,6 +44,7 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
     @Override
     @Transactional
     @LocalLock
+    @SharedLock
     public void buyItem(@LockKey long playerId, Item item) {
         Player player = getPlayer(playerId);
         player.pay(item.getPrice());
@@ -58,6 +59,7 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
     @Transactional
     @Override
     @LocalLock
+    @SharedLock
     public BuyRumorResult buyRumor(@LockKey long playerId, Item item, String category) {
         Player player = getPlayer(playerId);
         player.pay(item.getPrice());
@@ -71,6 +73,7 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
     @Override
     @Transactional
     @LocalLock
+    @SharedLock
     public void buy(@LockKey long playerId, BuyPurchaseCommand command) {
         Player player = getPlayer(playerId);
         Purchase purchase = purchaseRepository.findById(command.purchaseId()).orElseThrow(() ->
@@ -81,6 +84,7 @@ public class PlayerService implements GetMe, PurchaseTrade, BuyItem {
     @Override
     @Transactional
     @LocalLock
+    @SharedLock
     public void sell(@LockKey long playerId, SellPurchaseCommand command) {
         Player player = getPlayer(playerId);
         Position position = positionRepository.findById(command.positionId()).orElseThrow();

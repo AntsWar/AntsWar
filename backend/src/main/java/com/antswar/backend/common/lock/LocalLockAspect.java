@@ -11,7 +11,6 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -22,7 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Aspect
 @Component
 @RequiredArgsConstructor
-@Order(Ordered.HIGHEST_PRECEDENCE)
+@Order(Ordered.HIGHEST_PRECEDENCE+1)
 public class LocalLockAspect {
     private final LocalLockManager localLockManager;
 
