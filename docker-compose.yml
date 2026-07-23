@@ -41,11 +41,10 @@ services:
       - "127.0.0.1:3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
-    mem_limit: 768m
+    mem_limit: 512m
     networks:
       - app
 

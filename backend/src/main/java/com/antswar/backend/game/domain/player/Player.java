@@ -50,14 +50,7 @@ public class Player{
     }
 
     public static Player user(String name, Game game) {
-        Player player =  new Player(name, game, Money.of(10_000));
-
-        for (Purchase purchase : game.getPurchases()) {
-            player.positions.add(new Position(player, purchase, PositionType.LONG));
-            player.positions.add(new Position(player, purchase, PositionType.SHORT));
-        }
-
-        return player;
+        return new Player(name, game, Money.of(10_000));
     }
 
     public static Player bot(String name, Game game) {
@@ -94,7 +87,11 @@ public class Player{
                 .filter(position -> position.getType().equals(type))
                 .filter(position -> position.getPurchase().getId().equals(purchase.getId()))
                 .findFirst()
-                .orElseThrow(() -> new IllegalStateException("초기 포지션이 존재해야 함"));
+                .orElseGet(() -> {
+                    Position position = new Position(this, purchase, type);
+                    positions.add(position);
+                    return position;
+                });
     }
 
     public List<Position> getPositions(){
