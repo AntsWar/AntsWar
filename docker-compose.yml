@@ -44,7 +44,7 @@ services:
     command: >
       --character-set-server=utf8mb4
       --collation-server=utf8mb4_unicode_ci
-    mem_limit: 512m
+    mem_limit: 768m
     networks:
       - app
 
